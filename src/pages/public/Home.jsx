@@ -1,6 +1,8 @@
 import React from 'react'
 import { doctorIcon, medicMask, pngwing1, rect58, rect59, rect60, rect61, roboDoc, userIcon } from '../../assets'
 import { Button, ImageCard } from '../../components'
+import { useNavigate } from 'react-router'
+import { PATH } from '../../routes/path'
 
 const imagecards = [
   {
@@ -22,12 +24,14 @@ const imagecards = [
 ]
 
 const Home = () => {
+  const navigate = useNavigate()
+
   return (
     <>
       <section className="Hero relative md:grid md:grid-cols-2 h-[90vh] bg-gradient-to-r from-primary-6 to-white transition-colors">
         <div className="right intro-text p-10 md:pl-20 md:p-0 flex flex-col justify-center items-center">
           <div className="font-extrabold text-[64px] text-white ">Step in to the next generation <span className="text-secondary-6">Health care service</span> with <span className="text-primary-9">our AI</span></div>
-          <Button className="self-start mt-5">Sign Up for Free</Button>
+          <Button className="self-start mt-5" onClick={() => navigate(PATH.general.signUpPointer)}>Sign Up for Free</Button>
         </div>
         <img src={roboDoc} alt="robo doctor" className="absolute right-0 top-0 h-full" />
       </section>
