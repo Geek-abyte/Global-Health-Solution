@@ -4,7 +4,7 @@ function path(root, sublink) {
 
 const ROOT = "/";
 const DOCTOR = `/doctor/`
-const PATIENT = `/patient/`
+const PATIENT = `/user/`
 
 export const PATH = {
   root: ROOT,
@@ -24,7 +24,7 @@ export const PATH = {
     profile: path(PATIENT, "profile"),
     ai: path(PATIENT, "ai"),
     prescription: path(PATIENT, "prescription"),
-    specialist: path(PATIENT, "specialist"),
+    consultant: path(PATIENT, "consultant"),
     history: path(PATIENT, "history")
   },
   doctor: {

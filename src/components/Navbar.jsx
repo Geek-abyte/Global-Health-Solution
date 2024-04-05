@@ -1,26 +1,41 @@
 import React, { useState } from 'react';
 import { Transition } from '@headlessui/react';
 import { logoWhite } from '../assets';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { PATH } from '../routes/path';
+import Button from './Button';
 
-const Navbar = () => {
+const Navbar = ({ className }) => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="bg-white">
+    <div className={`bg-white shadow-sm ${className}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <div className="flex-shrink-0">
+            <Link to={PATH.general.home} className="flex-shrink-0">
               <img className="h-10" src={logoWhite} alt="Logo" />
-            </div>
+            </Link>
           </div>
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4">
               <Link to={PATH.general.home} href="#" className="text-primary-6 hover:bg-primary-5 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</Link>
-              <Link href="#" className="text-primary-6 hover:bg-primary-5 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Our Doctors</Link>
+              <Link href="#" className="text-primary-6 hover:bg-primary-5 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Doctors</Link>
               <Link href="#" className="text-primary-6 hover:bg-primary-5 hover:text-white px-3 py-2 rounded-md text-sm font-medium">About</Link>
+              <Button 
+                background='bg-transparent'
+                textColor='text-primary-6'
+                borderRadius='rounded-full'
+                border='border-2 border-primary-6'
+                onClick={() => navigate(PATH.general.signIn)}
+              >Log In</Button>
+              <Button 
+                background='bg-primary-6'
+                textColor='text-white'
+                borderRadius='rounded-full'
+                onClick={() => navigate(PATH.general.signUp)}
+              >Sign Up</Button>
               {/* <Link href="#" className="text-primary-6 hover:bg-primary-5 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Contact</Link> */}
             </div>
           </div>

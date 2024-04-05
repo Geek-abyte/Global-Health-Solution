@@ -7,6 +7,10 @@ import { Page404 as NotFound,
   SignUpPointer,
 } from "../pages/public"
 import { DEFAULT_PATH, PATH } from "./path";
+import { LoadingScreen } from "../components";
+import { DoctorDashboard } from "../pages/private";
+
+let isAuthenticated = true;
 
 export default function Router() {
   return useRoutes([
@@ -15,8 +19,7 @@ export default function Router() {
       element: <LazyLayout />,
       children: [
         { element: <Home /> , index: true },
-        { path: PATH.general.home, element: <Navigate to="/" replace />  },
-        
+        { path: PATH.general.home, element: <Navigate to="/" replace />  },        
         { path: PATH.general.signUp, element: <PatientSignUp /> },
         { path: PATH.general.doctorSignUp, element: <DoctorSignUp /> },
         { path: PATH.general.signUpPointer, element: <SignUpPointer /> },
@@ -25,9 +28,11 @@ export default function Router() {
         { path: "*", element: <Navigate to={PATH.general.page404} replace /> },
       ],
     },
+    { path: "/loader", element: <LoadingScreen />},
     {
       path: PATH.dashboard.default,
-      element: <LazyLayout layout="patient" />,
+      element: <PrivateRoute isAuthenticated={isAuthenticated} route={<LazyLayout layout="patient" />} />,
+      // element: <LazyLayout layout="patient" />,
       children: [
         { path: PATH.dashboard.dashboard, element: <LazyDashboard /> , index: true },
         { path: PATH.dashboard.profile, element: <LazyProfile /> },
@@ -40,6 +45,22 @@ export default function Router() {
         { path: "*", element: <Navigate to={PATH.general.page404} replace /> },
       ],
     },
+    {
+      path: PATH.doctor.default,
+      element: <PrivateRoute isAuthenticated={isAuthenticated} route={<LazyLayout layout="doctor" />} />,
+      
+      children: [
+        {path: PATH.doctor.dashboard, element: <DoctorDashboard />, index: true },
+      ]
+    },
     { path: "*", element: <Navigate to={PATH.general.page404} replace /> },
   ]);
 }
+
+const PrivateRoute = ({ isAuthenticated, redirectTo, route }) => {
+  if (!isAuthenticated) {
+    return <Navigate to={redirectTo || PATH.general.signIn} />;
+  }
+
+  return route;
+};

@@ -16,14 +16,14 @@ const PatientSidebar = () => {
       case (PATH.dashboard.profile):
         setSelectedItem("profile");
         break;
-      case (PATH.dashboard.ai):
-        setSelectedItem("Ai");
-        break;
+      // case (PATH.dashboard.ai):
+      //   setSelectedItem("Ai");
+      //   break;
       case (PATH.dashboard.prescription):
         setSelectedItem("prescription");
         break;
-      case (PATH.dashboard.specialist):
-        setSelectedItem("specialist");
+      case (PATH.dashboard.consultant):
+        setSelectedItem("consultant");
         break;
       case (PATH.dashboard.history):
         setSelectedItem("medical-history");
@@ -36,8 +36,8 @@ const PatientSidebar = () => {
   
 
   return (
-    <div className="relative flex flex-col w-64 h-screen bg-primary-6 rounded-r-md text-white overflow-hidden">
-      <div className="image flex items-center px-6 w-full py-[30px]">
+    <div className="relative flex flex-col w-64 h-full bg-primary-6 rounded-r-md text-white overflow-hidden">
+      <div className="image flex items-center px-6 w-full py-[30px] ">
         <img src={userImage} alt="" className='w-[70px]'/>
       </div>
       <div className="flex flex-col flex-1 overflow-y-auto">
@@ -57,21 +57,21 @@ const PatientSidebar = () => {
         >
          <LuUser className='mr-2'/> Profile
         </Link>
-        <Link
+        {/* <Link
           to={PATH.dashboard.ai}
           className={`px-6 py-3 text-[20px] font-medium flex flex-row justify-start items-center ${
             selectedItem === 'Ai' ? 'text-secondary-6' : ''
           }`}
         >
          <HiChip className='mr-2'/> AI
-        </Link>   
+        </Link>    */}
         <Link
-          to={PATH.dashboard.specialist}
+          to={PATH.dashboard.consultant}
           className={`px-6 py-3 text-[20px] font-medium flex flex-row justify-start items-center ${
-            selectedItem === 'specialist' ? 'text-secondary-6' : ''
+            selectedItem === 'consultant' ? 'text-secondary-6' : ''
           }`}
         >
-         <FaUserDoctor className='mr-2'/> Specialist
+         <FaUserDoctor className='mr-2'/> Consultant
         </Link>   
         <Link
           to={PATH.dashboard.prescription}

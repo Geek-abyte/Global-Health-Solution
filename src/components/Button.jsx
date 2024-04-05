@@ -1,6 +1,18 @@
 import React, { useState } from 'react';
+import classNames from 'classnames';
 
-const Button = ({ children, className, onClick, type }) => {
+const Button = ({
+  children,
+  className,
+  onClick,
+  type = 'button',
+  background = 'bg-blue-500',
+  borderRadius = 'rounded',
+  textColor = 'text-white',
+  width = 'w-auto',
+  height = 'h-10',
+  border = 'border-none',
+}) => {
   const [isClicked, setIsClicked] = useState(false);
 
   const handleClick = () => {
@@ -8,26 +20,27 @@ const Button = ({ children, className, onClick, type }) => {
     onClick?.();
     setTimeout(() => {
       setIsClicked(false);
-    }, 300);
+    }, 200);
   };
 
+  const buttonClasses = classNames(
+    'flex items-center justify-center font-semibold transition-transform duration-200 ease-in-out p-5',
+    background,
+    borderRadius,
+    textColor,
+    width,
+    height,
+    border,
+    className,
+    {
+      'scale-95': isClicked,
+      'hover:scale-105 hover:shadow-lg': !isClicked,
+    }
+  );
+
   return (
-    <button type={type}
-      className={`relative overflow-hidden bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-md transition-all duration-300 ${className} ${
-        isClicked
-          ? 'scale-95 shadow-inner shadow-blue-800'
-          : 'scale-100 shadow-md shadow-blue-700'
-      }`}
-      onClick={handleClick}
-    >
-      <span className={`relative z-10 ${isClicked ? 'text-blue-200' : 'text-white'}`}>
-        {children}
-      </span>
-      <div
-        className={`absolute top-0 left-0 w-full h-full bg-blue-700 rounded-md transition-all duration-300 ${
-          isClicked ? 'scale-150' : 'scale-0'
-        }`}
-      />
+    <button type={type} className={buttonClasses} onClick={handleClick}>
+      {children}
     </button>
   );
 };

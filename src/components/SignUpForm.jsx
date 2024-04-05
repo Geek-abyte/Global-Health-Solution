@@ -2,6 +2,7 @@ import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import Button from './Button';
 import { Link } from 'react-router-dom';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 const formInput = "border-[3px] border-primary-5 text-primary-2 rounded-[20px] overflow-hidden p-2 w-full"
 
@@ -14,28 +15,32 @@ const SignUpForm = () => (
       phone: '',
       password: '',
       agreeTerms: false,
+      recaptcha: '',
     }}
     validate={values => {
       const errors = {};
       if (!values.firstName) {
-        errors.firstName = 'Required';
+        errors.firstName = '* Required';
       }
       if (!values.lastName) {
-        errors.lastName = 'Required';
+        errors.lastName = '* Required';
       }
       if (!values.email) {
         errors.email = 'Required';
       } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)) {
-        errors.email = 'Invalid email address';
+        errors.email = '* Invalid email address';
       }
       if (!values.phone) {
-        errors.phone = 'Required';
+        errors.phone = '* Required';
       }
       if (!values.password) {
-        errors.password = 'Required';
+        errors.password = '* Required';
       }
       if (!values.agreeTerms) {
-        errors.agreeTerms = 'You must agree to the terms and conditions';
+        errors.agreeTerms = '* You must agree to the terms and conditions';
+      }
+      if (!values.recaptcha) {
+        errors.recaptcha = '* Please verify that you are not a robot';
       }
       return errors;
     }}
@@ -75,6 +80,15 @@ const SignUpForm = () => (
           <Field type="password" name="password" placeholder="Password" className={`${formInput}`}/>
           <ErrorMessage name="password" component="div" className="error" />
         </div>
+        <ReCAPTCHA
+          className='self-start'
+          sitekey="6LcOqaopAAAAAJPFliqy4uWtTPkTAB4VhqqQUprB"
+          name="recaptcha"
+          onChange={(value) => {
+            setFieldValue("recaptcha", value);
+          }}
+        />
+        <ErrorMessage name="recaptcha" component="div" className="error" />
         <div className={`block w-full`}>
           <label>
             <Field type="checkbox" name="agreeTerms" className="mr-2"/>

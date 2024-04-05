@@ -1,9 +1,10 @@
 import React from 'react';
+import { logoWhite } from '../assets';
 
-const Loader = () => {
+const Loader = ({ image }) => {
   return (
-    <div className="flex items-center justify-center h-screen w-full">
-      <div className="w-24 h-24 rounded-full border-8 border-green-500 border-t-8 border-t-transparent animate-spin animate-spin-slow"></div>
+    <div className="flex flex-col items-center justify-center h-screen">
+      <img src={logoWhite} alt="Loading..." className="w-32 mb-4 heartbeat" />
     </div>
   );
 };
