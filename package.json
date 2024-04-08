@@ -13,6 +13,7 @@
     "@headlessui/react": "^1.7.18",
     "classnames": "^2.5.1",
     "formik": "^2.4.5",
+    "pure-react-carousel": "^1.30.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-google-recaptcha": "^3.1.0",

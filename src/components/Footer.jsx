@@ -39,9 +39,6 @@ const Footer = () => {
           <h4 className='font-extrabold text-[24px]'>Legal</h4>
           <ul>
             <Link>
-              <li>Return Policy</li>
-            </Link>
-            <Link>
               <li>Cookie Policy</li>
             </Link>
             <Link>
