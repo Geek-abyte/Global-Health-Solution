@@ -19,7 +19,7 @@ export default class extends React.Component {
       >
         <Slider>
           {cards.map((card) => (
-            <Slide index={0}><ImageCard image={card.image}>{card.content}</ImageCard></Slide>
+            <Slide index={0} className="mx-[10px]"><ImageCard image={card.image}>{card.content}</ImageCard></Slide>
           ))}
         </Slider>
         <ButtonBack className='absolute -left-4 z-12 top-[50%] translate-y-[-50%]'><IoIosArrowDropleftCircle size={60} className='opacity-25 text-gray-3 hover:opacity-100'/></ButtonBack>

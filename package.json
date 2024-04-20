@@ -20,7 +20,8 @@
     "react-icons": "^5.0.1",
     "react-router": "^6.22.3",
     "react-router-dom": "^6.22.3",
-    "react-tooltip": "^5.26.3"
+    "react-tooltip": "^5.26.3",
+    "swiper": "^11.1.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.56",

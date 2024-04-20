@@ -99,10 +99,6 @@ const SignUpForm = () => (
         <Button type="submit" disabled={isSubmitting}  className="mt-5 w-[60%]">
           Sign Up
         </Button>
-        <div className='flex flex-row justify-between gap-x-5 mt-5'>
-          <Button type="button">Sign in with Google</Button>
-          <Button type="button">Sign in with Facebook</Button>
-        </div>
         <div>
           Already have an account? <Link to="#" className='underline text-primary-5'>Sign in</Link>
         </div>

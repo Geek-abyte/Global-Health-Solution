@@ -4,9 +4,10 @@ import { logoDark } from '../assets'
 
 const Footer = () => {
   return (
-    <footer className='bg-primary-6 flex md:flex-row gap-x-[90px] justify-between items-between text-white pr-[200px] px-[100px] p-[40px] pb-[90px]'>
-      <img src={logoDark} alt=""className='w-[300px]' />
-      <div className='flex md:flex-row gap-[100px]'>
+    <footer className='bg-primary-6 flex flex-col gap-x-[90px] justify-between items-between text-white md:pr-[200px] md:px-[100px] p-[40px] md:pb-[90px]'>
+      <div className='flex flex-col md:flex-row gap-8 md:gap-[100px]'>
+      <img src={logoDark} alt="" className='hidden md:block w-[300px]' />
+
         <div className='flex flex-col gap-y-[5px]'>
           <h4 className='font-extrabold text-[24px]'>The Platform</h4>
           <ul>
@@ -46,6 +47,9 @@ const Footer = () => {
             </Link>
           </ul>
         </div>
+      </div>
+      <div className='border-t mt-8 pt-4'>
+        copyright something
       </div>
     </footer>
   )

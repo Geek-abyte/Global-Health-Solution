@@ -11,7 +11,7 @@ const Layout = ({ layout, selected }) => {
     return (
       <div className="h-screen flex flex-col">
         <Navbar />
-        <div className="flex flex-row flex-grow overflow-hidden"> 
+        <div className="flex flex-row flex-grow overflow-hidden">
           <PatientSidebar />
           <section className="w-full overflow-x-auto">
             <Outlet />
@@ -20,12 +20,12 @@ const Layout = ({ layout, selected }) => {
         </div>
       </div>
     )
-  } 
+  }
   if (layout === "doctor") {
     return (
       <div className="h-screen flex flex-col">
         <Navbar />
-        <div className="flex flex-row flex-grow overflow-hidden"> 
+        <div className="flex flex-row flex-grow overflow-hidden">
           <DoctorSidebar />
           <section className="w-full overflow-x-auto">
             <Outlet />
@@ -38,9 +38,9 @@ const Layout = ({ layout, selected }) => {
   return (
     <>
       <Navbar />
-        <Outlet />
-        {/* <ChatBot /> */}
-      <Footer/>
+      <Outlet />
+      {/* <ChatBot /> */}
+      <Footer />
     </>
   );
 };

@@ -4,7 +4,8 @@ function path(root, sublink) {
 
 const ROOT = "/";
 const DOCTOR = `/doctor/`
-const PATIENT = `/user/`
+const PATIENT = `/patient/`
+const BLOG = `/blog/`
 
 export const PATH = {
   root: ROOT,
@@ -33,6 +34,10 @@ export const PATH = {
     profile: path(DOCTOR, "calender"),
     chat: path(DOCTOR, "chat"),
   },
+  blog: {
+    default: BLOG,
+    article: path(BLOG, ":id")
+  }
 };
 
 export const DEFAULT_PATH = PATH.general.home

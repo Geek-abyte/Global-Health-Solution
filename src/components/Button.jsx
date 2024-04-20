@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import classNames from 'classnames';
 
 const Button = ({
   children,
@@ -23,20 +22,13 @@ const Button = ({
     }, 200);
   };
 
-  const buttonClasses = classNames(
-    'flex items-center justify-center font-semibold transition-transform duration-200 ease-in-out p-5',
-    background,
-    borderRadius,
-    textColor,
-    width,
-    height,
-    border,
-    className,
-    {
-      'scale-95': isClicked,
-      'hover:scale-105 hover:shadow-lg': !isClicked,
-    }
-  );
+  // Build the className string directly based on the state
+  const buttonClasses = `
+    flex items-center justify-center font-semibold transition-transform duration-200 ease-in-out p-5
+    ${background} ${borderRadius} ${textColor} ${width} ${height} ${border}
+    ${className}
+    ${isClicked ? 'scale-95' : 'hover:scale-105 hover:shadow-lg'}
+  `;
 
   return (
     <button type={type} className={buttonClasses} onClick={handleClick}>

@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { BsRobot, BsX } from 'react-icons/bs';
-import { Tooltip as ReactTooltip } from 'react-tooltip';
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -51,26 +50,7 @@ const ChatBot = () => {
         }`}
         onTransitionEnd={() => !isOpen && setChatClass('hidden')}
       >
-       <TabO /> 
-      </div>
-      <button
-        onClick={toggleChatBot}
-        data-tip="Chatbot"
-        data-for="chatbotTooltip"
-        className="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-[10px] shadow-lg hover:scale-110 transition-transform duration-300"
-      >
-        <div className='border-2 border-white rounded-full p-2'>{isOpen ? <BsX className='rotate-pop' size={30} /> : <BsRobot className='rotate-pop' size={30} />}</div>
-      </button>
-      <ReactTooltip id="chatbotTooltip" place="bottom" effect="solid" />
-    </div>
-  );
-};
-
-
-const TabO = () => {
-  return (
-    <>
-      <div className="flex justify-between items-center bg-blue-500 text-white p-2 rounded-t-lg">
+       <div className="flex justify-between items-center bg-blue-500 text-white p-2 rounded-t-lg">
         <h2 className="font-bold">Adam</h2>
       </div>
       <div className="flex-1 p-4 overflow-y-auto">
@@ -112,15 +92,17 @@ const TabO = () => {
         >
           Send
         </button>
-      </form>
-    </>
-  )
-}
+      </form> 
+      </div>
+      <button
+        onClick={toggleChatBot}
+        className="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-[10px] shadow-lg hover:scale-110 transition-transform duration-300"
+      >
+        <div className='border-2 border-white rounded-full p-2'>{isOpen ? <BsX className='rotate-pop' size={30} /> : <BsRobot className='rotate-pop' size={30} />}</div>
+      </button>
+    </div>
+  );
+};
 
-const Tab1 = () => {
-  return (
-    <>
-    </>
-  )
-}
 
+export default ChatBot;
