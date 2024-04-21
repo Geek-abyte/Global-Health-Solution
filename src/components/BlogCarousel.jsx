@@ -25,10 +25,10 @@ const BlogCarousel = ({ blogs, visible, className }) => {
               </Slide>
             ))}
           </Slider>
-          <ButtonBack className="md:block hidden absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md">
+          <ButtonBack className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md">
             <IoIosArrowDropleftCircle size={40} className="text-gray-800" />
           </ButtonBack>
-          <ButtonNext className="md:block hidden absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md">
+          <ButtonNext className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md">
             <IoIosArrowDroprightCircle size={40} className="text-gray-800" />
           </ButtonNext>
         </CarouselProvider>

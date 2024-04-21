@@ -17,7 +17,7 @@ export default class extends React.Component {
         totalSlides={cards.length}
         className={`${className} relative flex justify-center items-center`}
       >
-        <Slider>
+        <Slider className>
           {cards.map((card) => (
             <Slide index={0} className="mx-[10px]"><ImageCard image={card.image}>{card.content}</ImageCard></Slide>
           ))}
