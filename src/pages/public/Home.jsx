@@ -6,6 +6,7 @@ import { PATH } from '../../routes/path'
 import { cards } from '../../data/cards'
 import BlogCarousel from '../../components/BlogCarousel'
 import { blogs } from '../../data/blogs'
+import { Link } from 'react-router-dom'
 
 
 const Home = () => {
@@ -34,7 +35,7 @@ const Home = () => {
       <ChatBot />
       <section className="Hero relative md:grid md:grid-cols-2 h-[90vh] bg-gradient-to-b md:bg-gradient-to-r from-primary-6 to-white transition-colors">
         <div className="right intro-text p-10 md:pl-20 md:p-0 flex flex-col gap-[25px] md:gap-8 justify-center items-center h-full md:h-auto">
-          <div className="font-extrabold text-[45px] md:text-left text-center md:text-[64px] text-white ">Step in to the next generation <span className="text-secondary-6">Health care service</span> with <span className="text-primary-9">our AI</span></div>
+          <div className="font-extrabold text-[45px] md:text-left text-center md:text-[64px] text-white ">Step in to the next generation <span className="text-white">Health care service</span> with <span className="text-primary-9">our AI</span></div>
           <Button
             className="self-start mt-5 self-center md:self-start"
             borderRadius='rounded-lg'
@@ -97,16 +98,20 @@ const Home = () => {
             borderRadius='rounded-lg'
             background='bg-secondary-6 py-[30px] px-[30px]'
             textColor='text-white text-[18px]'
+            onClick={() => navigate(PATH.general.signIn)}
           >
             Try it now
           </Button>
         </div>
-        <div className="large-card relative min-h-[300px] md:flex-1 md:h-[500px] bg-primary-1 rounded-[20px] p-10 hover:scale-105 hover:z-10 hover:shadow-lg transition-transform duration-300">
-          <img src={consult} alt="" className="absolute right-0 bottom-0 md:w-[300px] w-[200px]" />
-          <div className='relative flex flex-col w-[75%] font-extrabold text-[32px] text-primary-10 top-5'>
-            Consult a Doctor
+        <Link to={PATH.general.signIn}>
+          <div className="large-card relative min-h-[300px] md:flex-1 md:h-[500px] bg-primary-1 rounded-[20px] p-10 hover:scale-105 hover:z-10 hover:shadow-lg transition-transform duration-300">
+            <img src={consult} alt="" className="absolute right-0 bottom-0 md:w-[300px] w-[200px]" />
+            <div className='relative flex flex-col w-[75%] font-extrabold text-[32px] text-primary-10 top-5'>
+              Consult a Doctor
+            </div>
           </div>
-        </div>
+        </Link>
+        
       </section>
       <section className='md:w-[1000px] m-auto'>
         <BlogCarousel blogs={blogs} visible={isMobile ? 1 : 3} />
