@@ -14,6 +14,7 @@ import { LoadingScreen } from "../components";
 
 import { blogs } from "../data/blogs";
 import DoctorDashboard from "../pages/private/doctor/DoctorDashboard";
+import { ChatRoom } from "../pages/private/chat";
 
 let isAuthenticated = true;
 
@@ -33,7 +34,7 @@ export default function Router() {
         { path: "*", element: <Navigate to={PATH.general.page404} replace /> },
       ],
     },
-    { path: "/loader", element: <LoadingScreen /> },
+    { path: PATH.chat.default, element: <ChatRoom /> },
     {
       path: PATH.dashboard.default,
       element: <PrivateRoute isAuthenticated={isAuthenticated} route={<LazyLayout layout="patient" />} />,

@@ -1,5 +1,7 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
+import { showToast, hideToast, showModal, hideModal } from '../states/popUpSlice';
+import { useSelector, useDispatch } from 'react-redux';
 import { ChatBot, Footer, Navbar } from "../components";
 import PatientSidebar from "./PatientSidebar";
 import DoctorSidebar from "./DoctorSidebar";
@@ -7,6 +9,9 @@ import DoctorSidebar from "./DoctorSidebar";
 // const layoutList = "default" | "doctor" | "patient";
 
 const Layout = ({ layout, selected }) => {
+  const dispatch = useDispatch();
+  const { showToast, toastMessage, showModal, modalContent } = useSelector((state) => state.popUp);
+
   if (layout === "patient") {
     return (
       <div className="h-screen flex flex-col">
@@ -37,6 +42,7 @@ const Layout = ({ layout, selected }) => {
   }
   return (
     <>
+      
       <Navbar />
       <Outlet />
       {/* <ChatBot /> */}

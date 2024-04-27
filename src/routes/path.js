@@ -6,6 +6,7 @@ const ROOT = "/";
 const DOCTOR = `/doctor/`
 const PATIENT = `/patient/`
 const BLOG = `/blog/`
+const CHAT = `/chat/`
 
 export const PATH = {
   root: ROOT,
@@ -24,7 +25,7 @@ export const PATH = {
     dashboard: path(PATIENT, "dashboard"),
     profile: path(PATIENT, "profile"),
     ai: path(PATIENT, "ai"),
-    prescription: path(PATIENT, "prescription"),
+    prescription: path(PATIENT, "prescription/:key?"),
     consultant: path(PATIENT, "consultant"),
     history: path(PATIENT, "history")
   },
@@ -37,6 +38,9 @@ export const PATH = {
   blog: {
     default: BLOG,
     article: path(BLOG, ":id")
+  },
+  chat: {
+    default: CHAT,
   }
 };
 
