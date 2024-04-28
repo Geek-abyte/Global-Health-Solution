@@ -1,15 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const DashboardTable = () => {
+const DashboardTable = ({ data }) => {
   const navigate = useNavigate();
-
-  const data = [
-    { id: 1, doctor: 'Dr. Smith', duration: '1 hour', dateTime: '2024-04-01 10:00 AM' },
-    { id: 2, doctor: 'Dr. Johnson', duration: '45 minutes', dateTime: '2024-04-02 02:30 PM' },
-    { id: 3, doctor: 'Dr. Brown', duration: '30 minutes', dateTime: '2024-04-03 09:00 AM' },
-    { id: 4, doctor: 'Dr. Davis', duration: '1 hour', dateTime: '2024-04-04 11:30 AM' },
-  ];
 
   const handleRowClick = (id) => {
     navigate.push(`/details/${id}`);

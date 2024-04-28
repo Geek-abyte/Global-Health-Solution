@@ -1,6 +1,7 @@
 import React from 'react'
 import { DTable } from '../../../components'
 import { cardbrain, carddoc, cardfile } from '../../../assets'
+import { tableData } from '../../../data/tableData'
 
 const PatientDashboard = ({ className }) => {
   return (
@@ -19,7 +20,7 @@ const PatientDashboard = ({ className }) => {
           History
         </div>
       </div>
-      <DTable />
+      <DTable data={tableData.slice(0, 5)}/>
     </main>
   )
 }
