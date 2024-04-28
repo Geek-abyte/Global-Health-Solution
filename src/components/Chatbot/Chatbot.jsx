@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { BsRobot, BsX } from 'react-icons/bs';
+import { IoMdArrowBack } from 'react-icons/io';
 import { RiCustomerService2Fill } from 'react-icons/ri';
 
 const ChatBot = () => {
@@ -83,9 +84,13 @@ const ChatBot = () => {
         }
         {(selectedTab === tabs[1]) && 
           <div className='flex flex-col h-full'>
-            <div className='relative bg-primary-9 p-2 flex justify-center text-white font-bold'>symptoms</div>
+            <div className='relative bg-primary-9 p-2 flex justify-center text-white font-bold'>
+              <IoMdArrowBack color={"white"} size={25} className='absolute top-2 left-2' onClick={() => handleTabChange(0)} />symptoms
+              </div>
             <div className='bg-white flex-1'>
-
+              <div className='h-full flex justify-center p-12 text-[20px] text-center text-gray-2'>
+                please input at least 5 symptoms
+              </div>
             </div>
             <div className='bg-white p-4 flex justify-center'>
               <input
