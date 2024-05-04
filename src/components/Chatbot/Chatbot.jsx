@@ -10,7 +10,7 @@ import { symptoms } from '../../data/symptoms';
 const exampleMessages = [
   // { text: 'Hello!', sender: 'user' },
   { text: 'Hi there!', sender: 'bot' },
-  { text: 'How can I assist you today?', sender: 'bot' },
+  { text: 'Input your symptoms to determine the likely illness or consult a specialist', sender: 'bot' },
   // { text: 'I need help with my symptoms.', sender: 'user' },
 ]
 
@@ -51,6 +51,14 @@ const ChatBot = () => {
     );
     setSuggestions(filteredSuggestions);
   };
+
+  const handleAddingTags = () => {
+    addMessage(
+      'please input at least 5 symptoms',
+      'bot'
+    )
+    setIsAddingTags(true)
+  }
 
   const handleSelectSuggestion = (suggestion) => {
     addTag(suggestion)
@@ -95,7 +103,7 @@ const ChatBot = () => {
   const sendTags = async (message) => {
     let packet = message.map((tag) => toSnakeCase(tag))
 
-    let url = 'https://aiconsultdemo.onrender.com/predict_disease'
+    let url = 'https://proxy.cors.sh/' + 'https://aiconsultdemo.onrender.com/predict_disease'
 
     setLoading(true)
     try {
@@ -170,8 +178,7 @@ const ChatBot = () => {
                   <div className="flex space-x-4 mt-10">
                     <button 
                       className={`border rounded-xl p-2 transition-transform duration-500 ease-out transform hover:scale-110 bg-gradient-to-r from-purple-500 to-indigo-500 text-white ${showButton ? 'scale-100 opacity-100 inline-block' : 'scale-0 opacity-0 none'}`}
-                      onClick={() => {setIsAddingTags(true)
-                      }}
+                      onClick={() => handleAddingTags()}
                       >Input Symptoms</button>
                     <button className={`border rounded-xl p-2 duration-500 ease-out transition-transform transform hover:scale-110 bg-gradient-to-r from-pink-500 to-red-500 text-white ${showButton ? 'scale-100 opacity-100 inline-block' : 'scale-0 opacity-0 none'}`}>Consult a Specialist</button>
                   </div>
