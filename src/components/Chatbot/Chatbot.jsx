@@ -8,12 +8,9 @@ import axios from 'axios';
 import { symptoms } from '../../data/symptoms';
 
 const exampleMessages = [
-  // { text: 'Hello!', sender: 'user' },
   { text: 'Hi there!', sender: 'bot' },
   { text: 'Input your symptoms to determine the likely illness or consult a specialist', sender: 'bot' },
-  // { text: 'I need help with my symptoms.', sender: 'user' },
 ]
-
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,6 +23,7 @@ const ChatBot = () => {
   const [chatClass, setChatClass] = useState('hidden');
   const [messages, setMessages] = useState(exampleMessages); // New state for messages
   const chatbotRef = useRef(null);
+  const messageAreaRef = useRef(null); // Ref for the message area
 
   // tab options
   const tabs = ["home", "symptoms", "faq"];
@@ -87,7 +85,7 @@ const ChatBot = () => {
     setTags([])
     setIsAddingTags(false)
     addMessage(
-      `What is the possible cause of this symptoms? \n ${payload.join('\n')}`,
+      `What is the possible cause of this symptoms? \n ${payload.join(',\n')}`,
       'user'
     )
 
@@ -97,8 +95,11 @@ const ChatBot = () => {
   // Function to add a message to the chat
   const addMessage = (text, sender) => {
     const newMessage = { text, sender };
-    setMessages(prevMessages => [...prevMessages, newMessage]);
+    setTimeout(() => {
+      setMessages(prevMessages => [...prevMessages, newMessage]);
+    }, 300); // Delay for 300ms to allow the transition to play
   };
+  
 
   const sendTags = async (message) => {
     let packet = message.map((tag) => toSnakeCase(tag))
@@ -113,12 +114,17 @@ const ChatBot = () => {
         'Content-Type': 'application/json',
       },
     }); 
+      setLoading(false)
       addMessage(response.data)
+      addMessage('Try a different set of symptoms, or consult a specialist')
       console.log('Response:', response.data);
     } catch (error) {
       console.error('Error:', error);
+      setLoading(false)
+      addMessage(
+        'there was a problem with the result, please try again'
+      )
     }
-    setLoading(false)
   };
 
   useEffect(() => {
@@ -128,7 +134,12 @@ const ChatBot = () => {
       setShowButton(true)
     }, 1000);
   }, [messages])
-  
+
+  useEffect(() => {
+    // Scroll to the bottom of the message area when messages change
+    messageAreaRef.current?.scrollTo(0, messageAreaRef.current?.scrollHeight);
+  }, [messages, tags]);
+
   return (
     <div className="fixed font-roboto-condensed bottom-4 right-6 z-20">
       <div
@@ -164,17 +175,22 @@ const ChatBot = () => {
             <div className='relative bg-primary-9 p-2 flex justify-center text-white font-bold'>
               <IoMdArrowBack color={"white"} size={25} className='absolute top-2 left-2' onClick={() => handleTabChange(0)} />symptoms
             </div>
-            <div className='bg-white flex-1 overflow-auto custom-scrollbar'>
+            <div id='message-area' ref={messageAreaRef} className='bg-white flex-1 overflow-auto custom-scrollbar'>
               {/* Render messages */}
               <div className="flex-1 p-6 rounded-lg">
                 {messages.map((message, index) => (
-                  <div key={index} className={`mb-2 ${message.sender === 'user' ? 'text-right' : 'text-left'}`}>
+                  <div key={index} className={`mb-2 ${message.sender === 'user' ? 'text-right' : 'text-left'} message-enter message-enter-active`}>
                     <div className={`bg-${message.sender === 'user' ? 'blue-500 text-white' : 'secondary-8'} rounded-lg p-2 shadow-md inline-block max-w-[70%]`}>
                       {message.text}
                     </div>
                   </div>
                 ))}
-                {isAddingTags === false && 
+                 {loading && (
+                    <div className="flex items-center justify-center h-full">
+                      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-7"></div>
+                    </div>
+                  )}
+                {isAddingTags === false && !loading &&
                   <div className="flex space-x-4 mt-10">
                     <button 
                       className={`border rounded-xl p-2 transition-transform duration-500 ease-out transform hover:scale-110 bg-gradient-to-r from-purple-500 to-indigo-500 text-white ${showButton ? 'scale-100 opacity-100 inline-block' : 'scale-0 opacity-0 none'}`}
@@ -240,6 +256,5 @@ const ChatBot = () => {
     </div>
   );
 };
-
 
 export default ChatBot;
