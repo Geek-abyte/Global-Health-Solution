@@ -1,14 +1,30 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { BsRobot, BsX } from 'react-icons/bs';
 import { IoMdArrowBack } from 'react-icons/io';
 import { RiCustomerService2Fill } from 'react-icons/ri';
+import { IoCloseCircleOutline } from 'react-icons/io5';
+import { toSnakeCase } from '../../helperFunctions';
+import axios from 'axios';
+import { symptoms } from '../../data/symptoms';
+
+const exampleMessages = [
+  // { text: 'Hello!', sender: 'user' },
+  { text: 'Hi there!', sender: 'bot' },
+  { text: 'How can I assist you today?', sender: 'bot' },
+  // { text: 'I need help with my symptoms.', sender: 'user' },
+]
+
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [isAddingTags, setIsAddingTags] = useState(false);
+  const [showButton, setShowButton] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
   const [chatClass, setChatClass] = useState('hidden');
-  const [isLoading, setIsLoading] = useState(false);
+  const [messages, setMessages] = useState(exampleMessages); // New state for messages
   const chatbotRef = useRef(null);
 
   // tab options
@@ -17,90 +33,194 @@ const ChatBot = () => {
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
 
   const toggleChatBot = () => {
-    if(!isOpen){
-      setChatClass('') 
+    if (!isOpen) {
+      setChatClass('')
       setTimeout(() => setIsOpen(true), 10)
     } else {
       setIsOpen(false);
     }
   };
 
-  const handleInputChange = (e) => {
-    setMessage(e.target.value);
+  const handleInputChange = (event) => {
+    const value = event.target.value;
+    setSearchTerm(value);
+
+    // Filter suggestions based on input value
+    const filteredSuggestions = symptoms.filter(item =>
+      item.toLowerCase().includes(value.toLowerCase())
+    );
+    setSuggestions(filteredSuggestions);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (message.trim() !== '') {
-      setMessages([...messages, { sender: 'user', text: message }]);
-      setMessage('');
-      setIsLoading(true); // Set loading state to true
-
-      // Simulate a delay and add a dummy response
-      setTimeout(() => {
-        setMessages([
-          ...messages,
-          { sender: 'user', text: message },
-          { sender: 'bot', text: 'This is a dummy response from the bot.' },
-        ]);
-        setIsLoading(false); // Set loading state to false after receiving the response
-      }, 2000); // Simulating a 2-second delay
-    }
+  const handleSelectSuggestion = (suggestion) => {
+    addTag(suggestion)
+    setSearchTerm('')
+    setSuggestions([]);
   };
 
-  const handleTabChange = ( tab ) => {
+  const addTag = (newTag) => {
+    if (!tags.includes(newTag)) setTags(prevTags => [...prevTags, newTag]);
+  };
+
+  const removeTag = (index) => {
+    setTags(prevTags => {
+      const newTags = [...prevTags];
+      newTags.splice(index, 1);
+      return newTags;
+    });
+  };
+
+  const handleTabChange = (tab) => {
     setSelectedTab(tabs[tab])
   }
 
+  const handleSeePrediction = (arr) => {
+    let payload = arr
+    setTags([])
+    setIsAddingTags(false)
+    addMessage(
+      `What is the possible cause of this symptoms? \n ${payload.join('\n')}`,
+      'user'
+    )
+
+    sendTags(payload)
+  }
+
+  // Function to add a message to the chat
+  const addMessage = (text, sender) => {
+    const newMessage = { text, sender };
+    setMessages(prevMessages => [...prevMessages, newMessage]);
+  };
+
+  const sendTags = async (message) => {
+    let packet = message.map((tag) => toSnakeCase(tag))
+
+    let url = 'https://aiconsultdemo.onrender.com/predict_disease'
+
+    setLoading(true)
+    try {
+      const response = await axios.post(url, { packet },  
+      { 
+        headers: {
+        'Content-Type': 'application/json',
+      },
+    }); 
+      addMessage(response.data)
+      console.log('Response:', response.data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+    setLoading(false)
+  };
+
+  useEffect(() => {
+    setShowButton(false);
+
+    setTimeout(() => {
+      setShowButton(true)
+    }, 1000);
+  }, [messages])
+  
   return (
     <div className="fixed font-roboto-condensed bottom-4 right-6 z-20">
       <div
         ref={chatbotRef}
-        className={`${chatClass} overflow-hidden  rounded-lg shadow-lg w-96 h-[450px] mb-[100px] flex flex-col transition-transform duration-300 transform ${
-          isOpen ? 'translate-y-0 translate-x-0 scale-100' : 'translate-y-96 translate-x-44 scale-0'
-        }`}
+        className={`${chatClass} overflow-hidden  rounded-lg shadow-lg w-96 h-[450px] mb-[100px] flex flex-col transition-transform duration-300 transform ${isOpen ? 'translate-y-0 translate-x-0 scale-100' : 'translate-y-96 translate-x-44 scale-0'
+          }`}
         onTransitionEnd={() => !isOpen && setChatClass('hidden')}
       >
-        {(selectedTab === tabs[0]) && 
+        {(selectedTab === tabs[0]) &&
           <div className='flex flex-col bg-gradient-to-b from-primary-7 via-primary-5 to-white p-6 pl-10 h-full'>
-           <div className="flex flex-row justify-center m-4">
-             <div class="flex justify-center items-center ml-6 w-10 h-10 bg-blue-500 rounded-full border-2 border-white relative"><RiCustomerService2Fill color='white' size={20}/></div>
-             <div class="flex justify-center items-center w-10 h-10 bg-blue-500 rounded-full border-2 border-white relative transform -translate-x-2"><RiCustomerService2Fill color='white' size={20}/></div>
-             <div class="flex justify-center items-center w-10 h-10 bg-blue-500 rounded-full border-2 border-white relative transform -translate-x-4"><RiCustomerService2Fill color='white' size={20}/></div>
-           </div>
-           <div className='font-extrabold text-[32px] mt-12'>
-             <p className='text-secondary-1'>Hello There!</p>
-             <p className='text-white'>How can we help?</p>
-           </div>
-           <div className='mt-8 flex flex-col gap-5'>
-             <div className='bg-white rounded-lg text-[20px] cursor-pointer shadow-lg p-4 ' onClick={() => handleTabChange(1)}>
-               Tell us your symptoms
-             </div>
-             <div className='bg-white rounded-lg text-[20px] cursor-pointer shadow-lg p-4 '>
-               Frequently asked questions
-             </div>
-           </div>
-         </div>
+            <div className="flex flex-row justify-center m-4">
+              <div class="flex justify-center items-center ml-6 w-10 h-10 bg-blue-500 rounded-full border-2 border-white relative"><RiCustomerService2Fill color='white' size={20} /></div>
+              <div class="flex justify-center items-center w-10 h-10 bg-blue-500 rounded-full border-2 border-white relative transform -translate-x-2"><RiCustomerService2Fill color='white' size={20} /></div>
+              <div class="flex justify-center items-center w-10 h-10 bg-blue-500 rounded-full border-2 border-white relative transform -translate-x-4"><RiCustomerService2Fill color='white' size={20} /></div>
+            </div>
+            <div className='font-extrabold text-[32px] mt-12'>
+              <p className='text-secondary-1'>Hello There!</p>
+              <p className='text-white'>How can we help?</p>
+            </div>
+            <div className='mt-8 flex flex-col gap-5'>
+              <div className='bg-white rounded-lg text-[20px] cursor-pointer shadow-lg p-4 ' onClick={() => handleTabChange(1)}>
+                Tell us your symptoms
+              </div>
+              <div className='bg-white rounded-lg text-[20px] cursor-pointer shadow-lg p-4 'onClick={() => sendTags(tags)}>
+                Frequently asked questions
+              </div>
+            </div>
+          </div>
         }
-        {(selectedTab === tabs[1]) && 
+        {(selectedTab === tabs[1]) &&
+          // tab handler
           <div className='flex flex-col h-full'>
             <div className='relative bg-primary-9 p-2 flex justify-center text-white font-bold'>
               <IoMdArrowBack color={"white"} size={25} className='absolute top-2 left-2' onClick={() => handleTabChange(0)} />symptoms
-              </div>
-            <div className='bg-white flex-1'>
-              <div className='h-full flex justify-center p-12 text-[20px] text-center text-gray-2'>
-                please input at least 5 symptoms
+            </div>
+            <div className='bg-white flex-1 overflow-auto custom-scrollbar'>
+              {/* Render messages */}
+              <div className="flex-1 p-6 rounded-lg">
+                {messages.map((message, index) => (
+                  <div key={index} className={`mb-2 ${message.sender === 'user' ? 'text-right' : 'text-left'}`}>
+                    <div className={`bg-${message.sender === 'user' ? 'blue-500 text-white' : 'secondary-8'} rounded-lg p-2 shadow-md inline-block max-w-[70%]`}>
+                      {message.text}
+                    </div>
+                  </div>
+                ))}
+                {isAddingTags === false && 
+                  <div className="flex space-x-4 mt-10">
+                    <button 
+                      className={`border rounded-xl p-2 transition-transform duration-500 ease-out transform hover:scale-110 bg-gradient-to-r from-purple-500 to-indigo-500 text-white ${showButton ? 'scale-100 opacity-100 inline-block' : 'scale-0 opacity-0 none'}`}
+                      onClick={() => {setIsAddingTags(true)
+                      }}
+                      >Input Symptoms</button>
+                    <button className={`border rounded-xl p-2 duration-500 ease-out transition-transform transform hover:scale-110 bg-gradient-to-r from-pink-500 to-red-500 text-white ${showButton ? 'scale-100 opacity-100 inline-block' : 'scale-0 opacity-0 none'}`}>Consult a Specialist</button>
+                  </div>
+                }
+                {tags.length > 0 &&
+                  <div className='mt-6'>
+                    <ul className="flex flex-wrap flex-row-reverse">
+                      {tags.map((tag, index) => (
+                        <li key={index} className="flex items-center bg-gray-200 rounded-full px-3 py-1 m-1">
+                          <span>{tag}</span>
+                          <IoCloseCircleOutline onClick={() => removeTag(index)} className="ml-2 outline-none focus:outline-none" color='red' />
+                        </li>
+                      ))}
+                    </ul>
+                    <div className='flex justify-center mt-4'>
+                      <button className={`border rounded-xl p-2 bg-primary-4 text-white transition-all duration-500 ease-in-out transform hover:scale-110 ${tags.length > 4 ? 'scale-100 opacity-100 inline-block' : 'scale-0 opacity-0 none'}`}
+                      onClick={() => handleSeePrediction(tags)}  
+                    >See Prediction</button>
+                    </div>
+                  </div>
+                }
               </div>
             </div>
-            <div className='bg-white p-4 flex justify-center'>
-              <input
-                type="text"
-                placeholder="search for syptoms..."
-                value={message}
-                onChange={handleInputChange}
-                className="flex-1 border rounded-lg px-4 py-2 mr-2"
-              />
-            </div>
+            {isAddingTags &&
+              <div>
+                {suggestions.length > 0 && (
+                  <div className="bg-gray-100 border-gray-200 max-h-[200px] overflow-auto">
+                    {suggestions.map((suggestion, index) => (
+                      <div
+                        key={index}
+                        className="p-2 hover:bg-gray-200 cursor-pointer"
+                        onClick={() => handleSelectSuggestion(suggestion)}
+                      >
+                        {suggestion}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                <div className={`bg-white p-4 flex justify-center ${isOpen ? 'translate-y-0 translate-x-0' : 'translate-y-12'}`}>
+                  <input
+                    type="text"
+                    placeholder="search for syptoms..."
+                    value={searchTerm}
+                    onChange={handleInputChange}
+                    className="flex-1 border rounded-lg px-4 py-2 mr-2"
+                  />
+                </div>
+              </div>
+            }
           </div>
         }
       </div>
@@ -116,48 +236,3 @@ const ChatBot = () => {
 
 
 export default ChatBot;
-
-
-       {/* <div className="flex justify-between items-center bg-blue-500 text-white p-2 rounded-t-lg">
-        <h2 className="font-bold">Adam</h2>
-      </div>
-      <div className="flex-1 p-4 overflow-y-auto">
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`mb-2 p-2 rounded-lg flex items-start ${
-              message.sender === 'user'
-                ? 'bg-blue-100 self-end'
-                : 'bg-gray-100 self-start'
-            }`}
-          >
-            {message.sender === 'bot' && (
-              <div className="mr-2">
-                <BsRobot size={20} className="text-blue-500" />
-              </div>
-            )}
-            <span>{message.text}</span>
-          </div>
-        ))}
-        {isLoading && (
-          <div className="self-start bg-gray-100 p-2 rounded-lg flex items-center">
-            <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-blue-500"></div>
-            <span className="ml-2">Loading...</span>
-          </div>
-        )}
-      </div>
-      <form onSubmit={handleSubmit} className="flex p-4">
-        <input
-          type="text"
-          placeholder="Type your message..."
-          value={message}
-          onChange={handleInputChange}
-          className="flex-1 border rounded-lg px-4 py-2 mr-2"
-        />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded-lg"
-        >
-          Send
-        </button>
-      </form>  */}
