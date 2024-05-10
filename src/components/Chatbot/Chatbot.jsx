@@ -116,13 +116,16 @@ const ChatBot = () => {
     }); 
       setLoading(false)
       addMessage(response.data)
-      addMessage('Try a different set of symptoms, or consult a specialist')
+      addMessage('Try a different set of symptoms, or would you like to consult a specialist?')
       console.log('Response:', response.data);
     } catch (error) {
       console.error('Error:', error);
       setLoading(false)
       addMessage(
         'there was a problem with the result, please try again'
+      )
+      addMessage(
+        'or will you like to consult a specialist'
       )
     }
   };
@@ -141,21 +144,21 @@ const ChatBot = () => {
   }, [messages, tags]);
 
   return (
-    <div className="fixed font-roboto-condensed bottom-4 right-6 z-20">
+    <div className="fixed font-roboto-condensed bottom-2 md:bottom-4 right-2 md:right-6 z-20">
       <div
         ref={chatbotRef}
-        className={`${chatClass} overflow-hidden  rounded-lg shadow-lg w-96 h-[450px] mb-[100px] flex flex-col transition-transform duration-300 transform ${isOpen ? 'translate-y-0 translate-x-0 scale-100' : 'translate-y-96 translate-x-44 scale-0'
+        className={`${chatClass} overflow-hidden  rounded-lg shadow-lg w-[95vw] sm:w-96 h-[400px] md:h-[450px] mb-[70px] md:mb-[100px] flex flex-col transition-transform duration-300 transform ${isOpen ? 'translate-y-0 translate-x-0 scale-100' : 'translate-y-96 translate-x-44 scale-0'
           }`}
         onTransitionEnd={() => !isOpen && setChatClass('hidden')}
       >
         {(selectedTab === tabs[0]) &&
-          <div className='flex flex-col bg-gradient-to-b from-primary-7 via-primary-5 to-white p-6 pl-10 h-full'>
+          <div className='flex flex-col bg-gradient-to-b from-primary-7 via-primary-5 to-white custom-scrollbar overflow-auto scroll-2 p-6 pl-10 h-full'>
             <div className="flex flex-row justify-center m-4">
               <div class="flex justify-center items-center ml-6 w-10 h-10 bg-blue-500 rounded-full border-2 border-white relative"><RiCustomerService2Fill color='white' size={20} /></div>
               <div class="flex justify-center items-center w-10 h-10 bg-blue-500 rounded-full border-2 border-white relative transform -translate-x-2"><RiCustomerService2Fill color='white' size={20} /></div>
               <div class="flex justify-center items-center w-10 h-10 bg-blue-500 rounded-full border-2 border-white relative transform -translate-x-4"><RiCustomerService2Fill color='white' size={20} /></div>
             </div>
-            <div className='font-extrabold text-[32px] mt-12'>
+            <div className='font-extrabold text-[32px] mt-4 md:mt-12'>
               <p className='text-secondary-1'>Hello There!</p>
               <p className='text-white'>How can we help?</p>
             </div>
@@ -249,9 +252,9 @@ const ChatBot = () => {
       </div>
       <button
         onClick={toggleChatBot}
-        className="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-[10px] shadow-lg hover:scale-110 transition-transform duration-300"
+        className="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-[5px] md:p-[10px] shadow-lg hover:scale-110 transition-transform duration-300"
       >
-        <div className='border-2 border-white rounded-full p-2'>{isOpen ? <BsX className='rotate-pop' size={30} /> : <BsRobot className='rotate-pop' size={30} />}</div>
+        <div className='border-2 border-white rounded-full p-2'>{isOpen ? <BsX className='rotate-pop' size={25} /> : <BsRobot className='rotate-pop' size={25} />}</div>
       </button>
     </div>
   );

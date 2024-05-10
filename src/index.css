@@ -122,7 +122,7 @@ button:focus-visible {
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
+  width: 5px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -136,6 +136,18 @@ button:focus-visible {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+.scroll-2::-webkit-scrollbar-track {
+  background: linear-gradient(#194e9d, #1e5dbc, #ffffff) !important;
+}
+
+.scroll-2::-webkit-scrollbar-thumb {
+  background-color: #b4c9e9;
+}
+
+.scroll-2::-webkit-scrollbar-thumb:hover {
+  background: #8faede;
 }
 
 .message-enter {
