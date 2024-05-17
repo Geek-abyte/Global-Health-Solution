@@ -8,6 +8,8 @@ import {
   SignUpPointer,
   BlogArticle,
   BlogList,
+  About,
+  Doctors
 } from "../pages/public"
 import { DEFAULT_PATH, PATH } from "./path";
 import { LoadingScreen } from "../components";
@@ -27,6 +29,8 @@ export default function Router() {
         { element: <Home />, index: true },
         { path: PATH.general.home, element: <Navigate to="/" replace /> },
         { path: PATH.general.signUp, element: <PatientSignUp /> },
+        { path: PATH.general.about, element: <About /> },
+        { path: PATH.general.doctors, element: <Doctors /> },
         { path: PATH.general.doctorSignUp, element: <DoctorSignUp /> },
         { path: PATH.general.signUpPointer, element: <SignUpPointer /> },
         { path: PATH.general.signIn, element: <SignIn /> },

@@ -13,8 +13,8 @@ export const PATH = {
   general: {
     page404: path(ROOT, "404"),
     home: path(ROOT, ""),
-    doctors: path(ROOT, "doctors"),
     about: path(ROOT, "about"),
+    doctors: path(ROOT, "our-doctors"),
     signUp: path(ROOT, "sign-up"),
     doctorSignUp: path(ROOT, "sign-up/doctors"),
     signUpPointer: path(ROOT, "sign-up/pointer"),

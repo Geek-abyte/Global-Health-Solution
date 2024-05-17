@@ -6,3 +6,5 @@ export { default as SignIn } from "./SignIn";
 export { default as SignUpPointer } from "./SignUpPointer";
 export { default as BlogArticle } from "./blog/BlogArticle";
 export { default as BlogList } from "./blog/BlogList"
+export { default as About } from "./About"
+export { default as Doctors } from "./Doctors"

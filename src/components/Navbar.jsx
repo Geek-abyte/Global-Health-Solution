@@ -21,8 +21,8 @@ const Navbar = ({ className }) => {
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4">
               <Link to={PATH.general.home} href="#" className="text-primary-6 hover:bg-primary-5 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Home</Link>
-              <Link href="#" className="text-primary-6 hover:bg-primary-5 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Doctors</Link>
-              <Link href="#" className="text-primary-6 hover:bg-primary-5 hover:text-white px-3 py-2 rounded-md text-sm font-medium">About</Link>
+              <Link to={PATH.general.doctors} className="text-primary-6 hover:bg-primary-5 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Doctors</Link>
+              <Link to={PATH.general.about} className="text-primary-6 hover:bg-primary-5 hover:text-white px-3 py-2 rounded-md text-sm font-medium">About</Link>
               <Button 
                 background='bg-transparent'
                 textColor='text-primary-6'
