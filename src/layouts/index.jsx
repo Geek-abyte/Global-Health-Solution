@@ -1,18 +1,26 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
-import { showToast, hideToast, showModal, hideModal } from '../states/popUpSlice';
+import React, { useEffect } from 'react';
+import { Outlet } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { ChatBot, Footer, Navbar } from "../components";
-import PatientSidebar from "./PatientSidebar";
-import DoctorSidebar from "./DoctorSidebar";
-
-// const layoutList = "default" | "doctor" | "patient";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { ChatBot, Footer, Navbar } from '../components';
+import PatientSidebar from './PatientSidebar';
+import DoctorSidebar from './DoctorSidebar';
+import { hideToast } from '../states/popUpSlice';
 
 const Layout = ({ layout, selected }) => {
   const dispatch = useDispatch();
   const { showToast, toastMessage, showModal, modalContent } = useSelector((state) => state.popUp);
 
-  if (layout === "patient") {
+  useEffect(() => {
+    if (showToast) {
+      toast(toastMessage, {
+        onClose: () => dispatch(hideToast()),
+      });
+    }
+  }, [showToast, toastMessage, dispatch]);
+
+  if (layout === 'patient') {
     return (
       <div className="h-screen flex flex-col">
         <Navbar />
@@ -23,10 +31,12 @@ const Layout = ({ layout, selected }) => {
             <ChatBot />
           </section>
         </div>
+        <ToastContainer />
       </div>
-    )
+    );
   }
-  if (layout === "doctor") {
+
+  if (layout === 'doctor') {
     return (
       <div className="h-screen flex flex-col">
         <Navbar />
@@ -37,16 +47,18 @@ const Layout = ({ layout, selected }) => {
             {/* <ChatBot /> */}
           </section>
         </div>
+        <ToastContainer />
       </div>
-    )
+    );
   }
+
   return (
     <>
-      
       <Navbar />
       <Outlet />
       {/* <ChatBot /> */}
       <Footer />
+      <ToastContainer />
     </>
   );
 };
