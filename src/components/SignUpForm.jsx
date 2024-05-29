@@ -18,8 +18,8 @@ const apiUrl = import.meta.env.VITE_API_URL;
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
-  // const isModalOpen = useSelector((state) => state.popUp.showModal);
-  const isModalOpen = true;
+  const isModalOpen = useSelector((state) => state.popUp.showModal);
+  // const isModalOpen = true;
   const [userEmail, setUserEmail] = useState("");
 
   const handleOpenModal = (email) => {

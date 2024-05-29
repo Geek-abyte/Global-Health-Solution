@@ -1,4 +1,3 @@
-import React from 'react'
 import { doctors2 } from '../../assets'
 import { SignInForm } from '../../components'
 
