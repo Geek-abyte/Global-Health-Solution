@@ -1,26 +1,37 @@
-import React, { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { ChatBot, Footer, Navbar } from '../components';
-import PatientSidebar from './PatientSidebar';
-import DoctorSidebar from './DoctorSidebar';
-import { hideToast } from '../states/popUpSlice';
+import React, { useEffect } from "react";
+import { Outlet } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { ChatBot, Footer, Navbar } from "../components";
+import PatientSidebar from "./PatientSidebar";
+import DoctorSidebar from "./DoctorSidebar";
+import { hideToast } from "../states/popUpSlice";
 
 const Layout = ({ layout, selected }) => {
   const dispatch = useDispatch();
-  const { showToast, toastMessage, showModal, modalContent } = useSelector((state) => state.popUp);
+  const { showToast, toastMessage, toastStatus, showModal, modalContent } =
+    useSelector((state) => state.popUp);
 
   useEffect(() => {
     if (showToast) {
-      toast(toastMessage, {
-        onClose: () => dispatch(hideToast()),
-      });
+      if (toastStatus === "success") {
+        toast.success(toastMessage, {
+          onClose: () => dispatch(hideToast()),
+        });
+      } else if (toastStatus === "error") {
+        toast.error(toastMessage, {
+          onClose: () => dispatch(hideToast()),
+        });
+      } else {
+        toast(toastMessage, {
+          onClose: () => dispatch(hideToast()),
+        });
+      }
     }
-  }, [showToast, toastMessage, dispatch]);
+  }, [showToast, toastMessage, toastStatus, dispatch]);
 
-  if (layout === 'patient') {
+  if (layout === "patient") {
     return (
       <div className="h-screen flex flex-col">
         <Navbar />
@@ -36,7 +47,7 @@ const Layout = ({ layout, selected }) => {
     );
   }
 
-  if (layout === 'doctor') {
+  if (layout === "doctor") {
     return (
       <div className="h-screen flex flex-col">
         <Navbar />

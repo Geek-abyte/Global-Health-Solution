@@ -1,27 +1,26 @@
-// src/slices/authSlice.js
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axiosInstance from '../utils/axios';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axiosInstance from "../../utils/axiosConfig";
 
-// Thunks
 export const loginUser = createAsyncThunk(
-  'auth/loginUser',
+  "auth/loginUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post('/users/login', userData);
+      const response = await axiosInstance.post("/users/login", userData);
       const { token } = response.data;
-      localStorage.setItem('authToken', token);
+      localStorage.setItem("authToken", token);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
+      console.log('Nay!');
     }
   }
 );
 
 export const fetchUserProfile = createAsyncThunk(
-  'auth/fetchUserProfile',
+  "auth/fetchUserProfile",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.get('/users/profile');
+      const response = await axiosInstance.get("/users/profile");
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -30,17 +29,17 @@ export const fetchUserProfile = createAsyncThunk(
 );
 
 const authSlice = createSlice({
-  name: 'auth',
+  name: "auth",
   initialState: {
     user: null,
-    token: localStorage.getItem('authToken') || null,
-    isAuthenticated: !!localStorage.getItem('authToken'),
+    token: localStorage.getItem("authToken") || null,
+    isAuthenticated: !!localStorage.getItem("authToken"),
     loading: false,
     error: null,
   },
   reducers: {
     logout: (state) => {
-      localStorage.removeItem('authToken');
+      localStorage.removeItem("authToken");
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;

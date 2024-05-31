@@ -78,7 +78,12 @@ const SignUpForm = () => {
             .then((response) => {
               if (response.status === 201) {
                 // Check if response status is 201 Created
-                dispatch(showToast({ message: "Signup successful!" }));
+                dispatch(
+                  showToast({
+                    status: "success",
+                    message: "Signup successful!",
+                  })
+                );
                 setStatus({ success: true });
                 handleOpenModal(values.email);
               } else {
@@ -99,7 +104,7 @@ const SignUpForm = () => {
                   errorMessage = "User already exists.";
                 }
               }
-              dispatch(showToast({ message: errorMessage }));
+              dispatch(showToast({ status: "error", message: errorMessage }));
               setStatus({ success: false });
             })
             .finally(() => {

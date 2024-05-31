@@ -4,18 +4,28 @@ import { logoWhite } from "../assets";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { PATH } from "../routes/path";
 import Button from "./Button";
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUserProfile } from '../states/user/authSlice';
 
 const Navbar = ({ className }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [navMode, setNavMode] = useState("full");
+  const { user, isAuthenticated, loading, error } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (location.pathname.includes("auth")) {
       setNavMode("none");
     } else setNavMode("full");
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchUserProfile());
+    }
+  }, [dispatch, isAuthenticated]);
 
   return (
     <div className={`bg-white shadow-sm ${className}`}>
@@ -49,24 +59,40 @@ const Navbar = ({ className }) => {
                   >
                     About
                   </Link>
-                  <Button
-                    background="bg-transparent"
-                    textColor="text-primary-6"
-                    borderRadius="rounded-full"
-                    border="border-2 border-primary-6"
-                    onClick={() => navigate(PATH.general.signIn)}
-                  >
-                    Log In
-                  </Button>
-                  <Button
-                    background="bg-primary-6"
-                    textColor="text-white"
-                    borderRadius="rounded-full"
-                    onClick={() => navigate(PATH.general.signUp)}
-                  >
-                    Sign Up
-                  </Button>
-                  {/* <Link href="#" className="text-primary-6 hover:bg-primary-5 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Contact</Link> */}
+                  {user ? (
+                    <>
+                      <div className="flex items-center space-x-2">
+                        <img
+                          className="h-6 w-6 rounded-full"
+                          src={user.photoURL}
+                          alt="User Image"
+                        />
+                        <span className="text-primary-6 hover:bg-primary-5 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                          {user.displayName}
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        background="bg-transparent"
+                        textColor="text-primary-6"
+                        borderRadius="rounded-full"
+                        border="border-2 border-primary-6"
+                        onClick={() => navigate(PATH.general.signIn)}
+                      >
+                        Log In
+                      </Button>
+                      <Button
+                        background="bg-primary-6"
+                        textColor="text-white"
+                        borderRadius="rounded-full"
+                        onClick={() => navigate(PATH.general.signUp)}
+                      >
+                        Sign Up
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
               <div className="-mr-2 flex md:hidden">
@@ -125,24 +151,40 @@ const Navbar = ({ className }) => {
               >
                 About
               </Link>
-              <Button
-                background="bg-transparent"
-                textColor="text-primary-6"
-                borderRadius="rounded-full"
-                border="border-2 border-primary-6"
-                onClick={() => navigate(PATH.general.signIn)}
-              >
-                Log In
-              </Button>
-              <Button
-                background="bg-primary-6"
-                textColor="text-white"
-                borderRadius="rounded-full"
-                onClick={() => navigate(PATH.general.signUp)}
-              >
-                Sign Up
-              </Button>
-              {/* <Link href="#" className="text-gray-300 hover:bg-primary-5 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Contact</Link> */}
+              {user ? (
+                <>
+                  <div className="flex items-center space-x-2">
+                    <img
+                      className="h-6 w-6 rounded-full"
+                      src={user.photoURL}
+                      alt="User Image"
+                    />
+                    <span className="text-gray-300 hover:bg-primary-5 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                      {user.displayName}
+                    </span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Button
+                    background="bg-transparent"
+                    textColor="text-primary-6"
+                    borderRadius="rounded-full"
+                    border="border-2 border-primary-6"
+                    onClick={() => navigate(PATH.general.signIn)}
+                  >
+                    Log In
+                  </Button>
+                  <Button
+                    background="bg-primary-6"
+                    textColor="text-white"
+                    borderRadius="rounded-full"
+                    onClick={() => navigate(PATH.general.signUp)}
+                  >
+                    Sign Up
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </Transition>
@@ -152,3 +194,4 @@ const Navbar = ({ className }) => {
 };
 
 export default Navbar;
+

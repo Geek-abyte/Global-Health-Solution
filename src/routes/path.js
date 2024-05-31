@@ -4,7 +4,7 @@ function path(root, sublink) {
 
 const ROOT = "/";
 const DOCTOR = `/doctor/`
-const PATIENT = `/patient/`
+const PATIENT = `/user/`
 const BLOG = `/blog/`
 const CHAT = `/chat/`
 
