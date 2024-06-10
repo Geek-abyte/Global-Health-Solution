@@ -13,12 +13,14 @@ const Navbar = ({ className }) => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [navMode, setNavMode] = useState("full");
-  const { user, isAuthenticated, loading, error } = useSelector((state) => state.auth);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (location.pathname.includes("auth")) {
       setNavMode("none");
-    } else setNavMode("full");
+    } else {
+      setNavMode("full");
+    }
   }, [location.pathname]);
 
   useEffect(() => {
@@ -42,7 +44,6 @@ const Navbar = ({ className }) => {
                 <div className="ml-10 flex items-baseline space-x-4">
                   <Link
                     to={PATH.general.home}
-                    href="#"
                     className="text-primary-6 hover:bg-primary-5 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
                   >
                     Home
@@ -60,18 +61,16 @@ const Navbar = ({ className }) => {
                     About
                   </Link>
                   {user ? (
-                    <>
-                      <div className="flex items-center space-x-2">
-                        <img
-                          className="h-6 w-6 rounded-full"
-                          src={user.photoURL}
-                          alt="User Image"
-                        />
-                        <span className="text-primary-6 hover:bg-primary-5 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                          {user.displayName}
-                        </span>
-                      </div>
-                    </>
+                    <div className="flex items-center space-x-3">
+                      <img
+                        className="h-8 w-8 rounded-full object-cover"
+                        src={user.photoURL}
+                        alt="User"
+                      />
+                      <span className="text-primary-6 px-3 py-2 rounded-md text-sm font-medium">
+                        {user.firstName}
+                      </span>
+                    </div>
                   ) : (
                     <>
                       <Button
@@ -132,7 +131,7 @@ const Navbar = ({ className }) => {
           leaveTo="opacity-0"
         >
           <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col item-center justify-center">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 flex flex-col items-center justify-center">
               <Link
                 to={PATH.general.home}
                 className="text-gray-300 text-center hover:bg-primary-5 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
@@ -152,18 +151,16 @@ const Navbar = ({ className }) => {
                 About
               </Link>
               {user ? (
-                <>
-                  <div className="flex items-center space-x-2">
-                    <img
-                      className="h-6 w-6 rounded-full"
-                      src={user.photoURL}
-                      alt="User Image"
-                    />
-                    <span className="text-gray-300 hover:bg-primary-5 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
-                      {user.displayName}
-                    </span>
-                  </div>
-                </>
+                <div className="flex items-center space-x-2">
+                  <img
+                    className="h-6 w-6 rounded-full object-cover"
+                    src={user.photoURL}
+                    alt="User"
+                  />
+                  <span className="text-gray-300 hover:bg-primary-5 hover:text-white block px-3 py-2 rounded-md text-base font-medium">
+                    {user.firstName}
+                  </span>
+                </div>
               ) : (
                 <>
                   <Button
@@ -194,4 +191,3 @@ const Navbar = ({ className }) => {
 };
 
 export default Navbar;
-

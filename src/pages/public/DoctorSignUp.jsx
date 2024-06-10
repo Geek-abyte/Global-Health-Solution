@@ -1,5 +1,6 @@
 import React from 'react'
 import { doctorsBlue, logoWhite } from '../../assets'
+import { SpecialistSignUpForm } from '../../components'
 
 const DoctorSignUP = () => {
   return (
@@ -9,7 +10,7 @@ const DoctorSignUP = () => {
             <img src={doctorsBlue} alt="image of doctors" />
           </div>
           <div className='left flex-1 justify-center items-center'>
-            form
+            <SpecialistSignUpForm />
           </div>
         </div>
       </main>

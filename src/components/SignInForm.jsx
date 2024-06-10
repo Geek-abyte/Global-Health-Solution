@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { showToast } from "../states/popUpSlice";
 import { loginUser } from "../states/user/authSlice";
 import { LoadingSpinner } from "./";
+import { PATH } from "../routes/path";
 
 const formInput =
   "border-[3px] border-primary-5 text-primary-2 rounded-[20px] overflow-hidden p-2 w-full";
@@ -97,7 +98,7 @@ const SignInForm = () => {
           </Button>
           <div>
             Don't have an account?{" "}
-            <Link to="#" className="underline text-primary-5">
+            <Link to={PATH.general.signUp} className="underline text-primary-5">
               Sign Up
             </Link>
           </div>

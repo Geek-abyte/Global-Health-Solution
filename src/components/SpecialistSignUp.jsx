@@ -7,19 +7,27 @@ import 'react-phone-input-2/lib/style.css';
 import axios from "../utils/axiosConfig"; // Import the configured Axios instance
 import Button from "./Button";
 import { LoadingSpinner } from "./"; // Import the loading spinner
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaCloudUploadAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { showToast, showModal, hideModal } from "../states/popUpSlice"; // Import the actions
 import OTPModal from "./OTPModal"; // Import OTP Modal
-import { countries } from "../utils/constants";
-import axiosInstance from "../utils/axiosConfig";
 
 const formInput =
-  "border-[3px] border-primary-5 text-primary-2 rounded-[20px] overflow-hidden p-2 w-full";
+  "border-2 border-primary-5 text-primary-2 rounded-[20px] overflow-hidden p-2 w-full bg-white focus:outline-none focus:border-primary-2";
+
 const sitekey = import.meta.env.VITE_APP_RECAPTCHA_SITE_KEY;
 const apiUrl = import.meta.env.VITE_API_URL;
 
-const SignUpForm = () => {
+const specialties = [
+  "Allergy and Immunology", "Anesthesiology", "Dermatology", "Diagnostic Radiology", 
+  "Emergency Medicine", "Family Medicine", "Internal Medicine", "Medical Genetics", 
+  "Neurology", "Nuclear Medicine", "Obstetrics and Gynecology", "Ophthalmology", 
+  "Pathology", "Pediatrics", "Physical Medicine and Rehabilitation", "Preventive Medicine", 
+  "Psychiatry", "Radiation Oncology", "Surgery", "Urology", "Cardiology", 
+  "Endocrinology", "Gastroenterology", "Hematology"
+];
+
+const SpecialistSignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const dispatch = useDispatch();
@@ -49,6 +57,10 @@ const SignUpForm = () => {
           email: "",
           password: "",
           confirmPassword: "",
+          currentPracticingLicense: null,
+          fullRegistrationCertificate: null,
+          doctorsRegistrationNumber: "",
+          speciality: "",
           agreeTerms: false,
           recaptcha: "",
         }}
@@ -90,6 +102,12 @@ const SignUpForm = () => {
           } else if (values.confirmPassword !== values.password) {
             errors.confirmPassword = "* Passwords do not match";
           }
+          if (!values.doctorsRegistrationNumber) {
+            errors.doctorsRegistrationNumber = "* Required";
+          }
+          if (!values.speciality) {
+            errors.speciality = "* Required";
+          }
           if (!values.agreeTerms) {
             errors.agreeTerms = "* You must agree to the terms and conditions";
           }
@@ -99,11 +117,19 @@ const SignUpForm = () => {
           return errors;
         }}
         onSubmit={(values, { setSubmitting, setStatus }) => {
-          axiosInstance
-            .post(`${apiUrl}/api/users/register`, values)
+          const formData = new FormData();
+          for (let key in values) {
+            formData.append(key, values[key]);
+          }
+
+          axios
+            .post(`${apiUrl}/api/users/register`, formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            })
             .then((response) => {
               if (response.status === 201) {
-                // Check if response status is 201 Created
                 dispatch(
                   showToast({
                     status: "success",
@@ -139,7 +165,8 @@ const SignUpForm = () => {
         }}
       >
         {({ isSubmitting, status, setFieldValue }) => (
-          <Form className="flex flex-col gap-y-[20px] justify-center items-center">
+          <Form className="flex flex-col gap-y-5 justify-center items-center bg-blue-100 p-5 rounded-lg shadow-lg w-full max-w-lg">
+            <h2 className="text-2xl font-bold text-primary-5 mb-4">Sign Up</h2>
             <div className="flex flex-row justify-between gap-x-5 w-full">
               <div className={`block w-full flex-1`}>
                 <Field
@@ -151,7 +178,7 @@ const SignUpForm = () => {
                 <ErrorMessage
                   name="firstName"
                   component="div"
-                  className="error"
+                  className="text-red-500 text-sm mt-1"
                 />
               </div>
               <div className={`block w-full flex-1`}>
@@ -164,7 +191,7 @@ const SignUpForm = () => {
                 <ErrorMessage
                   name="lastName"
                   component="div"
-                  className="error"
+                  className="text-red-500 text-sm mt-1"
                 />
               </div>
             </div>
@@ -179,7 +206,7 @@ const SignUpForm = () => {
                 <ErrorMessage
                   name="dateOfBirth"
                   component="div"
-                  className="error"
+                  className="text-red-500 text-sm mt-1"
                 />
               </div>
               <div className={`block w-full flex-1`}>
@@ -192,7 +219,7 @@ const SignUpForm = () => {
                 <ErrorMessage
                   name="gender"
                   component="div"
-                  className="error"
+                  className="text-red-500 text-sm mt-1"
                 />
               </div>
             </div>
@@ -203,7 +230,11 @@ const SignUpForm = () => {
                 placeholder="Address"
                 className={formInput}
               />
-              <ErrorMessage name="address" component="div" className="error" />
+              <ErrorMessage
+                name="address"
+                component="div"
+                className="text-red-500 text-sm mt-1"
+              />
             </div>
             <div className={`block w-full`}>
               <Field as="select" name="country" className={formInput}>
@@ -212,7 +243,11 @@ const SignUpForm = () => {
                   <option key={index} value={country}>{country}</option>
                 ))}
               </Field>
-              <ErrorMessage name="country" component="div" className="error" />
+              <ErrorMessage
+                name="country"
+                component="div"
+                className="text-red-500 text-sm mt-1"
+              />
             </div>
             <div className="block w-full">
               <PhoneInput
@@ -233,7 +268,7 @@ const SignUpForm = () => {
                   border: '3px solid #4478c7',
                 }}
               />
-              <ErrorMessage name="phone" component="div" className="error" />
+              <ErrorMessage name="phone" component="div" className="text-red-500 text-sm mt-1" />
             </div>
             <div className={`block w-full`}>
               <Field
@@ -242,7 +277,7 @@ const SignUpForm = () => {
                 placeholder="Email"
                 className={formInput}
               />
-              <ErrorMessage name="email" component="div" className="error" />
+              <ErrorMessage name="email" component="div" className="text-red-500 text-sm mt-1" />
             </div>
             <div className={`block w-full relative`}>
               <Field
@@ -251,7 +286,7 @@ const SignUpForm = () => {
                 placeholder="Password"
                 className={formInput}
               />
-              <ErrorMessage name="password" component="div" className="error" />
+              <ErrorMessage name="password" component="div" className="text-red-500 text-sm mt-1" />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
                 <button
                   type="button"
@@ -276,7 +311,7 @@ const SignUpForm = () => {
               <ErrorMessage
                 name="confirmPassword"
                 component="div"
-                className="error"
+                className="text-red-500 text-sm mt-1"
               />
               <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
                 <button
@@ -292,43 +327,141 @@ const SignUpForm = () => {
                 </button>
               </div>
             </div>
-            <div className="block w-full flex justify-start items-center">
-              <Field
-                type="checkbox"
-                name="agreeTerms"
-                className="mr-2"
-              />
-              <label htmlFor="agreeTerms" className="text-primary-2">
-                I agree to the <Link to="/terms" className="text-primary-5 underline">Terms and Conditions</Link>
+
+            {/* New Section for Specialist Registration */}
+            <div className="w-full border-t-2 border-gray-300 mt-5 pt-5">
+              <h3 className="text-lg font-semibold text-primary-5 mb-3">Upload Documents</h3>
+              <p className="text-sm text-gray-600 mb-5">
+                Ensure all files uploaded have descriptive file names. Please note: only JPEG, PDF, or DOC files are accepted. Max. file size is 2MB.
+              </p>
+              <div className="grid grid-cols-1 gap-y-4">
+                <div className="block w-full">
+                  <label className="block mb-2 text-primary-5 font-semibold">
+                    Upload Current Practising License
+                  </label>
+                  <div className="flex items-center">
+                    <Field
+                      type="file"
+                      name="currentPracticingLicense"
+                      accept=".jpg,.jpeg,.pdf,.doc"
+                      className={formInput}
+                      onChange={(event) => {
+                        setFieldValue("currentPracticingLicense", event.currentTarget.files[0]);
+                      }}
+                    />
+                    <FaCloudUploadAlt className="ml-3 text-primary-5" size={24} />
+                  </div>
+                  <ErrorMessage
+                    name="currentPracticingLicense"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
+                <div className="block w-full">
+                  <label className="block mb-2 text-primary-5 font-semibold">
+                    Upload Full Registration Certificate
+                  </label>
+                  <div className="flex items-center">
+                    <Field
+                      type="file"
+                      name="fullRegistrationCertificate"
+                      accept=".jpg,.jpeg,.pdf,.doc"
+                      className={formInput}
+                      onChange={(event) => {
+                        setFieldValue("fullRegistrationCertificate", event.currentTarget.files[0]);
+                      }}
+                    />
+                    <FaCloudUploadAlt className="ml-3 text-primary-5" size={24} />
+                  </div>
+                  <ErrorMessage
+                    name="fullRegistrationCertificate"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
+                <div className="block w-full">
+                  <Field
+                    type="text"
+                    name="doctorsRegistrationNumber"
+                    placeholder="Doctors' Registration Number"
+                    className={formInput}
+                  />
+                  <ErrorMessage
+                    name="doctorsRegistrationNumber"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
+                <div className="block w-full">
+                  <Field as="select" name="speciality" className={formInput}>
+                    <option value="">Speciality</option>
+                    {specialties.map((specialty) => (
+                      <option key={specialty} value={specialty}>
+                        {specialty}
+                      </option>
+                    ))}
+                  </Field>
+                  <ErrorMessage
+                    name="speciality"
+                    component="div"
+                    className="text-red-500 text-sm mt-1"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <ReCAPTCHA
+              className="self-start mt-3"
+              sitekey={sitekey}
+              name="recaptcha"
+              onChange={(value) => setFieldValue("recaptcha", value)}
+            />
+            <ErrorMessage name="recaptcha" component="div" className="text-red-500 text-sm mt-1" />
+            <div className="block w-full">
+              <label className="flex items-center">
+                <Field type="checkbox" name="agreeTerms" className="mr-2" />
+                I agree to the terms and conditions
               </label>
               <ErrorMessage
                 name="agreeTerms"
                 component="div"
-                className="error"
+                className="text-red-500 text-sm mt-1"
               />
             </div>
-            <div className="w-full flex justify-center items-center">
-              <ReCAPTCHA
-                sitekey={sitekey}
-                onChange={(value) => setFieldValue("recaptcha", value)}
-              />
-              <ErrorMessage
-                name="recaptcha"
-                component="div"
-                className="error"
-              />
-            </div>
-            <Button type="submit" disabled={isSubmitting}>
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="mt-5 w-[60%] bg-primary-5 text-white rounded-lg py-2"
+            >
               {isSubmitting ? <LoadingSpinner /> : "Sign Up"}
             </Button>
-            {status && status.success && (
-              <OTPModal email={userEmail} onClose={handleCloseModal} />
+            {status && (
+              <div
+                className={`mt-3 ${
+                  status.success ? "text-green-500" : "text-red-500"
+                }`}
+              >
+                {status.message}
+              </div>
             )}
+            <div>
+              Already have an account?{" "}
+              <Link to="#" className="underline text-primary-5">
+                Sign in
+              </Link>
+            </div>
           </Form>
         )}
       </Formik>
+      {isModalOpen && (
+        <OTPModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          email={userEmail}
+        />
+      )}
     </>
   );
 };
 
-export default SignUpForm;
+export default SpecialistSignUpForm;

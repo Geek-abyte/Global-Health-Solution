@@ -7,3 +7,5 @@ export { default as BlogArticle } from "./blog/BlogArticle";
 export { default as BlogList } from "./blog/BlogList"
 export { default as About } from "./About"
 export { default as Doctors } from "./Doctors"
+export { default as PrivacyPolicy } from "./PrivacyPolicy"
+export { default as CookiePolicy } from "./CookiePolicy"

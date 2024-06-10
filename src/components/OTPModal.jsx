@@ -1,18 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { FaTimes } from "react-icons/fa";
-import axios from "../utils/axiosConfig";
-import { useDispatch, useSelector } from "react-redux";
-import { hideModal } from "../states/popUpSlice";
+import React, { useState, useEffect } from 'react';
+import { FaTimes } from 'react-icons/fa';
+import axios from '../utils/axiosConfig';
+import { useDispatch, useSelector } from 'react-redux';
+import { hideModal } from '../states/popUpSlice';
+import { useNavigate } from 'react-router-dom';
+import { PATH } from '../routes/path';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const OTPModal = ({ isOpen, email }) => {
-  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
   const [isResendDisabled, setIsResendDisabled] = useState(true);
   const [resendTimer, setResendTimer] = useState(60);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -27,22 +30,18 @@ const OTPModal = ({ isOpen, email }) => {
   }, [resendTimer]);
 
   const handleOTPChange = (e, index) => {
-    const value = e.target.value.replace(/\D/g, "");
+    const value = e.target.value.replace(/\D/g, '');
     const newOtp = [...otp];
     newOtp[index] = value.slice(-1);
     setOtp(newOtp);
 
     if (value && index < 5) {
-      const nextInput = document.querySelector(
-        `input[data-index="${index + 1}"]`
-      );
+      const nextInput = document.querySelector(`input[data-index="${index + 1}"]`);
       if (nextInput) {
         nextInput.focus();
       }
     } else if (!value && index > 0) {
-      const prevInput = document.querySelector(
-        `input[data-index="${index - 1}"]`
-      );
+      const prevInput = document.querySelector(`input[data-index="${index - 1}"]`);
       if (prevInput) {
         prevInput.focus();
       }
@@ -51,15 +50,15 @@ const OTPModal = ({ isOpen, email }) => {
 
   const handlePaste = (e) => {
     const clipboardData = e.clipboardData || window.clipboardData;
-    const pastedData = clipboardData.getData("Text").slice(0, 6).split("");
+    const pastedData = clipboardData.getData('Text').slice(0, 6).split('');
     setOtp(pastedData);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const otpValue = otp.join("");
+    const otpValue = otp.join('');
     if (otpValue.length !== 6) {
-      setError("OTP must be 6 digits");
+      setError('OTP must be 6 digits');
       return;
     }
     try {
@@ -68,25 +67,27 @@ const OTPModal = ({ isOpen, email }) => {
         otp: otpValue,
       });
       setMessage(response.data.message);
-      setError("");
+      setError('');
       setIsResendDisabled(true);
       setResendTimer(60);
+      dispatch(hideModal());
+      navigate(PATH.general.congratulations);
     } catch (err) {
-      setError(err.response?.data || "An error occurred");
-      setMessage("");
+      setError(err.response?.data || 'An error occurred');
+      setMessage('');
     }
   };
 
   const handleResendOTP = async () => {
     try {
       await axios.post(`${apiUrl}/api/users/resend-otp`, { email });
-      setMessage("OTP has been resent to your email");
-      setError("");
+      setMessage('OTP has been resent to your email');
+      setError('');
       setIsResendDisabled(true);
       setResendTimer(60);
     } catch (err) {
-      setError(err.response?.data || "An error occurred");
-      setMessage("");
+      setError(err.response?.data || 'An error occurred');
+      setMessage('');
     }
   };
 
@@ -105,7 +106,7 @@ const OTPModal = ({ isOpen, email }) => {
             <FaTimes className="text-gray-500 hover:text-gray-700" />
           </button>
         </div>
-        <p className="m-auto flex justify-center pb-4 text-gray-3">please verify OTP sent to your email</p>
+        <p className="m-auto flex justify-center pb-4 text-gray-3">Please verify OTP sent to your email</p>
         <form onSubmit={handleSubmit}>
           <div className="mb-4 flex justify-between">
             {otp.map((value, index) => (
@@ -138,7 +139,7 @@ const OTPModal = ({ isOpen, email }) => {
               disabled={isResendDisabled}
               className="py-2 px-4 bg-gray-300 text-gray-700 font-semibold rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
             >
-              Resend OTP ({isResendDisabled ? resendTimer : "Resend"})
+              Resend OTP ({isResendDisabled ? resendTimer : 'Resend'})
             </button>
           </div>
         </form>

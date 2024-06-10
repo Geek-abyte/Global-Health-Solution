@@ -1,0 +1,45 @@
+.video-player {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+}
+
+@media (max-width: 1024px) {
+  #chat-section {
+    width: 100%;
+    height: 50%;
+    bottom: 0;
+  }
+}
+
+#chat-section {
+  display: flex;
+  flex-direction: column;
+}
+
+#chat-messages {
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  max-width: 70%;
+  margin: 0.5rem 0;
+}
+
+.message.self-end {
+  align-self: flex-end;
+}
+
+.control-container {
+  transition: transform 0.2s;
+}
+
+.control-container:hover {
+  transform: scale(1.1);
+}
+
+.control-container:hover .h-8.w-8 {
+  color: #1da1f2; /* Hover color for icons */
+}

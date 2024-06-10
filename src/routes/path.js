@@ -19,11 +19,15 @@ export const PATH = {
     doctorSignUp: path(ROOT, "auth/sign-up/doctors"),
     signUpPointer: path(ROOT, "auth/sign-up/pointer"),
     signIn: path(ROOT, "auth/sign-in"),
+    congratulations: path(ROOT, "congratulations"),
+    privacy: path(ROOT, "privacy-policy"),
+    cookie: path(ROOT, "cookie-policy"),
   },
   dashboard: {
     default: PATIENT,
     dashboard: path(PATIENT, "dashboard"),
     profile: path(PATIENT, "profile"),
+    edit: path(PATIENT, "profile/edit-profile"),
     ai: path(PATIENT, "ai"),
     prescription: path(PATIENT, "prescription/:key?"),
     consultant: path(PATIENT, "consultant"),
@@ -41,6 +45,7 @@ export const PATH = {
   },
   chat: {
     default: CHAT,
+    meeting: path(CHAT, ":callId"),
   }
 };
 

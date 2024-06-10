@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { logoDark } from '../assets'
+import { PATH } from '../routes/path'
 
 const Footer = () => {
   return (
@@ -11,10 +12,10 @@ const Footer = () => {
         <div className='flex flex-col gap-y-[5px]'>
           <h4 className='font-extrabold text-[24px]'>The Platform</h4>
           <ul>
-            <Link className>
+            <Link to={PATH.general.signIn}>
               <li>Log in</li>
             </Link>
-            <Link>
+            <Link to={PATH.general.signUp}>
               <li>sign up</li>
             </Link>
             <Link>
@@ -25,10 +26,10 @@ const Footer = () => {
         <div className='flex flex-col gap-y-[5px]'>
           <h4 className='font-extrabold text-[24px]'>Company</h4>
           <ul>
-            <Link>
+            <Link to={PATH.blog.default}>
               <li>Blog</li>
             </Link>
-            <Link>
+            <Link to={PATH.general.about}>
               <li>About Us</li>
             </Link>
             <Link>
@@ -39,10 +40,10 @@ const Footer = () => {
         <div className='flex flex-col gap-y-[5px]'>
           <h4 className='font-extrabold text-[24px]'>Legal</h4>
           <ul>
-            <Link>
+            <Link to={PATH.general.cookie}>
               <li>Cookie Policy</li>
             </Link>
-            <Link>
+            <Link to={PATH.general.privacy}>
               <li>Privacy Policy</li>
             </Link>
           </ul>
