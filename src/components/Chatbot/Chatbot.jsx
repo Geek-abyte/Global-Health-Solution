@@ -6,7 +6,9 @@ import { IoCloseCircleOutline } from 'react-icons/io5';
 import { toSnakeCase } from '../../helperFunctions';
 import axios from 'axios';
 import { symptoms } from '../../data/symptoms';
+import axiosInstance from '../../utils/axiosConfig';
 
+const apiUrl = import.meta.env.VITE_API_URL;
 const exampleMessages = [
   { text: 'Hi there!', sender: 'bot' },
   { text: 'Input your symptoms to determine the likely illness or consult a specialist', sender: 'bot' },
@@ -100,33 +102,21 @@ const ChatBot = () => {
     }, 300); // Delay for 300ms to allow the transition to play
   };
   
-
   const sendTags = async (message) => {
-    let packet = message.map((tag) => toSnakeCase(tag))
-
-    let url = 'https://proxy.cors.sh/' + 'https://aiconsultdemo.onrender.com/predict_disease'
-
-    setLoading(true)
+    let packet = message.map((tag) => toSnakeCase(tag));
+  
+    setLoading(true);
     try {
-      const response = await axios.post(url, { packet },  
-      { 
-        headers: {
-        'Content-Type': 'application/json',
-      },
-    }); 
-      setLoading(false)
-      addMessage(response.data)
-      addMessage('Try a different set of symptoms, or would you like to consult a specialist?')
+      const response = await axiosInstance.post('/chatbot/predict_disease', { symptoms: packet });
+      setLoading(false);
+      addMessage(response.data);
+      addMessage('Try a different set of symptoms, or would you like to consult a specialist?');
       console.log('Response:', response.data);
     } catch (error) {
       console.error('Error:', error);
-      setLoading(false)
-      addMessage(
-        'there was a problem with the result, please try again'
-      )
-      addMessage(
-        'or will you like to consult a specialist'
-      )
+      setLoading(false);
+      addMessage('There was a problem with the result, please try again');
+      addMessage('Or would you like to consult a specialist?');
     }
   };
 

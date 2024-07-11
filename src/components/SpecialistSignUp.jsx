@@ -2,29 +2,63 @@ import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
-import axios from "../utils/axiosConfig"; // Import the configured Axios instance
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+import axios from "../utils/axiosConfig";
 import Button from "./Button";
-import { LoadingSpinner } from "./"; // Import the loading spinner
-import { FaEye, FaEyeSlash, FaCloudUploadAlt } from "react-icons/fa";
+import { LoadingSpinner } from "./";
+import {
+  FaEye,
+  FaEyeSlash,
+  FaCloudUploadAlt,
+  FaUser,
+  FaEnvelope,
+  FaLock,
+  FaCalendarAlt,
+  FaVenusMars,
+  FaMapMarkerAlt,
+  FaGlobe,
+  FaPhone,
+  FaIdCard,
+  FaUserMd,
+} from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
-import { showToast, showModal, hideModal } from "../states/popUpSlice"; // Import the actions
-import OTPModal from "./OTPModal"; // Import OTP Modal
+import { showToast, showModal, hideModal } from "../states/popUpSlice";
+import OTPModal from "./OTPModal";
 
 const formInput =
-  "border-2 border-primary-5 text-primary-2 rounded-[20px] overflow-hidden p-2 w-full bg-white focus:outline-none focus:border-primary-2";
+  "border border-gray-300 text-gray-900 rounded-lg p-3 w-full bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition duration-200";
+const formLabel = "block mb-2 text-sm font-semibold text-gray-700";
+const formError = "text-red-500 text-xs mt-1";
 
 const sitekey = import.meta.env.VITE_APP_RECAPTCHA_SITE_KEY;
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const specialties = [
-  "Allergy and Immunology", "Anesthesiology", "Dermatology", "Diagnostic Radiology", 
-  "Emergency Medicine", "Family Medicine", "Internal Medicine", "Medical Genetics", 
-  "Neurology", "Nuclear Medicine", "Obstetrics and Gynecology", "Ophthalmology", 
-  "Pathology", "Pediatrics", "Physical Medicine and Rehabilitation", "Preventive Medicine", 
-  "Psychiatry", "Radiation Oncology", "Surgery", "Urology", "Cardiology", 
-  "Endocrinology", "Gastroenterology", "Hematology"
+  "Allergy and Immunology",
+  "Anesthesiology",
+  "Dermatology",
+  "Diagnostic Radiology",
+  "Emergency Medicine",
+  "Family Medicine",
+  "Internal Medicine",
+  "Medical Genetics",
+  "Neurology",
+  "Nuclear Medicine",
+  "Obstetrics and Gynecology",
+  "Ophthalmology",
+  "Pathology",
+  "Pediatrics",
+  "Physical Medicine and Rehabilitation",
+  "Preventive Medicine",
+  "Psychiatry",
+  "Radiation Oncology",
+  "Surgery",
+  "Urology",
+  "Cardiology",
+  "Endocrinology",
+  "Gastroenterology",
+  "Hematology",
 ];
 
 const SpecialistSignUpForm = () => {
@@ -44,423 +78,574 @@ const SpecialistSignUpForm = () => {
   };
 
   return (
-    <>
-      <Formik
-        initialValues={{
-          firstName: "",
-          lastName: "",
-          dateOfBirth: "",
-          gender: "",
-          address: "",
-          country: "",
-          phone: "",
-          email: "",
-          password: "",
-          confirmPassword: "",
-          currentPracticingLicense: null,
-          fullRegistrationCertificate: null,
-          doctorsRegistrationNumber: "",
-          speciality: "",
-          agreeTerms: false,
-          recaptcha: "",
-        }}
-        validate={(values) => {
-          const errors = {};
-          if (!values.firstName) {
-            errors.firstName = "* Required";
-          }
-          if (!values.lastName) {
-            errors.lastName = "* Required";
-          }
-          if (!values.dateOfBirth) {
-            errors.dateOfBirth = "* Required";
-          }
-          if (!values.gender) {
-            errors.gender = "* Required";
-          }
-          if (!values.address) {
-            errors.address = "* Required";
-          }
-          if (!values.country) {
-            errors.country = "* Required";
-          }
-          if (!values.phone) {
-            errors.phone = "* Required";
-          }
-          if (!values.email) {
-            errors.email = "* Required";
-          } else if (
-            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-          ) {
-            errors.email = "* Invalid email address";
-          }
-          if (!values.password) {
-            errors.password = "* Required";
-          }
-          if (!values.confirmPassword) {
-            errors.confirmPassword = "* Required";
-          } else if (values.confirmPassword !== values.password) {
-            errors.confirmPassword = "* Passwords do not match";
-          }
-          if (!values.doctorsRegistrationNumber) {
-            errors.doctorsRegistrationNumber = "* Required";
-          }
-          if (!values.speciality) {
-            errors.speciality = "* Required";
-          }
-          if (!values.agreeTerms) {
-            errors.agreeTerms = "* You must agree to the terms and conditions";
-          }
-          if (!values.recaptcha) {
-            errors.recaptcha = "* Please verify that you are not a robot";
-          }
-          return errors;
-        }}
-        onSubmit={(values, { setSubmitting, setStatus }) => {
-          const formData = new FormData();
-          for (let key in values) {
-            formData.append(key, values[key]);
-          }
+    <div className="min-h-screen bg-primary-7 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl w-full space-y-8 bg-white p-10 rounded-xl shadow-2xl">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Specialist Registration
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Join our network of healthcare professionals
+          </p>
+        </div>
+        <Formik
+          initialValues={{
+            firstName: "",
+            lastName: "",
+            dateOfBirth: "",
+            gender: "",
+            address: "",
+            country: "",
+            phone: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            currentPracticingLicense: null,
+            fullRegistrationCertificate: null,
+            doctorsRegistrationNumber: "",
+            speciality: "",
+            agreeTerms: false,
+            recaptcha: "",
+          }}
+          validate={(values) => {
+            const errors = {};
+            if (!values.firstName) errors.firstName = "Required";
+            if (!values.lastName) errors.lastName = "Required";
+            if (!values.dateOfBirth) errors.dateOfBirth = "Required";
+            if (!values.gender) errors.gender = "Required";
+            if (!values.address) errors.address = "Required";
+            if (!values.country) errors.country = "Required";
+            if (!values.phone) errors.phone = "Required";
+            if (!values.email) {
+              errors.email = "Required";
+            } else if (
+              !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
+            ) {
+              errors.email = "Invalid email address";
+            }
+            if (!values.password) {
+              errors.password = "Required";
+            } else if (values.password.length < 8) {
+              errors.password = "Password must be at least 8 characters";
+            }
+            if (!values.confirmPassword) {
+              errors.confirmPassword = "Required";
+            } else if (values.confirmPassword !== values.password) {
+              errors.confirmPassword = "Passwords must match";
+            }
+            if (!values.currentPracticingLicense)
+              errors.currentPracticingLicense = "Required";
+            if (!values.fullRegistrationCertificate)
+              errors.fullRegistrationCertificate = "Required";
+            if (!values.doctorsRegistrationNumber)
+              errors.doctorsRegistrationNumber = "Required";
+            if (!values.speciality) errors.speciality = "Required";
+            if (!values.agreeTerms)
+              errors.agreeTerms = "You must agree to the terms and conditions";
+            if (!values.recaptcha)
+              errors.recaptcha = "Please complete the reCAPTCHA";
+            return errors;
+          }}
+          onSubmit={(values, { setSubmitting, setStatus }) => {
+            const formData = new FormData();
+            for (let key in values) {
+              formData.append(key, values[key]);
+            }
 
-          axios
-            .post(`${apiUrl}/api/users/register`, formData, {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            })
-            .then((response) => {
-              if (response.status === 201) {
-                dispatch(
-                  showToast({
-                    status: "success",
-                    message: "Signup successful!",
-                  })
-                );
-                setStatus({ success: true });
-                handleOpenModal(values.email);
-              } else {
-                throw new Error("Unexpected response status");
-              }
-            })
-            .catch((error) => {
-              let errorMessage = "Signup failed. Please try again.";
-              if (error.response) {
-                if (
-                  error.response?.data?.includes("reCAPTCHA validation failed")
-                ) {
-                  errorMessage =
-                    "reCAPTCHA validation failed. Please try again.";
-                } else if (
-                  error.response?.data?.includes("User already exists")
-                ) {
-                  errorMessage = "User already exists.";
+            axios
+              .post(`${apiUrl}/api/users/register`, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+              })
+              .then((response) => {
+                if (response.status === 201) {
+                  dispatch(
+                    showToast({
+                      status: "success",
+                      message: "Signup successful!",
+                    })
+                  );
+                  setStatus({ success: true });
+                  handleOpenModal(values.email);
+                } else {
+                  throw new Error("Unexpected response status");
                 }
-              }
-              dispatch(showToast({ status: "error", message: errorMessage }));
-              setStatus({ success: false });
-            })
-            .finally(() => {
-              setSubmitting(false);
-            });
-        }}
-      >
-        {({ isSubmitting, status, setFieldValue }) => (
-          <Form className="flex flex-col gap-y-5 justify-center items-center bg-blue-100 p-5 rounded-lg shadow-lg w-full max-w-lg">
-            <h2 className="text-2xl font-bold text-primary-5 mb-4">Sign Up</h2>
-            <div className="flex flex-row justify-between gap-x-5 w-full">
-              <div className={`block w-full flex-1`}>
-                <Field
-                  type="text"
-                  name="firstName"
-                  placeholder="First Name"
-                  className={formInput}
-                />
-                <ErrorMessage
-                  name="firstName"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
-              </div>
-              <div className={`block w-full flex-1`}>
-                <Field
-                  type="text"
-                  name="lastName"
-                  placeholder="Last Name"
-                  className={formInput}
-                />
-                <ErrorMessage
-                  name="lastName"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
-              </div>
-            </div>
-            <div className="flex flex-row justify-between gap-x-5 w-full">
-              <div className={`block w-full flex-1`}>
-                <Field
-                  type="date"
-                  name="dateOfBirth"
-                  placeholder="Date of Birth"
-                  className={formInput}
-                />
-                <ErrorMessage
-                  name="dateOfBirth"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
-              </div>
-              <div className={`block w-full flex-1`}>
-                <Field as="select" name="gender" className={formInput}>
-                  <option value="">Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                </Field>
-                <ErrorMessage
-                  name="gender"
-                  component="div"
-                  className="text-red-500 text-sm mt-1"
-                />
-              </div>
-            </div>
-            <div className={`block w-full`}>
-              <Field
-                type="text"
-                name="address"
-                placeholder="Address"
-                className={formInput}
-              />
-              <ErrorMessage
-                name="address"
-                component="div"
-                className="text-red-500 text-sm mt-1"
-              />
-            </div>
-            <div className={`block w-full`}>
-              <Field as="select" name="country" className={formInput}>
-                <option value="">Country</option>
-                {countries.map((country, index) => (
-                  <option key={index} value={country}>{country}</option>
-                ))}
-              </Field>
-              <ErrorMessage
-                name="country"
-                component="div"
-                className="text-red-500 text-sm mt-1"
-              />
-            </div>
-            <div className="block w-full">
-              <PhoneInput
-                country={'us'}
-                placeholder="Phone Number"
-                value=""
-                onChange={phone => setFieldValue('phone', phone)}
-                inputClass="custom-phone-input"
-                containerClass="custom-phone-container"
-                inputStyle={{
-                  width: '100%',
-                  height: '40px',
-                  borderRadius: '20px',
-                  border: '3px solid #4478c7',
-                }}
-                buttonStyle={{
-                  borderRadius: '20px 0 0 20px',
-                  border: '3px solid #4478c7',
-                }}
-              />
-              <ErrorMessage name="phone" component="div" className="text-red-500 text-sm mt-1" />
-            </div>
-            <div className={`block w-full`}>
-              <Field
-                type="email"
-                name="email"
-                placeholder="Email"
-                className={formInput}
-              />
-              <ErrorMessage name="email" component="div" className="text-red-500 text-sm mt-1" />
-            </div>
-            <div className={`block w-full relative`}>
-              <Field
-                type={showPassword ? "text" : "password"}
-                name="password"
-                placeholder="Password"
-                className={formInput}
-              />
-              <ErrorMessage name="password" component="div" className="text-red-500 text-sm mt-1" />
-              <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="focus:outline-none"
-                >
-                  {showPassword ? (
-                    <FaEyeSlash color="#20655b" />
-                  ) : (
-                    <FaEye color="#194e9d" />
-                  )}
-                </button>
-              </div>
-            </div>
-            <div className={`block w-full relative`}>
-              <Field
-                type={showConfirmPassword ? "text" : "password"}
-                name="confirmPassword"
-                placeholder="Confirm Password"
-                className={formInput}
-              />
-              <ErrorMessage
-                name="confirmPassword"
-                component="div"
-                className="text-red-500 text-sm mt-1"
-              />
-              <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="focus:outline-none"
-                >
-                  {showConfirmPassword ? (
-                    <FaEyeSlash color="#20655b" />
-                  ) : (
-                    <FaEye color="#194e9d" />
-                  )}
-                </button>
-              </div>
-            </div>
+              })
+              .catch((error) => {
+                let errorMessage = "Signup failed. Please try again.";
+                if (error.response) {
+                  if (
+                    error.response.data?.includes("reCAPTCHA validation failed")
+                  ) {
+                    errorMessage =
+                      "reCAPTCHA validation failed. Please try again.";
+                  } else if (
+                    error.response.data?.includes("User already exists")
+                  ) {
+                    errorMessage = "User already exists.";
+                  }
+                }
+                dispatch(showToast({ status: "error", message: errorMessage }));
+                setStatus({ success: false });
+              })
+              .finally(() => {
+                setSubmitting(false);
+              });
+          }}
+        >
+          {({ isSubmitting, status, setFieldValue }) => (
+            <Form className="mt-8 space-y-6">
+              <div className="grid grid-cols-1 gap-6">
+                {/* Personal Information */}
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    Personal Information
+                  </h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label htmlFor="firstName" className={formLabel}>
+                        First Name
+                      </label>
+                      <div className="relative">
+                        <Field
+                          type="text"
+                          name="firstName"
+                          id="firstName"
+                          className={`${formInput} pl-10`}
+                          placeholder="John"
+                        />
+                        <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      </div>
+                      <ErrorMessage
+                        name="firstName"
+                        component="div"
+                        className={formError}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="lastName" className={formLabel}>
+                        Last Name
+                      </label>
+                      <div className="relative">
+                        <Field
+                          type="text"
+                          name="lastName"
+                          id="lastName"
+                          className={`${formInput} pl-10`}
+                          placeholder="Doe"
+                        />
+                        <FaUser className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      </div>
+                      <ErrorMessage
+                        name="lastName"
+                        component="div"
+                        className={formError}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="dateOfBirth" className={formLabel}>
+                        Date of Birth
+                      </label>
+                      <div className="relative">
+                        <Field
+                          type="date"
+                          name="dateOfBirth"
+                          id="dateOfBirth"
+                          className={`${formInput} pl-10`}
+                        />
+                        <FaCalendarAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      </div>
+                      <ErrorMessage
+                        name="dateOfBirth"
+                        component="div"
+                        className={formError}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="gender" className={formLabel}>
+                        Gender
+                      </label>
+                      <div className="relative">
+                        <Field
+                          as="select"
+                          name="gender"
+                          id="gender"
+                          className={`${formInput} pl-10`}
+                        >
+                          <option value="">Select Gender</option>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="Other">Other</option>
+                        </Field>
+                        <FaVenusMars className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      </div>
+                      <ErrorMessage
+                        name="gender"
+                        component="div"
+                        className={formError}
+                      />
+                    </div>
+                  </div>
+                </div>
 
-            {/* New Section for Specialist Registration */}
-            <div className="w-full border-t-2 border-gray-300 mt-5 pt-5">
-              <h3 className="text-lg font-semibold text-primary-5 mb-3">Upload Documents</h3>
-              <p className="text-sm text-gray-600 mb-5">
-                Ensure all files uploaded have descriptive file names. Please note: only JPEG, PDF, or DOC files are accepted. Max. file size is 2MB.
-              </p>
-              <div className="grid grid-cols-1 gap-y-4">
-                <div className="block w-full">
-                  <label className="block mb-2 text-primary-5 font-semibold">
-                    Upload Current Practising License
+                {/* Contact Information */}
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">
+                    Contact Information
+                  </h3>
+                  <div className="space-y-4">
+                    <div>
+                      <label htmlFor="address" className={formLabel}>
+                        Address
+                      </label>
+                      <div className="relative">
+                        <Field
+                          type="text"
+                          name="address"
+                          id="address"
+                          className={`${formInput} pl-10`}
+                          placeholder="1234 Main St, City, State, ZIP"
+                        />
+                        <FaMapMarkerAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      </div>
+                      <ErrorMessage
+                        name="address"
+                        component="div"
+                        className={formError}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="country" className={formLabel}>
+                        Country
+                      </label>
+                      <div className="relative">
+                        <Field
+                          as="select"
+                          name="country"
+                          id="country"
+                          className={`${formInput} pl-10`}
+                        >
+                          <option value="">Select Country</option>
+                          {/* Add country options here */}
+                        </Field>
+                        <FaGlobe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      </div>
+                      <ErrorMessage
+                        name="country"
+                        component="div"
+                        className={formError}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="phone" className={formLabel}>
+                        Phone Number
+                      </label>
+                      <PhoneInput
+                        country={"us"}
+                        inputProps={{
+                          name: "phone",
+                          id: "phone",
+                          placeholder: "Enter phone number",
+                        }}
+                        containerClass="phone-input-container"
+                        inputClass={`${formInput} pl-14`}
+                        buttonClass="phone-input-button"
+                        onChange={(phone) => setFieldValue("phone", phone)}
+                      />
+                      <ErrorMessage
+                        name="phone"
+                        component="div"
+                        className={formError}
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="email" className={formLabel}>
+                        Email
+                      </label>
+                      <div className="relative">
+                        <Field
+                          type="email"
+                          name="email"
+                          id="email"
+                          className={`${formInput} pl-10`}
+                          placeholder="johndoe@example.com"
+                        />
+                        <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                      </div>
+                      <ErrorMessage
+                        name="email"
+                        component="div"
+                        className={formError}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Password Section */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Security
+                </h3>
+                <div>
+                  <label htmlFor="password" className={formLabel}>
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Field
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      id="password"
+                      className={`${formInput} pl-10 pr-10`}
+                      placeholder="••••••••"
+                    />
+                    <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 focus:outline-none"
+                    >
+                      {showPassword ? (
+                        <FaEyeSlash className="text-gray-400" />
+                      ) : (
+                        <FaEye className="text-gray-400" />
+                      )}
+                    </button>
+                  </div>
+                  <ErrorMessage
+                    name="password"
+                    component="div"
+                    className={formError}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="confirmPassword" className={formLabel}>
+                    Confirm Password
+                  </label>
+                  <div className="relative">
+                    <Field
+                      type={showConfirmPassword ? "text" : "password"}
+                      name="confirmPassword"
+                      id="confirmPassword"
+                      className={`${formInput} pl-10 pr-10`}
+                      placeholder="••••••••"
+                    />
+                    <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 focus:outline-none"
+                    >
+                      {showConfirmPassword ? (
+                        <FaEyeSlash className="text-gray-400" />
+                      ) : (
+                        <FaEye className="text-gray-400" />
+                      )}
+                    </button>
+                  </div>
+                  <ErrorMessage
+                    name="confirmPassword"
+                    component="div"
+                    className={formError}
+                  />
+                </div>
+              </div>
+
+              {/* Professional Information */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  Professional Information
+                </h3>
+                <div>
+                  <label
+                    htmlFor="currentPracticingLicense"
+                    className={formLabel}
+                  >
+                    Current Practising License
                   </label>
                   <div className="flex items-center">
-                    <Field
+                    <input
                       type="file"
                       name="currentPracticingLicense"
+                      id="currentPracticingLicense"
                       accept=".jpg,.jpeg,.pdf,.doc"
-                      className={formInput}
+                      className="hidden"
                       onChange={(event) => {
-                        setFieldValue("currentPracticingLicense", event.currentTarget.files[0]);
+                        setFieldValue(
+                          "currentPracticingLicense",
+                          event.currentTarget.files[0]
+                        );
                       }}
                     />
-                    <FaCloudUploadAlt className="ml-3 text-primary-5" size={24} />
+                    <label
+                      htmlFor="currentPracticingLicense"
+                      className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer transition duration-150 ease-in-out"
+                    >
+                      <FaCloudUploadAlt className="mr-2" />
+                      Upload License
+                    </label>
                   </div>
                   <ErrorMessage
                     name="currentPracticingLicense"
                     component="div"
-                    className="text-red-500 text-sm mt-1"
+                    className={formError}
                   />
                 </div>
-                <div className="block w-full">
-                  <label className="block mb-2 text-primary-5 font-semibold">
-                    Upload Full Registration Certificate
+                <div>
+                  <label
+                    htmlFor="fullRegistrationCertificate"
+                    className={formLabel}
+                  >
+                    Full Registration Certificate
                   </label>
                   <div className="flex items-center">
-                    <Field
+                    <input
                       type="file"
                       name="fullRegistrationCertificate"
+                      id="fullRegistrationCertificate"
                       accept=".jpg,.jpeg,.pdf,.doc"
-                      className={formInput}
+                      className="hidden"
                       onChange={(event) => {
-                        setFieldValue("fullRegistrationCertificate", event.currentTarget.files[0]);
+                        setFieldValue(
+                          "fullRegistrationCertificate",
+                          event.currentTarget.files[0]
+                        );
                       }}
                     />
-                    <FaCloudUploadAlt className="ml-3 text-primary-5" size={24} />
+                    <label
+                      htmlFor="fullRegistrationCertificate"
+                      className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer transition duration-150 ease-in-out"
+                    >
+                      <FaCloudUploadAlt className="mr-2" />
+                      Upload Certificate
+                    </label>
                   </div>
                   <ErrorMessage
                     name="fullRegistrationCertificate"
                     component="div"
-                    className="text-red-500 text-sm mt-1"
+                    className={formError}
                   />
                 </div>
-                <div className="block w-full">
-                  <Field
-                    type="text"
-                    name="doctorsRegistrationNumber"
-                    placeholder="Doctors' Registration Number"
-                    className={formInput}
-                  />
+                <div>
+                  <label
+                    htmlFor="doctorsRegistrationNumber"
+                    className={formLabel}
+                  >
+                    Doctor's Registration Number
+                  </label>
+                  <div className="relative">
+                    <Field
+                      type="text"
+                      name="doctorsRegistrationNumber"
+                      id="doctorsRegistrationNumber"
+                      className={`${formInput} pl-10`}
+                      placeholder="Enter registration number"
+                    />
+                    <FaIdCard className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  </div>
                   <ErrorMessage
                     name="doctorsRegistrationNumber"
                     component="div"
-                    className="text-red-500 text-sm mt-1"
+                    className={formError}
                   />
                 </div>
-                <div className="block w-full">
-                  <Field as="select" name="speciality" className={formInput}>
-                    <option value="">Speciality</option>
-                    {specialties.map((specialty) => (
-                      <option key={specialty} value={specialty}>
-                        {specialty}
-                      </option>
-                    ))}
-                  </Field>
+                <div>
+                  <label htmlFor="speciality" className={formLabel}>
+                    Speciality
+                  </label>
+                  <div className="relative">
+                    <Field
+                      as="select"
+                      name="speciality"
+                      id="speciality"
+                      className={`${formInput} pl-10`}
+                    >
+                      <option value="">Select Speciality</option>
+                      {specialties.map((specialty, index) => (
+                        <option key={index} value={specialty}>
+                          {specialty}
+                        </option>
+                      ))}
+                    </Field>
+                    <FaUserMd className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                  </div>
                   <ErrorMessage
                     name="speciality"
                     component="div"
-                    className="text-red-500 text-sm mt-1"
+                    className={formError}
                   />
                 </div>
               </div>
-            </div>
 
-            <ReCAPTCHA
-              className="self-start mt-3"
-              sitekey={sitekey}
-              name="recaptcha"
-              onChange={(value) => setFieldValue("recaptcha", value)}
-            />
-            <ErrorMessage name="recaptcha" component="div" className="text-red-500 text-sm mt-1" />
-            <div className="block w-full">
-              <label className="flex items-center">
-                <Field type="checkbox" name="agreeTerms" className="mr-2" />
-                I agree to the terms and conditions
-              </label>
+              <div className="flex items-center">
+                <Field
+                  type="checkbox"
+                  name="agreeTerms"
+                  id="agreeTerms"
+                  className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                />
+                <label
+                  htmlFor="agreeTerms"
+                  className="ml-2 block text-sm text-gray-900"
+                >
+                  I agree to the{" "}
+                  <a
+                    href="#"
+                    className="text-primary-600 hover:text-primary-500"
+                  >
+                    Terms and Conditions
+                  </a>
+                </label>
+              </div>
               <ErrorMessage
                 name="agreeTerms"
                 component="div"
-                className="text-red-500 text-sm mt-1"
+                className={formError}
               />
-            </div>
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="mt-5 w-[60%] bg-primary-5 text-white rounded-lg py-2"
-            >
-              {isSubmitting ? <LoadingSpinner /> : "Sign Up"}
-            </Button>
-            {status && (
-              <div
-                className={`mt-3 ${
-                  status.success ? "text-green-500" : "text-red-500"
-                }`}
-              >
-                {status.message}
+
+              <div className="flex justify-center">
+                <ReCAPTCHA
+                  sitekey={sitekey}
+                  onChange={(value) => setFieldValue("recaptcha", value)}
+                />
               </div>
-            )}
-            <div>
-              Already have an account?{" "}
-              <Link to="#" className="underline text-primary-5">
-                Sign in
-              </Link>
-            </div>
-          </Form>
-        )}
-      </Formik>
-      {isModalOpen && (
-        <OTPModal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          email={userEmail}
-        />
-      )}
-    </>
+              <ErrorMessage
+                name="recaptcha"
+                component="div"
+                className={formError}
+              />
+
+              <div>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                >
+                  {isSubmitting ? (
+                    <LoadingSpinner size="sm" color="white" />
+                  ) : (
+                    "Sign Up"
+                  )}
+                </Button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+
+        <div className="text-sm text-center">
+          Already have an account?{" "}
+          <Link
+            to="/login"
+            className="font-medium text-primary-600 hover:text-primary-500"
+          >
+            Log in
+          </Link>
+        </div>
+      </div>
+
+      {isModalOpen && <OTPModal email={userEmail} onClose={handleCloseModal} />}
+    </div>
   );
 };
 

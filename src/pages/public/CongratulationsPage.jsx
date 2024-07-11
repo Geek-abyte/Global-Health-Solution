@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaCheckCircle } from 'react-icons/fa';
 import confetti from 'canvas-confetti';
+import { PATH } from '../../routes/path';
 
 const CongratulationsPage = () => {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ const CongratulationsPage = () => {
   }, []);
 
   const handleGoToDashboard = () => {
-    navigate('/dashboard');
+    navigate(PATH.dashboard.dashboard);
   };
 
   return (

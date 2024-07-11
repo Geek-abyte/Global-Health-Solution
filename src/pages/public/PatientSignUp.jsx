@@ -1,18 +1,31 @@
-import React from 'react'
-import { doctors, logoWhite } from '../../assets'
-import { SignUpForm } from '../../components'
+import React from 'react';
+import { doctors, logoWhite } from '../../assets';
+import { SignUpForm } from '../../components';
 
 const PatientSignUp = () => {
   return (
-    <main className={`relative mx-auto md:w-max flex md:flex-row py-[100px] gap-x-[100px] pb-[200px]`}>
-      <div className='right flex-1 flex flex-col justify-center items-center hidden md:block'>
-        <img src={doctors} alt="image of doctors" />
+    <div className="flex flex-col md:flex-row min-h-screen">
+      <div className="hidden md:block md:w-1/2 sticky top-0 left-0 h-screen">
+        <div className="h-full flex items-center justify-center p-8">
+          <img
+            src={doctors}
+            alt="Image of doctors"
+            className="max-w-full max-h-full object-contain"
+          />
+        </div>
       </div>
-      <div className='left flex flex-1 justify-center items-center p-[20px] md:p-none'>
-        <SignUpForm />
-      </div>
-    </main>
-  )
-}
+      <main className="w-full md:w-1/2 flex flex-col justify-center items-center p-6 md:p-12">
+        <img
+          src={logoWhite}
+          alt="Logo"
+          className="w-40 mb-8 md:hidden"
+        />
+        <div className="w-full max-w-md">
+          <SignUpForm />
+        </div>
+      </main>
+    </div>
+  );
+};
 
-export default PatientSignUp
+export default PatientSignUp;

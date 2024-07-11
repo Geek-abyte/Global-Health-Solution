@@ -7,11 +7,24 @@ import { ChatBot, Footer, Navbar } from "../components";
 import PatientSidebar from "./PatientSidebar";
 import DoctorSidebar from "./DoctorSidebar";
 import { hideToast } from "../states/popUpSlice";
+import { setIncomingCall } from "../states/videoCallSlice";
+import IncomingCallNotification from "../components/IncomingCallNotification";
+import { socket } from "../services/sockets";
 
 const Layout = ({ layout, selected }) => {
   const dispatch = useDispatch();
   const { showToast, toastMessage, toastStatus, showModal, modalContent } =
     useSelector((state) => state.popUp);
+
+  useEffect(() => {
+    socket.on("incomingCall", (callData) => {
+      dispatch(setIncomingCall(callData));
+    });
+
+    return () => {
+      socket.off("incomingCall");
+    };
+  }, [dispatch]);
 
   useEffect(() => {
     if (showToast) {
@@ -31,6 +44,15 @@ const Layout = ({ layout, selected }) => {
     }
   }, [showToast, toastMessage, toastStatus, dispatch]);
 
+  const commonElements = (
+    <>
+      <ToastContainer />
+      {showModal && modalContent === "incomingCall" && (
+        <IncomingCallNotification />
+      )}
+    </>
+  );
+
   if (layout === "patient") {
     return (
       <div className="h-screen flex flex-col">
@@ -42,7 +64,7 @@ const Layout = ({ layout, selected }) => {
             <ChatBot />
           </section>
         </div>
-        <ToastContainer />
+        {commonElements}
       </div>
     );
   }
@@ -55,10 +77,9 @@ const Layout = ({ layout, selected }) => {
           <DoctorSidebar />
           <section className="w-full overflow-x-auto">
             <Outlet />
-            {/* <ChatBot /> */}
           </section>
         </div>
-        <ToastContainer />
+        {commonElements}
       </div>
     );
   }
@@ -67,9 +88,8 @@ const Layout = ({ layout, selected }) => {
     <>
       <Navbar />
       <Outlet />
-      {/* <ChatBot /> */}
       <Footer />
-      <ToastContainer />
+      {commonElements}
     </>
   );
 };

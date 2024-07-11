@@ -57,7 +57,6 @@ const DoctorDashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <section className="bg-white shadow-md rounded-lg p-6">
             <h2 className="text-xl font-semibold mb-4">Appointments Overview</h2>
-            <Bar data={chartData} options={chartOptions} />
           </section>
 
           <section className="bg-white shadow-md rounded-lg p-6">

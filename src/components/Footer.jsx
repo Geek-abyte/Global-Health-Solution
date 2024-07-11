@@ -18,7 +18,7 @@ const Footer = () => {
             <Link to={PATH.general.signUp}>
               <li>sign up</li>
             </Link>
-            <Link>
+            <Link to={PATH.general.terms}>
               <li>Term of Use</li>
             </Link>
           </ul>

@@ -24,6 +24,7 @@ import {
   Doctors,
   PrivacyPolicy,
   CookiePolicy,
+  Terms,
 } from "../pages/public";
 import { DEFAULT_PATH, PATH } from "./path";
 import { LoadingScreen } from "../components";
@@ -51,6 +52,7 @@ export default function Router() {
         { path: PATH.general.signIn, element: <SignIn /> },
         { path: PATH.general.privacy, element: <PrivacyPolicy /> },
         { path: PATH.general.cookie, element: <CookiePolicy /> },
+        { path: PATH.general.terms, element: <Terms /> },
         { path: PATH.general.page404, element: <NotFound /> },
         { path: "*", element: <Navigate to={PATH.general.page404} replace /> },
       ],
@@ -92,7 +94,7 @@ export default function Router() {
       element: (
         <PrivateRoute
           userRole={userRole}
-          requiredRole="specialist"
+          // requiredRole="specialist"
           route={<LazyLayout layout="doctor" />}
         />
       ),

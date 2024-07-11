@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import Button from "./Button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { showToast } from "../states/popUpSlice";
 import { loginUser } from "../states/user/authSlice";
@@ -12,6 +12,7 @@ const formInput =
   "border-[3px] border-primary-5 text-primary-2 rounded-[20px] overflow-hidden p-2 w-full";
 
 const SignInForm = () => {
+  const navigate = useNavigate()
   const dispatch = useDispatch();
   const { isAuthenticated, error, isLoading } = useSelector(
     (state) => state.auth
@@ -21,7 +22,6 @@ const SignInForm = () => {
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(showToast({ status: "success", message: "Login successful!" }));
-      console.log("this is it", isAuthenticated);
     }
     if (error) {
       // Parse the HTML error message
@@ -64,6 +64,7 @@ const SignInForm = () => {
         dispatch(loginUser(values)).then(() => {
           setSubmitting(false);
           setIsSubmitting(false);
+          navigate(PATH.dashboard.dashboard);
         });
       }}
     >

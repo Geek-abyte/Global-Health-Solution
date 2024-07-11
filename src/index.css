@@ -123,6 +123,7 @@ button:focus-visible {
 
 .custom-scrollbar::-webkit-scrollbar {
   width: 5px;
+  transition: ease-in .2;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -130,7 +131,7 @@ button:focus-visible {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #888;
+  background-color: #c9c9c9;
   border-radius: 4px;
 }
 

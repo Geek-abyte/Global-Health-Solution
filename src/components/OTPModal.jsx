@@ -5,10 +5,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { hideModal } from '../states/popUpSlice';
 import { useNavigate } from 'react-router-dom';
 import { PATH } from '../routes/path';
+import { loginUser } from '../states/user/authSlice';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-const OTPModal = ({ isOpen, email }) => {
+const OTPModal = ({ isOpen, email, userInfo }) => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -71,6 +72,7 @@ const OTPModal = ({ isOpen, email }) => {
       setIsResendDisabled(true);
       setResendTimer(60);
       dispatch(hideModal());
+      dispatch(loginUser(userInfo))
       navigate(PATH.general.congratulations);
     } catch (err) {
       setError(err.response?.data || 'An error occurred');
@@ -92,7 +94,7 @@ const OTPModal = ({ isOpen, email }) => {
   };
 
   const handleClose = () => {
-    dispatch(hideModal());
+    dispatch(hideModal({ content: "OTP verification" }));
   };
 
   if (!isOpen) return null;
@@ -129,6 +131,7 @@ const OTPModal = ({ isOpen, email }) => {
           <div className="mt-6 flex justify-between">
             <button
               type="submit"
+              onClick={handleSubmit}
               className="py-2 px-4 bg-primary-7 text-white font-semibold rounded-md hover:bg-primary-8 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-200"
             >
               Verify OTP

@@ -24,10 +24,10 @@ const SignUpForm = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const dispatch = useDispatch();
   const isModalOpen = useSelector((state) => state.popUp.showModal);
-  const [userEmail, setUserEmail] = useState("");
+  const [userValues, setUserValues] = useState();
 
-  const handleOpenModal = (email) => {
-    setUserEmail(email);
+  const handleOpenModal = (values) => {
+    setUserValues(values);
     dispatch(showModal({ content: "OTP verification" }));
   };
 
@@ -100,7 +100,7 @@ const SignUpForm = () => {
         }}
         onSubmit={(values, { setSubmitting, setStatus }) => {
           axiosInstance
-            .post(`${apiUrl}/api/users/register`, values)
+            .post(`${apiUrl}/api/users/register`, {...values, role: "user"})
             .then((response) => {
               if (response.status === 201) {
                 // Check if response status is 201 Created
@@ -111,7 +111,7 @@ const SignUpForm = () => {
                   })
                 );
                 setStatus({ success: true });
-                handleOpenModal(values.email);
+                handleOpenModal(values);
               } else {
                 throw new Error("Unexpected response status");
               }
@@ -321,8 +321,8 @@ const SignUpForm = () => {
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting ? <LoadingSpinner /> : "Sign Up"}
             </Button>
-            {status && status.success && (
-              <OTPModal email={userEmail} onClose={handleCloseModal} />
+            {isModalOpen && (
+              <OTPModal isOpen userInfo={userValues} email={userValues.email} onClose={handleCloseModal} />
             )}
           </Form>
         )}

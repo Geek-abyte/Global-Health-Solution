@@ -22,6 +22,7 @@ export const PATH = {
     congratulations: path(ROOT, "congratulations"),
     privacy: path(ROOT, "privacy-policy"),
     cookie: path(ROOT, "cookie-policy"),
+    terms: path(ROOT, "terms"),
   },
   dashboard: {
     default: PATIENT,
@@ -30,7 +31,7 @@ export const PATH = {
     edit: path(PATIENT, "profile/edit-profile"),
     ai: path(PATIENT, "ai"),
     prescription: path(PATIENT, "prescription/:key?"),
-    consultant: path(PATIENT, "consultant"),
+    consultant: path(PATIENT, "specialist"),
     history: path(PATIENT, "history")
   },
   doctor: {

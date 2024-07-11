@@ -8,9 +8,13 @@ import {
 } from "react-icons/fa";
 import { useNavigate } from "react-router";
 import { PATH } from "../../../routes/path";
+import { useDispatch } from "react-redux";
+import { initiateCall } from "../../../states/videoCallSlice";
 
-const SetupPage = () => {
+const SetupPage = ({ specialistCategory = "cardiology" }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const userId = "anything"; // Get the current user's ID
   const [isCameraEnabled, setIsCameraEnabled] = useState(false);
   const [isMicEnabled, setIsMicEnabled] = useState(false);
   const [localTrack, setLocalTrack] = useState(null);
@@ -50,8 +54,9 @@ const SetupPage = () => {
     setIsMicEnabled(!isMicEnabled);
   };
 
-  const onJoinCall = () => {
-    navigate(`${PATH.chat.default}d24`);
+  const onJoinCall = ({ category }) => {
+    dispatch(initiateCall({ userId, category }));
+    // navigate(`${PATH.chat.default}d24`);
   };
 
   return (
@@ -101,7 +106,7 @@ const SetupPage = () => {
           </button>
         </div>
         <button
-          onClick={onJoinCall}
+          onClick={onJoinCall("cardiology")}
           className="px-6 py-3 bg-indigo-600 text-white rounded-full shadow-md hover:bg-indigo-700 transition-colors duration-300"
         >
           Join Call

@@ -6,42 +6,52 @@ import { tableData } from "../../../data/tableData";
 const PatientDashboard = ({ className }) => {
   const isVerified = true; // Dummy variable for verification status
 
+  const cards = [
+    { title: "Chat with AI", image: cardbrain, color: "text-secondary-6" },
+    { title: "Consultant", image: carddoc, color: "text-primary-6" },
+    { title: "History", image: cardfile, color: "text-[#3AADD9]" },
+  ];
+
   return (
-    <main className={`main p-[40px] w-full ${className}`}>
+    <main className={`p-4 md:p-8 w-full ${className}`}>
       {!isVerified && (
-        <div className="flex items-center justify-between mb-[30px] p-[20px] bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
-          <div>
-            <h2 className="text-[24px] font-bold">
-              Email Verification Required
-            </h2>
-            <p className="text-[18px]">
-              Please verify your Email to access all features.
-            </p>
-          </div>
+        <div className="mb-6 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-r-md shadow-md">
+          <h2 className="text-xl font-bold mb-2">
+            Email Verification Required
+          </h2>
+          <p className="mb-4">
+            Please verify your Email to access all features.
+          </p>
           <a
             href="/otp-verification"
             target="_blank"
-            className="px-[20px] py-[10px] bg-yellow-500 text-white rounded-md shadow-md hover:bg-yellow-600 transition-colors duration-300"
+            className="inline-block px-4 py-2 bg-yellow-500 text-white rounded-md shadow-md hover:bg-yellow-600 transition-colors duration-300"
           >
             Verify Now
           </a>
         </div>
       )}
-      <div className="flex flex-row items-center justify-between mb-[90px]">
-        <div className="card flex flex-col gap-[10px] text-[20px] font-bold text-secondary-6 rounded-md border-2 border-secondary-6 h-[200px] w-[200px] hover:scale-110 transition-transform duration-300 flex items-center justify-center shadow-lg">
-          <img src={cardbrain} className="w-[80px]" alt="" />
-          Chat with AI
-        </div>
-        <div className="card flex flex-col gap-[10px] text-[20px] font-bold text-primary-6 rounded-md border-2 border-secondary-6 h-[200px] w-[200px] hover:scale-110 transition-transform duration-300 flex items-center justify-center shadow-lg">
-          <img src={carddoc} className="w-[80px]" alt="" />
-          Consultant
-        </div>
-        <div className="card flex flex-col gap-[10px] text-[20px] font-bold text-[#3AADD9] rounded-md border-2 border-secondary-6 h-[200px] w-[200px] hover:scale-110 transition-transform duration-300 flex items-center justify-center shadow-lg">
-          <img src={cardfile} className="w-[80px]" alt="" />
-          History
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        {cards.map((card, index) => (
+          <div
+            key={index}
+            className={`flex flex-col items-center justify-center p-6 rounded-lg border-2 border-secondary-6 ${card.color} shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}
+          >
+            <img src={card.image} className="w-20 h-20 mb-4" alt="" />
+            <h3 className="text-lg font-bold text-center">{card.title}</h3>
+          </div>
+        ))}
+      </div>
+
+      <div className="bg-white rounded-lg shadow-md overflow-hidden">
+        <h2 className="text-xl font-bold p-4 bg-gray-50 border-b">
+          Recent Activities
+        </h2>
+        <div className="overflow-x-auto">
+          <DTable data={tableData.slice(0, 5)} />
         </div>
       </div>
-      <DTable data={tableData.slice(0, 5)} />
     </main>
   );
 };

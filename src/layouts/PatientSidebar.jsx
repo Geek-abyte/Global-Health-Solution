@@ -1,97 +1,71 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { logoDark, userImage } from '../assets';
-import { LuLayoutDashboard, LuUser } from "react-icons/lu";
-import { HiChip } from "react-icons/hi";
+import React from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { logoDark, logoWhite, userImage } from '../assets';
+import { LuLayoutDashboard, LuUser, LuLogOut } from "react-icons/lu";
 import { BsCapsulePill } from "react-icons/bs";
 import { FaRegHospital, FaUserDoctor } from "react-icons/fa6";
 import { PATH } from '../routes/path';
+import { useDispatch } from 'react-redux';
+import { showModal } from '../states/popUpSlice';
 
-const PatientSidebar = () => {
-  const location = useLocation()
-  const [selectedItem, setSelectedItem] = useState('dashboard');
+const PatientSidebar = ({ isOpen, onClose }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    switch (location.pathname) {
-      case (PATH.dashboard.profile):
-        setSelectedItem("profile");
-        break;
-      // case (PATH.dashboard.ai):
-      //   setSelectedItem("Ai");
-      //   break;
-      case (PATH.dashboard.prescription):
-        setSelectedItem("prescription");
-        break;
-      case (PATH.dashboard.consultant):
-        setSelectedItem("consultant");
-        break;
-      case (PATH.dashboard.history):
-        setSelectedItem("medical-history");
-        break;
-      default:
-        setSelectedItem("dashboard");
-        break;
-    }
-  }, [location.pathname])
-  
+  const navItems = [
+    { path: PATH.dashboard.dashboard, icon: <LuLayoutDashboard />, label: "Dashboard" },
+    { path: PATH.dashboard.profile, icon: <LuUser />, label: "Profile" },
+    { path: PATH.dashboard.consultant, icon: <FaUserDoctor />, label: "Specialist" },
+    { path: PATH.dashboard.prescription, icon: <BsCapsulePill />, label: "Prescription" },
+    { path: PATH.dashboard.history, icon: <FaRegHospital />, label: "Medical History" },
+  ];
+
+  const handleLogout = () => {
+    dispatch(showModal({ content: "OTP verification" }));
+  };
+
+  const NavLink = ({ item }) => (
+    <Link
+      to={item.path}
+      className={`px-4 py-3 my-1 text-lg font-medium flex items-center rounded-lg transition-colors duration-200
+        ${location.pathname === item.path
+          ? 'bg-primary-7 text-white'
+          : 'text-primary-2 hover:bg-primary-5 hover:text-white'
+        }`}
+      onClick={onClose}
+    >
+      <span className="mr-3">{item.icon}</span>
+      {item.label}
+    </Link>
+  );
 
   return (
-    <div className="relative flex flex-col w-64 h-full bg-primary-6 rounded-r-md text-white overflow-hidden">
-      <div className="image flex items-center px-6 w-full py-[30px] ">
-        <img src={userImage} alt="" className='w-[70px]'/>
+    <div className={`fixed inset-y-0 left-0 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out md:flex md:flex-col w-64 bg-white shadow-lg overflow-y-hidden z-40`}>
+      <div className="flex flex-col items-center p-4 border-b border-gray-200">
+        <img src={userImage} alt="User" className="w-20 h-20 rounded-full mb-2"/>
+        <h2 className="text-xl font-semibold text-gray-800">John Doe</h2>
+        <p className="text-sm text-gray-600">Patient</p>
       </div>
-      <div className="flex flex-col flex-1 overflow-y-auto">
-        <Link
-          to={PATH.dashboard.dashboard}
-          className={`px-6 py-3 text-[20px] font-medium flex flex-row justify-start items-center ${
-            selectedItem === 'dashboard' ? 'text-secondary-6' : ''
-          }`}
+
+      <nav className="flex-1 px-4 py-4 custom-scrollbar overflow-y-auto">
+        {navItems.map((item, index) => (
+          <NavLink key={index} item={item} />
+        ))}
+      </nav>
+
+      <div className="p-4 border-t border-gray-200">
+        <button
+          onClick={handleLogout}
+          className="w-full px-4 py-3 text-lg font-medium flex items-center rounded-lg transition-colors duration-200 text-primary-2 hover:bg-primary-5 hover:text-white"
         >
-         <LuLayoutDashboard className='mr-2'/> Dashboard
-        </Link>
-        <Link
-          to={PATH.dashboard.profile}
-          className={`px-6 py-3 text-[20px] font-medium flex flex-row justify-start items-center ${
-            selectedItem === 'profile' ? 'text-secondary-6' : ''
-          }`}
-        >
-         <LuUser className='mr-2'/> Profile
-        </Link>
-        {/* <Link
-          to={PATH.dashboard.ai}
-          className={`px-6 py-3 text-[20px] font-medium flex flex-row justify-start items-center ${
-            selectedItem === 'Ai' ? 'text-secondary-6' : ''
-          }`}
-        >
-         <HiChip className='mr-2'/> AI
-        </Link>    */}
-        <Link
-          to={PATH.dashboard.consultant}
-          className={`px-6 py-3 text-[20px] font-medium flex flex-row justify-start items-center ${
-            selectedItem === 'consultant' ? 'text-secondary-6' : ''
-          }`}
-        >
-         <FaUserDoctor className='mr-2'/> Consultant
-        </Link>   
-        <Link
-          to={PATH.dashboard.prescription}
-          className={`px-6 py-3 text-[20px] font-medium flex flex-row justify-start items-center ${
-            selectedItem === 'prescription' ? 'text-secondary-6' : ''
-          }`}
-        >
-         <BsCapsulePill className='mr-2'/> Prescription
-        </Link> 
-        <Link
-          to={PATH.dashboard.history}
-          className={`px-6 py-3 text-[20px] font-medium flex flex-row justify-start items-center ${
-            selectedItem === 'medical-history' ? 'text-secondary-6' : ''
-          }`}
-        >
-         <FaRegHospital className='mr-2'/> Medical History
-        </Link> 
+          <span className="mr-3"><LuLogOut /></span>
+          Logout
+        </button>
       </div>
-      <div className="absolute bottom-2 flex items-center justify-center h-16 pb-5 px-[20px] w-full">
-        <img src={logoDark} alt="" className='w-[100px]'/>
+
+      <div className="p-4 border-t border-gray-200">
+        <img src={logoWhite} alt="Logo" className="w-32 mx-auto"/>
       </div>
     </div>
   );

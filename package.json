@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@headlessui/react": "^1.7.18",
+    "@headlessui/react": "^1.7.19",
     "@reduxjs/toolkit": "^2.2.3",
     "agora-rtc-sdk-ng": "^4.21.0",
     "axios": "^1.7.2",
@@ -21,6 +21,7 @@
     "dotenv": "^16.4.5",
     "express-async-handler": "^1.2.0",
     "formik": "^2.4.5",
+    "framer-motion": "^11.2.13",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.0",
     "pure-react-carousel": "^1.30.1",
