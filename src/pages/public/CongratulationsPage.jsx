@@ -3,9 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { FaCheckCircle } from 'react-icons/fa';
 import confetti from 'canvas-confetti';
 import { PATH } from '../../routes/path';
+import { useSelector } from 'react-redux';
 
 const CongratulationsPage = () => {
   const navigate = useNavigate();
+  const userRole = useSelector((state) => state.auth.userRole);
+
 
   useEffect(() => {
     // Fire the confetti animation when the component mounts
@@ -17,7 +20,8 @@ const CongratulationsPage = () => {
   }, []);
 
   const handleGoToDashboard = () => {
-    navigate(PATH.dashboard.dashboard);
+    if (userRole == "user") navigate(PATH.dashboard.dashboard);
+    else if (userRole == "specialist") navigate(PATH.doctor.dashboard);
   };
 
   return (

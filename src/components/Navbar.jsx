@@ -31,7 +31,7 @@ const Navbar = ({ className }) => {
   }, [dispatch, isAuthenticated]);
 
   const handleLogout = () => {
-    dispatch(showModal({ content: "OTP verification" }));
+    dispatch(showModal({ content: "logout" }));
   };
 
   const NavLink = ({ to, children }) => (
@@ -88,7 +88,7 @@ const Navbar = ({ className }) => {
                       borderRadius="rounded-full"
                       border="border-2 border-primary-6"
                       hoverEffect="hover:bg-primary-6 hover:text-white transition-colors duration-200"
-                      onClick={() => navigate(PATH.general.signIn)}
+                      onClick={() => navigate(PATH.general.loginCrossroad)}
                     >
                       Log In
                     </Button>
@@ -218,7 +218,7 @@ const Navbar = ({ className }) => {
         )}
       </Transition>
 
-      {openModal == "OTP verification" && <LogoutModal />}
+      {openModal == "logout" && <LogoutModal />}
     </nav>
   );
 };

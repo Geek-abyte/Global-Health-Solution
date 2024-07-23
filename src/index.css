@@ -161,3 +161,35 @@ button:focus-visible {
   opacity: 1;
   transform: translateY(0);
 }
+
+/* Add this to your Tailwind CSS file */
+.video-call-container {
+  @apply flex flex-col items-center justify-center h-screen bg-gray-800;
+}
+
+.local-video,
+.remote-video-container div {
+  @apply w-64 h-64 bg-black rounded-lg;
+}
+
+.controls {
+  @apply flex space-x-4 mt-4;
+}
+
+.btn-accept,
+.btn-reject,
+.btn-end {
+  @apply px-4 py-2 rounded-lg text-white;
+}
+
+.btn-accept {
+  @apply bg-green-500 hover:bg-green-600;
+}
+
+.btn-reject {
+  @apply bg-red-500 hover:bg-red-600;
+}
+
+.btn-end {
+  @apply bg-gray-500 hover:bg-gray-600;
+}

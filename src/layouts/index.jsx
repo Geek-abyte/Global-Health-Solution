@@ -9,22 +9,11 @@ import DoctorSidebar from "./DoctorSidebar";
 import { hideToast } from "../states/popUpSlice";
 import { setIncomingCall } from "../states/videoCallSlice";
 import IncomingCallNotification from "../components/IncomingCallNotification";
-import { socket } from "../services/sockets";
 
 const Layout = ({ layout, selected }) => {
   const dispatch = useDispatch();
   const { showToast, toastMessage, toastStatus, showModal, modalContent } =
     useSelector((state) => state.popUp);
-
-  useEffect(() => {
-    socket.on("incomingCall", (callData) => {
-      dispatch(setIncomingCall(callData));
-    });
-
-    return () => {
-      socket.off("incomingCall");
-    };
-  }, [dispatch]);
 
   useEffect(() => {
     if (showToast) {

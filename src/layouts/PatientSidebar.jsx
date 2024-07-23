@@ -1,17 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { logoDark, logoWhite, userImage } from '../assets';
 import { LuLayoutDashboard, LuUser, LuLogOut } from "react-icons/lu";
 import { BsCapsulePill } from "react-icons/bs";
 import { FaRegHospital, FaUserDoctor } from "react-icons/fa6";
 import { PATH } from '../routes/path';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { showModal } from '../states/popUpSlice';
 
 const PatientSidebar = ({ isOpen, onClose }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { user, isAuthenticated } = useSelector((state) => state.auth)
 
   const navItems = [
     { path: PATH.dashboard.dashboard, icon: <LuLayoutDashboard />, label: "Dashboard" },
@@ -39,6 +40,10 @@ const PatientSidebar = ({ isOpen, onClose }) => {
       {item.label}
     </Link>
   );
+
+  useEffect(() => {
+
+  }, [user, isAuthenticated])
 
   return (
     <div className={`fixed inset-y-0 left-0 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out md:flex md:flex-col w-64 bg-white shadow-lg overflow-y-hidden z-40`}>

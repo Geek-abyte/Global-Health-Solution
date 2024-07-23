@@ -16,3 +16,4 @@ export { default as LoadingSpinner } from "./LoadingSpinner/LoadingSpinner";
 export { default as OTPModal } from "./OTPModal";
 export { default as PricingModal } from "./PricingModal";
 export { default as LogoutModal } from "./LogoutModal";
+export { default as CheckOutForm } from "./CheckOutForm"

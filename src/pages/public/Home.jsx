@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 const Home = () => {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
+  const iconlist = ['medical supplies', 'medical equipment', 'Air ambulance services']
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 768px)');
@@ -68,8 +69,7 @@ const Home = () => {
           <div key={index} className="flex flex-col sm:flex-row gap-4 text-white items-center justify-center text-center sm:text-left">
             <img src={icon} alt="" className="w-[55px] h-[55px]" />
             <div className="flex flex-col">
-              <p className="text-2xl md:text-[32px] font-extrabold">Title</p>
-              <p className="text-lg md:text-[20px] font-semibold">Lorem ipsum dolor sit amet. </p>
+              <p className="text-2xl md:text-[32px] font-bold">{iconlist[index]}</p>
             </div>
           </div>
         ))}

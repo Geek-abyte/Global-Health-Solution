@@ -11,8 +11,8 @@ const DoctorSidebar = ({ className }) => {
 
   useEffect(() => {
     switch (location.pathname) {
-      case (PATH.doctor.calender):
-        setSelectedItem("calender");
+      case (PATH.doctor.profile):
+        setSelectedItem("profile");
         break;
       case (PATH.dashboard.history):
         setSelectedItem("medical-history");
@@ -30,7 +30,7 @@ const DoctorSidebar = ({ className }) => {
       </div>
       <div className="flex flex-col flex-1 overflow-y-auto items-center">
         <Link
-          to={"#"}
+          to={PATH.doctor.dashboard}
           className={`px-4 py-3 text-[20px] font-medium flex flex-row justify-start items-center ${
             selectedItem === 'dashboard' ? 'text-[#FFE500]' : ''
           }`}
@@ -38,7 +38,7 @@ const DoctorSidebar = ({ className }) => {
           <LuLayoutDashboard size={25} className='mr-2'/>
         </Link>
         <Link
-          to={"#"}
+          to={PATH.doctor.profile}
           className={`px-4 py-3 text-[20px] font-medium flex flex-row justify-start items-center ${
             selectedItem === 'profile' ? 'text-[#FFE500]' : ''
           }`}

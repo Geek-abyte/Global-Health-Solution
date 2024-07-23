@@ -1,5 +1,3 @@
-// src/services/sockets.js
-
 import io from 'socket.io-client';
 import store from '../store';
 import { 
@@ -10,8 +8,10 @@ import {
   updateCallStatus
 } from '../states/videoCallSlice';
 import { showToast } from '../states/popUpSlice';
+import { useNavigate } from 'react-router';
+import { PATH } from '../routes/path';
 
-const SOCKET_URL = 'http://localhost:8000/api'; 
+const SOCKET_URL = 'http://localhost:8000';
 
 export const socket = io(SOCKET_URL, {
   autoConnect: false,
@@ -25,6 +25,14 @@ export const connectSocket = (userId) => {
 
   socket.auth = { userId };
   socket.connect();
+
+  console.log(`Attempting to connect with userId: ${userId}`);
+
+  socket.on('connect', () => {
+    console.log(`Connected with ID: ${socket.id}`);
+    console.log(userId)
+    socket.emit('join', userId); // Emit join event upon connection
+  });
 
   socket.on('connect_error', (error) => {
     console.error('Connection error:', error);
@@ -42,16 +50,19 @@ export const connectSocket = (userId) => {
   });
 
   socket.on('callAccepted', (callData) => {
+    console.log('Call accepted: ', callData);
     store.dispatch(callAccepted(callData));
     store.dispatch(showToast({ message: 'Call accepted', status: 'success' }));
   });
 
   socket.on('callRejected', (callData) => {
+    console.log('Call rejected:', callData);
     store.dispatch(callRejected(callData));
     store.dispatch(showToast({ message: 'Call rejected', status: 'info' }));
   });
 
   socket.on('callEnded', (callData) => {
+    console.log('Call ended:', callData);
     store.dispatch(callEnded(callData));
     store.dispatch(showToast({ message: 'Call ended', status: 'info' }));
   });

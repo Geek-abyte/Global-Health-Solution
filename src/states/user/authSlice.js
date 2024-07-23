@@ -6,12 +6,12 @@ export const loginUser = createAsyncThunk(
   async (userData, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.post("/users/login", userData);
-      const { token } = response.data;
+      const { token, role } = response.data;
       localStorage.setItem("authToken", token);
+      localStorage.setItem("userRole", role);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
-      console.log('Nay!');
     }
   }
 );
@@ -34,12 +34,15 @@ const authSlice = createSlice({
     user: null,
     token: localStorage.getItem("authToken") || null,
     isAuthenticated: !!localStorage.getItem("authToken"),
+    userRole: localStorage.getItem("userRole") || null,
     loading: false,
     error: null,
   },
   reducers: {
     logout: (state) => {
       localStorage.removeItem("authToken");
+      localStorage.removeItem("userRole");
+      state.userRole = null;
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
@@ -54,6 +57,8 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.token = action.payload.token;
         state.isAuthenticated = true;
+        state.userRole = action.payload.role;
+        state.userId = action.payload.userId;
         state.loading = false;
       })
       .addCase(loginUser.rejected, (state, action) => {

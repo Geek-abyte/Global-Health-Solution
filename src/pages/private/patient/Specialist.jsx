@@ -7,14 +7,22 @@ import { showModal as showModalAction, hideModal } from '../../../states/popUpSl
 import { MdOutlineClose } from 'react-icons/md';
 import { PATH } from '../../../routes/path';
 import { cards } from '../../../data/cards';
+import { updateSpecialistCategory } from '../../../states/videoCallSlice';
 
 const Specialist = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { showModal, modalContent } = useSelector((state) => state.popUp);
 
+  const onCardSelected = (category) => {
+    dispatch(updateSpecialistCategory(category));
+    dispatch(showModalAction({ content: "pricingModal" }))
+  }
+
   const closeModal = () => dispatch(hideModal());
-  const handleGoToDoctor = () => navigate(PATH.chat.default);
+  const handleGoToDoctor = () => {
+    navigate(PATH.chat.default);
+  }
 
   const PricingCard = ({ title, description, duration, price }) => (
     <div className="w-full md:w-1/3 px-4 mb-8 md:mb-0">
@@ -45,7 +53,7 @@ const Specialist = () => {
             <ImageCard 
               key={index} 
               image={card.image} 
-              clickFunc={() => dispatch(showModalAction({ content: "pricingModal" }))}
+              clickFunc={() => onCardSelected(card.content)}
               className="transition-transform duration-300 hover:scale-105"
             >
               {card.content}

@@ -11,13 +11,21 @@ import { PATH } from "../routes/path";
 const formInput =
   "border-[3px] border-primary-5 text-primary-2 rounded-[20px] overflow-hidden p-2 w-full";
 
-const SignInForm = () => {
+const SignInForm = ({ specialist, client }) => {
   const navigate = useNavigate()
   const dispatch = useDispatch();
   const { isAuthenticated, error, isLoading } = useSelector(
     (state) => state.auth
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleNavigate = () => {
+    if (client) {
+      navigate(PATH.dashboard.dashboard);
+    } else if (specialist) {
+      navigate(PATH.doctor.dashboard);
+    }
+  }
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -64,7 +72,7 @@ const SignInForm = () => {
         dispatch(loginUser(values)).then(() => {
           setSubmitting(false);
           setIsSubmitting(false);
-          navigate(PATH.dashboard.dashboard);
+          handleNavigate()
         });
       }}
     >

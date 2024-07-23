@@ -22,7 +22,7 @@ const SignIn = () => {
             <p className="text-center text-gray-600 mb-6">
               Please sign in to access your account
             </p>
-            <SignInForm />
+            <SignInForm client />
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Are you a healthcare specialist?{' '}

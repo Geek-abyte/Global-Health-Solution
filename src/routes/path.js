@@ -18,7 +18,9 @@ export const PATH = {
     signUp: path(ROOT, "auth/sign-up"),
     doctorSignUp: path(ROOT, "auth/sign-up/doctors"),
     signUpPointer: path(ROOT, "auth/sign-up/pointer"),
+    loginCrossroad: path(ROOT, "auth/sign-in/crossroad"),
     signIn: path(ROOT, "auth/sign-in"),
+    specialistSignIn: path(ROOT, "auth/sign-in/specialist"),
     congratulations: path(ROOT, "congratulations"),
     privacy: path(ROOT, "privacy-policy"),
     cookie: path(ROOT, "cookie-policy"),
@@ -37,7 +39,7 @@ export const PATH = {
   doctor: {
     default: DOCTOR,
     dashboard: path(DOCTOR, "dashboard"),
-    profile: path(DOCTOR, "calender"),
+    profile: path(DOCTOR, "profile"),
     chat: path(DOCTOR, "chat"),
   },
   blog: {
@@ -46,7 +48,6 @@ export const PATH = {
   },
   chat: {
     default: CHAT,
-    meeting: path(CHAT, ":callId"),
   }
 };
 

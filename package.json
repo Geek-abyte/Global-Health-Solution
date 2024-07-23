@@ -13,6 +13,8 @@
   "dependencies": {
     "@headlessui/react": "^1.7.19",
     "@reduxjs/toolkit": "^2.2.3",
+    "@stripe/react-stripe-js": "^2.7.3",
+    "@stripe/stripe-js": "^4.1.0",
     "agora-rtc-sdk-ng": "^4.21.0",
     "axios": "^1.7.2",
     "bcryptjs": "^2.4.3",

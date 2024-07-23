@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import axios from "../utils/axiosConfig";
+import axiosInstance from "../utils/axiosConfig"; 
 import Button from "./Button";
 import { LoadingSpinner } from "./";
 import {
@@ -25,6 +25,8 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { showToast, showModal, hideModal } from "../states/popUpSlice";
 import OTPModal from "./OTPModal";
+import { countries } from "../utils/constants";
+import { specialties } from "../data/speciality";
 
 const formInput =
   "border border-gray-300 text-gray-900 rounded-lg p-3 w-full bg-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition duration-200";
@@ -34,42 +36,17 @@ const formError = "text-red-500 text-xs mt-1";
 const sitekey = import.meta.env.VITE_APP_RECAPTCHA_SITE_KEY;
 const apiUrl = import.meta.env.VITE_API_URL;
 
-const specialties = [
-  "Allergy and Immunology",
-  "Anesthesiology",
-  "Dermatology",
-  "Diagnostic Radiology",
-  "Emergency Medicine",
-  "Family Medicine",
-  "Internal Medicine",
-  "Medical Genetics",
-  "Neurology",
-  "Nuclear Medicine",
-  "Obstetrics and Gynecology",
-  "Ophthalmology",
-  "Pathology",
-  "Pediatrics",
-  "Physical Medicine and Rehabilitation",
-  "Preventive Medicine",
-  "Psychiatry",
-  "Radiation Oncology",
-  "Surgery",
-  "Urology",
-  "Cardiology",
-  "Endocrinology",
-  "Gastroenterology",
-  "Hematology",
-];
-
 const SpecialistSignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const dispatch = useDispatch();
   const isModalOpen = useSelector((state) => state.popUp.showModal);
-  const [userEmail, setUserEmail] = useState("");
+  const [uploadedLicense, setUploadedLicense] = useState(null);
+  const [uploadedCertificate, setUploadedCertificate] = useState(null);
+  const [userValues, setUserValues] = useState();
 
-  const handleOpenModal = (email) => {
-    setUserEmail(email);
+  const handleOpenModal = (values) => {
+    setUserValues(values);
     dispatch(showModal({ content: "OTP verification" }));
   };
 
@@ -103,7 +80,7 @@ const SpecialistSignUpForm = () => {
             currentPracticingLicense: null,
             fullRegistrationCertificate: null,
             doctorsRegistrationNumber: "",
-            speciality: "",
+            specialistCategory: "",
             agreeTerms: false,
             recaptcha: "",
           }}
@@ -139,7 +116,7 @@ const SpecialistSignUpForm = () => {
               errors.fullRegistrationCertificate = "Required";
             if (!values.doctorsRegistrationNumber)
               errors.doctorsRegistrationNumber = "Required";
-            if (!values.speciality) errors.speciality = "Required";
+            if (!values.specialistCategory) errors.specialistCategory = "Required";
             if (!values.agreeTerms)
               errors.agreeTerms = "You must agree to the terms and conditions";
             if (!values.recaptcha)
@@ -147,17 +124,14 @@ const SpecialistSignUpForm = () => {
             return errors;
           }}
           onSubmit={(values, { setSubmitting, setStatus }) => {
-            const formData = new FormData();
-            for (let key in values) {
-              formData.append(key, values[key]);
-            }
-
-            axios
-              .post(`${apiUrl}/api/users/register`, formData, {
-                headers: { "Content-Type": "multipart/form-data" },
+            axiosInstance
+              .post(`${apiUrl}/api/users/register`, {
+                ...values,
+                role: "specialist",
               })
               .then((response) => {
                 if (response.status === 201) {
+                  // Check if response status is 201 Created
                   dispatch(
                     showToast({
                       status: "success",
@@ -165,7 +139,7 @@ const SpecialistSignUpForm = () => {
                     })
                   );
                   setStatus({ success: true });
-                  handleOpenModal(values.email);
+                  handleOpenModal(values);
                 } else {
                   throw new Error("Unexpected response status");
                 }
@@ -174,12 +148,14 @@ const SpecialistSignUpForm = () => {
                 let errorMessage = "Signup failed. Please try again.";
                 if (error.response) {
                   if (
-                    error.response.data?.includes("reCAPTCHA validation failed")
+                    error.response?.data?.includes(
+                      "reCAPTCHA validation failed"
+                    )
                   ) {
                     errorMessage =
                       "reCAPTCHA validation failed. Please try again.";
                   } else if (
-                    error.response.data?.includes("User already exists")
+                    error.response?.data?.includes("User already exists")
                   ) {
                     errorMessage = "User already exists.";
                   }
@@ -325,7 +301,11 @@ const SpecialistSignUpForm = () => {
                           className={`${formInput} pl-10`}
                         >
                           <option value="">Select Country</option>
-                          {/* Add country options here */}
+                          {countries.map((country, index) => (
+                            <option key={index} value={country}>
+                              {country}
+                            </option>
+                          ))}
                         </Field>
                         <FaGlobe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                       </div>
@@ -472,10 +452,9 @@ const SpecialistSignUpForm = () => {
                       accept=".jpg,.jpeg,.pdf,.doc"
                       className="hidden"
                       onChange={(event) => {
-                        setFieldValue(
-                          "currentPracticingLicense",
-                          event.currentTarget.files[0]
-                        );
+                        const file = event.currentTarget.files[0];
+                        setFieldValue("currentPracticingLicense", file);
+                        setUploadedLicense(file);
                       }}
                     />
                     <label
@@ -483,9 +462,16 @@ const SpecialistSignUpForm = () => {
                       className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer transition duration-150 ease-in-out"
                     >
                       <FaCloudUploadAlt className="mr-2" />
-                      Upload License
+                      {uploadedLicense
+                        ? uploadedLicense.name
+                        : "Upload License"}
                     </label>
                   </div>
+                  {uploadedLicense && (
+                    <p className="mt-2 text-sm text-green-600">
+                      File uploaded: {uploadedLicense.name}
+                    </p>
+                  )}
                   <ErrorMessage
                     name="currentPracticingLicense"
                     component="div"
@@ -507,10 +493,9 @@ const SpecialistSignUpForm = () => {
                       accept=".jpg,.jpeg,.pdf,.doc"
                       className="hidden"
                       onChange={(event) => {
-                        setFieldValue(
-                          "fullRegistrationCertificate",
-                          event.currentTarget.files[0]
-                        );
+                        const file = event.currentTarget.files[0];
+                        setFieldValue("fullRegistrationCertificate", file);
+                        setUploadedCertificate(file);
                       }}
                     />
                     <label
@@ -518,9 +503,16 @@ const SpecialistSignUpForm = () => {
                       className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer transition duration-150 ease-in-out"
                     >
                       <FaCloudUploadAlt className="mr-2" />
-                      Upload Certificate
+                      {uploadedCertificate
+                        ? uploadedCertificate.name
+                        : "Upload Certificate"}
                     </label>
                   </div>
+                  {uploadedCertificate && (
+                    <p className="mt-2 text-sm text-green-600">
+                      File uploaded: {uploadedCertificate.name}
+                    </p>
+                  )}
                   <ErrorMessage
                     name="fullRegistrationCertificate"
                     component="div"
@@ -551,27 +543,27 @@ const SpecialistSignUpForm = () => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="speciality" className={formLabel}>
+                  <label htmlFor="specialistCategory" className={formLabel}>
                     Speciality
                   </label>
                   <div className="relative">
                     <Field
                       as="select"
-                      name="speciality"
-                      id="speciality"
+                      name="specialistCategory"
+                      id="specialistCategory"
                       className={`${formInput} pl-10`}
                     >
                       <option value="">Select Speciality</option>
-                      {specialties.map((specialty, index) => (
-                        <option key={index} value={specialty}>
-                          {specialty}
+                      {specialties.map((speciality, index) => (
+                        <option key={index} value={speciality}>
+                          {speciality}
                         </option>
                       ))}
                     </Field>
                     <FaUserMd className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   </div>
                   <ErrorMessage
-                    name="speciality"
+                    name="specialistCategory"
                     component="div"
                     className={formError}
                   />
@@ -617,16 +609,8 @@ const SpecialistSignUpForm = () => {
               />
 
               <div>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                >
-                  {isSubmitting ? (
-                    <LoadingSpinner size="sm" color="white" />
-                  ) : (
-                    "Sign Up"
-                  )}
+                <Button type="submit" disabled={isSubmitting} className={'m-auto w-full'}>
+                  {isSubmitting ? <LoadingSpinner /> : "Sign Up"}
                 </Button>
               </div>
             </Form>
@@ -644,7 +628,14 @@ const SpecialistSignUpForm = () => {
         </div>
       </div>
 
-      {isModalOpen && <OTPModal email={userEmail} onClose={handleCloseModal} />}
+      {isModalOpen && (
+        <OTPModal
+          isOpen
+          userInfo={userValues}
+          email={userValues.email}
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 };
