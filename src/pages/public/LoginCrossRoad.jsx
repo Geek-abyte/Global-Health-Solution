@@ -18,7 +18,7 @@ const LoginCrossroad = () => {
         <div className="mt-8 space-y-6">
           <div className="grid grid-cols-1 gap-6">
             <Link
-              to="/specialist-signin"
+              to={PATH.general.specialistSignIn}
               className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-lg font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
@@ -27,7 +27,7 @@ const LoginCrossroad = () => {
               I'm a Healthcare Specialist
             </Link>
             <Link
-              to={PATH.general.loginCrossroad}
+              to={PATH.general.signIn}
               className="group relative w-full flex justify-center py-4 px-4 border border-transparent text-lg font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
             >
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">

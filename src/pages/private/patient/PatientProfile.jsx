@@ -1,22 +1,39 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { userImage } from '../../../assets';
+import { fetchUserProfile } from '../../../states/user/authSlice'; 
 import { Button } from '../../../components';
 import { IoLocationOutline } from "react-icons/io5";
 import { LuMail, LuPhoneCall } from 'react-icons/lu';
 import { PATH } from '../../../routes/path';
+import { defaultUser } from '../../../assets';
 
 const PatientProfile = ({ className }) => {
+  const dispatch = useDispatch();
+  const { user, loading, error } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    dispatch(fetchUserProfile());
+  }, [dispatch]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <main className={`main p-4 md:p-8 w-full ${className}`}>
       <div className="mb-8">
         <div className="bg-white shadow-lg rounded-2xl overflow-hidden">
           <div className="bg-primary-1 p-6 md:p-8">
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-              <img className="border-4 rounded-full w-24 h-24 md:w-32 md:h-32 border-white object-cover" src={userImage} alt="User" />
+              <img className="border-4 rounded-full w-24 h-24 md:w-32 md:h-32 border-white object-cover" src={user?.profileImage || defaultUser } alt="User" />
               <div className='flex flex-col items-center md:items-start'>
-                <h1 className='font-bold text-2xl md:text-3xl text-primary-7 mb-2'>West Brown</h1>
-                <div className="text-primary-6 mb-4">Male</div>
+                <h1 className='font-bold text-2xl md:text-3xl text-primary-7 mb-2'>{user?.firstName} {user?.lastName}</h1>
+                <div className="text-primary-6 mb-4">{user?.gender}</div>
                 <Link to={PATH.dashboard.edit}>
                   <Button
                     background="bg-primary-6 hover:bg-primary-7 transition-colors"
@@ -31,9 +48,9 @@ const PatientProfile = ({ className }) => {
           </div>
           <div className="p-6 md:p-8 text-sm md:text-base">
             <div className="flex flex-col md:flex-row gap-4 md:gap-8 justify-center items-center text-primary-6">
-              <div className="flex items-center gap-2"><IoLocationOutline className="text-xl" />Liverpool, England</div>
-              <div className="flex items-center gap-2"><LuPhoneCall className="text-xl" />+44 345 678 85</div>
-              <div className="flex items-center gap-2"><LuMail className="text-xl" />westbrown@mail.com</div>
+              <div className="flex items-center gap-2"><IoLocationOutline className="text-xl" />{user?.location}</div>
+              <div className="flex items-center gap-2"><LuPhoneCall className="text-xl" />{user?.phone}</div>
+              <div className="flex items-center gap-2"><LuMail className="text-xl" />{user?.email}</div>
             </div>
           </div>
         </div>
@@ -41,31 +58,34 @@ const PatientProfile = ({ className }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <InfoCard title="Personal Information">
-          <InfoItem label="First Name" value="West" />
-          <InfoItem label="Last Name" value="Brown" />
-          <InfoItem label="Email" value="westbrown@mail.com" />
-          <InfoItem label="Phone" value="+44 345 678 85" />
-          <InfoItem label="Location" value="Liverpool, England" />
-          <InfoItem label="Gender" value="Male" />
-          <InfoItem label="Date of Birth" value="01/01/1980" />
+          <InfoItem label="First Name" value={user?.firstName} />
+          <InfoItem label="Last Name" value={user?.lastName} />
+          <InfoItem label="Email" value={user?.email} />
+          <InfoItem label="Phone" value={user?.phone} />
+          <InfoItem label="Location" value={user?.location} />
+          <InfoItem label="Gender" value={user?.gender} />
+          <InfoItem label="Date of Birth" value={user?.dateOfBirth} />
         </InfoCard>
 
         <InfoCard title="Medical History">
-          <InfoItem label="Allergies" value="None" />
-          <InfoItem label="Current Medications" value="None" />
-          <InfoItem label="Past Surgeries" value="Appendectomy (2010)" />
-          <InfoItem label="Chronic Conditions" value="Hypertension" />
+          <InfoItem label="Allergies" value={user?.allergies} />
+          <InfoItem label="Current Medications" value={user?.medications} />
+          {/* <InfoItem label="Past Surgeries" value={user?.surgeries.join(', ')} /> */}
+          <InfoItem label="Chronic Conditions" value={user?.conditions} />
         </InfoCard>
       </div>
 
-      <AppointmentCard title="Appointment History">
-        <AppointmentItem date="05/05/2024" doctor="Dr. John Doe" reason="General Checkup" />
-        <AppointmentItem date="10/12/2023" doctor="Dr. Jane Smith" reason="Blood Pressure Check" />
-      </AppointmentCard>
+      {/* <AppointmentCard title="Appointment History">
+        {user?.appointmentHistory.map((appointment, index) => (
+          <AppointmentItem key={index} date={appointment.date} doctor={appointment.doctor} reason={appointment.reason} />
+        ))}
+      </AppointmentCard> */}
 
-      <AppointmentCard title="Upcoming Appointments">
-        <AppointmentItem date="20/06/2024" doctor="Dr. Emma Brown" reason="Follow-up Consultation" />
-      </AppointmentCard>
+      {/* <AppointmentCard title="Upcoming Appointments">
+        {user?.upcomingAppointments.map((appointment, index) => (
+          <AppointmentItem key={index} date={appointment.date} doctor={appointment.doctor} reason={appointment.reason} />
+        ))}
+      </AppointmentCard> */}
     </main>
   );
 }

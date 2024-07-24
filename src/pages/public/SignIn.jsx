@@ -2,6 +2,7 @@ import React from 'react';
 import { doctors2 } from '../../assets';
 import { SignInForm } from '../../components';
 import { Link } from 'react-router-dom';
+import { PATH } from '../../routes/path';
 
 const SignIn = () => {
   return (
@@ -26,7 +27,7 @@ const SignIn = () => {
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Are you a healthcare specialist?{' '}
-                <Link to="/specialist-signin" className="font-medium text-blue-600 hover:text-blue-500">
+                <Link to={PATH.general.specialistSignIn} className="font-medium text-blue-600 hover:text-blue-500">
                   Sign in here
                 </Link>
               </p>

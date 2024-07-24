@@ -2,9 +2,18 @@ import React from "react";
 import { IoCloseOutline, IoCheckmarkOutline } from "react-icons/io5";
 import { useNavigate } from "react-router";
 import { PATH } from "../routes/path";
+import { useDispatch } from "react-redux";
+import { showModal } from "../states/popUpSlice";
 
-const PricingModal = ({ closeModal }) => {
+const PricingModal = ({ closeModal, setPrice }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const onSelected = (price) => {
+    setPrice(price);
+    dispatch(showModal({ content: "checkoutModal" }));
+  };
+  // onClick={() => navigate(PATH.general.payment)}
 
   const PricingCard = ({ title, price, features, isRecommended }) => (
     <div
@@ -37,7 +46,7 @@ const PricingModal = ({ closeModal }) => {
       </ul>
       <button
         className="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transform hover:scale-105 active:scale-95"
-        onClick={() => navigate(PATH.chat.default)}
+        onClick={() => onSelected(price)}
       >
         Get Started
       </button>

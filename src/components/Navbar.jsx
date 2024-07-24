@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Transition } from "@headlessui/react";
-import { logoWhite } from "../assets";
+import { defaultUser, logoWhite } from "../assets";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { PATH } from "../routes/path";
 import Button from "./Button";
@@ -9,6 +9,8 @@ import { showToast, showModal, hideModal } from "../states/popUpSlice";
 import { fetchUserProfile, logout } from "../states/user/authSlice";
 import PatientSidebar from "../layouts/PatientSidebar";
 import LogoutModal from "./LogoutModal";
+
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const Navbar = ({ className }) => {
   const navigate = useNavigate();
@@ -66,8 +68,8 @@ const Navbar = ({ className }) => {
                 {user ? (
                   <div className="flex items-center space-x-3">
                     <img
-                      className="h-8 w-8 rounded-full object-cover border-2 border-primary-6"
-                      src={user.photoURL}
+                      className="h-8 w-8 rounded-full object-cover border-2"
+                      src={`${apiUrl}${user.profileImage}` || defaultUser }
                       alt={user.firstName}
                     />
                     <span className="text-gray-700 font-medium">
@@ -173,8 +175,8 @@ const Navbar = ({ className }) => {
                 <div className="flex flex-col space-y-2 px-3 py-2">
                   <div className="flex items-center space-x-2">
                     <img
-                      className="h-8 w-8 rounded-full object-cover border-2 border-primary-6"
-                      src={user.photoURL}
+                      className="h-8 w-8 rounded-full object-cover border-2"
+                      src={user.profileImage || defaultUser }
                       alt={user.firstName}
                     />
                     <span className="text-gray-700 font-medium">

@@ -30,6 +30,7 @@ const SignInForm = ({ specialist, client }) => {
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(showToast({ status: "success", message: "Login successful!" }));
+      handleNavigate()
     }
     if (error) {
       // Parse the HTML error message

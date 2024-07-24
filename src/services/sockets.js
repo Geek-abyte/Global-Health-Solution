@@ -26,11 +26,8 @@ export const connectSocket = (userId) => {
   socket.auth = { userId };
   socket.connect();
 
-  console.log(`Attempting to connect with userId: ${userId}`);
-
   socket.on('connect', () => {
     console.log(`Connected with ID: ${socket.id}`);
-    console.log(userId)
     socket.emit('join', userId); // Emit join event upon connection
   });
 
@@ -41,7 +38,7 @@ export const connectSocket = (userId) => {
 
   socket.on('disconnect', (reason) => {
     console.log('Disconnected:', reason);
-    store.dispatch(showToast({ message: 'Disconnected from server', status: 'warning' }));
+    // store.dispatch(showToast({ message: 'Disconnected from server', status: 'warning' }));
     store.dispatch(updateCallStatus({ isInCall: false }));
   });
 
@@ -50,7 +47,6 @@ export const connectSocket = (userId) => {
   });
 
   socket.on('callAccepted', (callData) => {
-    console.log('Call accepted: ', callData);
     store.dispatch(callAccepted(callData));
     store.dispatch(showToast({ message: 'Call accepted', status: 'success' }));
   });

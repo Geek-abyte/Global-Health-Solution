@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { logoDark, logoWhite, userImage } from '../assets';
+import { logoDark, logoWhite, defaultUser } from '../assets';
 import { LuLayoutDashboard, LuUser, LuLogOut } from "react-icons/lu";
 import { BsCapsulePill } from "react-icons/bs";
 import { FaRegHospital, FaUserDoctor } from "react-icons/fa6";
@@ -48,9 +48,9 @@ const PatientSidebar = ({ isOpen, onClose }) => {
   return (
     <div className={`fixed inset-y-0 left-0 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out md:flex md:flex-col w-64 bg-white shadow-lg overflow-y-hidden z-40`}>
       <div className="flex flex-col items-center p-4 border-b border-gray-200">
-        <img src={userImage} alt="User" className="w-20 h-20 rounded-full mb-2"/>
-        <h2 className="text-xl font-semibold text-gray-800">John Doe</h2>
-        <p className="text-sm text-gray-600">Patient</p>
+        <img src={user?.profileImage || defaultUser} alt="User" className="w-20 h-20 rounded-full mb-2"/>
+        <h2 className="text-xl font-semibold text-gray-800">{user?.firstName}</h2>
+        <p className="text-sm text-gray-600">{user?.role}</p>
       </div>
 
       <nav className="flex-1 px-4 py-4 custom-scrollbar overflow-y-auto">
