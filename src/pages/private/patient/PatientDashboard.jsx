@@ -2,27 +2,58 @@ import React from "react";
 import { DTable } from "../../../components";
 import { cardbrain, carddoc, cardfile } from "../../../assets";
 import { tableData } from "../../../data/tableData";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router";
+import { openChatBot } from "../../../states/popUpSlice";
+import { PATH } from "../../../routes/path";
 
 const PatientDashboard = ({ className }) => {
-  const { user } = useSelector((state) => state.auth); 
+  const { user } = useSelector((state) => state.auth);
+  const { chatBotOpen } = useSelector((state) => state.popUp);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleChat = () => {
+    if (!chatBotOpen) {
+      dispatch(openChatBot(true));
+    }
+  };
+
+  const handleConsult = () => {
+    navigate(PATH.dashboard.consultant);
+  };
+
+  const handleHistory = () => {
+    navigate(PATH.dashboard.history);
+  };
 
   const cards = [
-    { title: "Chat with AI", image: cardbrain, color: "text-secondary-6" },
-    { title: "Consultant", image: carddoc, color: "text-primary-6" },
-    { title: "History", image: cardfile, color: "text-[#3AADD9]" },
+    {
+      title: "Chat with AI",
+      image: cardbrain,
+      color: "text-secondary-6",
+      onClick: handleChat,
+    },
+    {
+      title: "Consultant",
+      image: carddoc,
+      color: "text-primary-6",
+      onClick: handleConsult,
+    },
+    {
+      title: "History",
+      image: cardfile,
+      color: "text-[#3AADD9]",
+      onClick: handleHistory,
+    },
   ];
 
   return (
     <main className={`p-4 md:p-8 w-full ${className}`}>
       {!user.isEmailVerified && (
         <div className="mb-6 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-r-md shadow-md">
-          <h2 className="text-xl font-bold mb-2">
-            Email Not Verified
-          </h2>
-          <p className="mb-4">
-            Please verify your Email.
-          </p>
+          <h2 className="text-xl font-bold mb-2">Email Not Verified</h2>
+          <p className="mb-4">Please verify your Email.</p>
           <a
             href="/otp-verification"
             target="_blank"
@@ -37,6 +68,7 @@ const PatientDashboard = ({ className }) => {
         {cards.map((card, index) => (
           <div
             key={index}
+            onClick={card.onClick}
             className={`flex flex-col items-center justify-center p-6 rounded-lg border-2 border-secondary-6 ${card.color} shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}
           >
             <img src={card.image} className="w-20 h-20 mb-4" alt="" />
