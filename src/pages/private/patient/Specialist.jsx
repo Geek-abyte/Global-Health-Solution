@@ -39,7 +39,7 @@ const Specialist = () => {
             <ImageCard
               key={index}
               image={card.image}
-              clickFunc={() => onCardSelected(card.content)}
+              clickFunc={() => onCardSelected(card.specialty)}
               className="transition-transform duration-300 hover:scale-105"
             >
               {card.content}

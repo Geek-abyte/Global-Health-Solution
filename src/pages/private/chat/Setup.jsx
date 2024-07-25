@@ -60,7 +60,7 @@ const SetupPage = ({ userId }) => {
     if (user) {
       // dispatch(initiateCall({ userId: user._id, specialistCategory: currentSpecialistCategory }));
       dispatch(
-        initiateCall({ userId: user._id, specialistCategory: "Cardiology" })
+        initiateCall({ userId: user._id, specialistCategory: currentSpecialistCategory })
       );
       setCanConnect(true);
     }

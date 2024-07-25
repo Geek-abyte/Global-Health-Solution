@@ -2,70 +2,127 @@ import { rect58, rect59, rect60, rect61 } from "../assets";
 
 export const cards = [
   {
-    'image': rect58,
-    'content': 'Pedeatrician'
+    image: rect58,
+    content: 'Allergist',
+    specialty: 'Allergy and Immunology'
   },
   {
-    'image': rect59,
-    'content': 'Cardiologist'
+    image: rect59,
+    content: 'Anesthesiologist',
+    specialty: 'Anesthesiology'
   },
   {
-    'image': rect60,
-    'content': 'Dermatologist'
+    image: rect60,
+    content: 'Dermatologist',
+    specialty: 'Dermatology'
   },
   {
-    'image': rect61,
-    'content': 'Neurologist'
+    image: rect61,
+    content: 'Diagnostic Radiologist',
+    specialty: 'Diagnostic Radiology'
   },
   {
-    'image': rect58,
-    'content': 'Pedeatrician'
+    image: rect58,
+    content: 'Emergency Medicine Specialist',
+    specialty: 'Emergency Medicine'
   },
   {
-    'image': rect59,
-    'content': 'Cardiologist'
+    image: rect59,
+    content: 'Family Medicine Doctor',
+    specialty: 'Family Medicine'
   },
   {
-    'image': rect60,
-    'content': 'Dermatologist'
+    image: rect60,
+    content: 'Internist',
+    specialty: 'Internal Medicine'
   },
   {
-    'image': rect61,
-    'content': 'Neurologist'
+    image: rect61,
+    content: 'Medical Geneticist',
+    specialty: 'Medical Genetics'
   },
   {
-    'image': rect58,
-    'content': 'Pedeatrician'
+    image: rect58,
+    content: 'Neurologist',
+    specialty: 'Neurology'
   },
   {
-    'image': rect59,
-    'content': 'Cardiologist'
+    image: rect59,
+    content: 'Nuclear Medicine Specialist',
+    specialty: 'Nuclear Medicine'
   },
   {
-    'image': rect60,
-    'content': 'Dermatologist'
+    image: rect60,
+    content: 'Obstetrician and Gynecologist',
+    specialty: 'Obstetrics and Gynecology'
   },
   {
-    'image': rect61,
-    'content': 'Neurologist'
+    image: rect61,
+    content: 'Ophthalmologist',
+    specialty: 'Ophthalmology'
   },
   {
-    'image': rect58,
-    'content': 'Pedeatrician'
+    image: rect58,
+    content: 'Pathologist',
+    specialty: 'Pathology'
   },
   {
-    'image': rect59,
-    'content': 'Cardiologist'
+    image: rect59,
+    content: 'Pediatrician',
+    specialty: 'Pediatrics'
   },
   {
-    'image': rect60,
-    'content': 'Dermatologist'
+    image: rect60,
+    content: 'Physiatrist',
+    specialty: 'Physical Medicine and Rehabilitation'
   },
   {
-    'image': rect61,
-    'content': 'Neurologist'
-  }
-]
+    image: rect61,
+    content: 'Preventive Medicine Specialist',
+    specialty: 'Preventive Medicine'
+  },
+  {
+    image: rect58,
+    content: 'Psychiatrist',
+    specialty: 'Psychiatry'
+  },
+  {
+    image: rect59,
+    content: 'Radiation Oncologist',
+    specialty: 'Radiation Oncology'
+  },
+  {
+    image: rect60,
+    content: 'Surgeon',
+    specialty: 'Surgery'
+  },
+  {
+    image: rect61,
+    content: 'Urologist',
+    specialty: 'Urology'
+  },
+  {
+    image: rect58,
+    content: 'Cardiologist',
+    specialty: 'Cardiology'
+  },
+  {
+    image: rect59,
+    content: 'Endocrinologist',
+    specialty: 'Endocrinology'
+  },
+  {
+    image: rect60,
+    content: 'Gastroenterologist',
+    specialty: 'Gastroenterology'
+  },
+  {
+    image: rect61,
+    content: 'Hematologist',
+    specialty: 'Hematology'
+  },
+];
+
 
 export const prescriptions = [
   {
