@@ -20,7 +20,7 @@ const CongratulationsPage = () => {
   }, []);
 
   const handleGoToDashboard = () => {
-    if (userRole == "user") navigate(PATH.dashboard.dashboard);
+    if (userRole == "user") navigate(PATH.dashboard.default);
     else if (userRole == "specialist") navigate(PATH.doctor.dashboard);
   };
 

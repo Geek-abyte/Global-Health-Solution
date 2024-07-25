@@ -2,9 +2,10 @@ import React from "react";
 import { DTable } from "../../../components";
 import { cardbrain, carddoc, cardfile } from "../../../assets";
 import { tableData } from "../../../data/tableData";
+import { useSelector } from "react-redux";
 
 const PatientDashboard = ({ className }) => {
-  const isVerified = true; // Dummy variable for verification status
+  const { user } = useSelector((state) => state.auth); 
 
   const cards = [
     { title: "Chat with AI", image: cardbrain, color: "text-secondary-6" },
@@ -14,13 +15,13 @@ const PatientDashboard = ({ className }) => {
 
   return (
     <main className={`p-4 md:p-8 w-full ${className}`}>
-      {!isVerified && (
+      {!user.isEmailVerified && (
         <div className="mb-6 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-r-md shadow-md">
           <h2 className="text-xl font-bold mb-2">
-            Email Verification Required
+            Email Not Verified
           </h2>
           <p className="mb-4">
-            Please verify your Email to access all features.
+            Please verify your Email.
           </p>
           <a
             href="/otp-verification"

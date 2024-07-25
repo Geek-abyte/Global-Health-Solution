@@ -29,19 +29,20 @@ export const PATH = {
   checkout: path(PATIENT, "checkout"),
   dashboard: {
     default: PATIENT,
-    dashboard: path(PATIENT, "dashboard"),
     profile: path(PATIENT, "profile"),
     edit: path(PATIENT, "profile/edit-profile"),
     ai: path(PATIENT, "ai"),
-    prescription: path(PATIENT, "prescription/:key?"),
+    prescription: path(PATIENT, "prescription"),
     consultant: path(PATIENT, "specialist"),
-    history: path(PATIENT, "history")
+    history: path(PATIENT, "history"),
+    callDetail: path(PATIENT, "history/call-detail"),
   },
   doctor: {
     default: DOCTOR,
     dashboard: path(DOCTOR, "dashboard"),
     profile: path(DOCTOR, "profile"),
     chat: path(DOCTOR, "chat"),
+    awaitingApproval: path(DOCTOR, "awaiting-approval")
   },
   blog: {
     default: BLOG,

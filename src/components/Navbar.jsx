@@ -36,14 +36,23 @@ const Navbar = ({ className }) => {
     dispatch(showModal({ content: "logout" }));
   };
 
-  const NavLink = ({ to, children }) => (
-    <Link
-      to={to}
-      className="text-gray-600 hover:text-primary-6 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium"
-    >
-      {children}
-    </Link>
-  );
+  const NavLink = ({ to, children }) => {
+    const isActive =
+      (to === "/" && location.pathname === "/") ||
+      (to !== "/" &&
+        location.pathname.startsWith(to) &&
+        location.pathname !== "/");
+    return (
+      <Link
+        to={to}
+        className={`${
+          isActive ? "text-primary-6" : "text-gray-600"
+        } hover:text-primary-6 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium`}
+      >
+        {children}
+      </Link>
+    );
+  };
 
   return (
     <nav className={`bg-white shadow-md ${className}`}>
@@ -57,10 +66,18 @@ const Navbar = ({ className }) => {
             <div className="flex items-center">
               <div className="hidden md:flex items-center space-x-4">
                 <NavLink to={PATH.general.home}>Home</NavLink>
-                <NavLink to={PATH.general.doctors}>Doctors</NavLink>
                 <NavLink to={PATH.general.about}>About</NavLink>
+                <NavLink to={PATH.general.doctors}>Doctors</NavLink>
                 {user && (
-                  <NavLink to={PATH.dashboard.default}>Dashboard</NavLink>
+                  <NavLink
+                    to={
+                      user.role === "specialist"
+                        ? PATH.doctor.dashboard
+                        : PATH.dashboard.default
+                    }
+                  >
+                    Dashboard
+                  </NavLink>
                 )}
               </div>
 
@@ -69,7 +86,7 @@ const Navbar = ({ className }) => {
                   <div className="flex items-center space-x-3">
                     <img
                       className="h-8 w-8 rounded-full object-cover border-2"
-                      src={`${apiUrl}${user.profileImage}` || defaultUser }
+                      src={`${apiUrl}${user.profileImage}` || defaultUser}
                       alt={user.firstName}
                     />
                     <span className="text-gray-700 font-medium">
@@ -168,15 +185,25 @@ const Navbar = ({ className }) => {
           <div className="md:hidden bg-white shadow-lg rounded-b-lg">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
               <NavLink to={PATH.general.home}>Home</NavLink>
-              <NavLink to={PATH.general.doctors}>Our Doctors</NavLink>
               <NavLink to={PATH.general.about}>About</NavLink>
-              {user && <NavLink to={PATH.dashboard.default}>Dashboard</NavLink>}
+              <NavLink to={PATH.general.doctors}>Our Doctors</NavLink>
+              {user && (
+                <NavLink
+                  to={
+                    user.role === "specialist"
+                      ? PATH.doctor.dashboard
+                      : PATH.dashboard.default
+                  }
+                >
+                  Dashboard
+                </NavLink>
+              )}
               {user ? (
                 <div className="flex flex-col space-y-2 px-3 py-2">
                   <div className="flex items-center space-x-2">
                     <img
                       className="h-8 w-8 rounded-full object-cover border-2"
-                      src={user.profileImage || defaultUser }
+                      src={user.profileImage || defaultUser}
                       alt={user.firstName}
                     />
                     <span className="text-gray-700 font-medium">

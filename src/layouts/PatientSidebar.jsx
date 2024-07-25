@@ -15,7 +15,7 @@ const PatientSidebar = ({ isOpen, onClose }) => {
   const { user, isAuthenticated } = useSelector((state) => state.auth)
 
   const navItems = [
-    { path: PATH.dashboard.dashboard, icon: <LuLayoutDashboard />, label: "Dashboard" },
+    { path: PATH.dashboard.default, icon: <LuLayoutDashboard />, label: "Dashboard" },
     { path: PATH.dashboard.profile, icon: <LuUser />, label: "Profile" },
     { path: PATH.dashboard.consultant, icon: <FaUserDoctor />, label: "Specialist" },
     { path: PATH.dashboard.prescription, icon: <BsCapsulePill />, label: "Prescription" },

@@ -1,4 +1,4 @@
-import { Navigate, useRoutes } from "react-router-dom";
+import { Navigate, useLocation, useRoutes } from "react-router-dom";
 import Layout from "../layouts";
 import {
   LazyAi,
@@ -34,43 +34,59 @@ import { blogs } from "../data/blogs";
 import DoctorDashboard from "../pages/private/doctor/DoctorDashboard";
 import { ChatRoom, Setup } from "../pages/private/chat";
 import { useDispatch, useSelector } from "react-redux";
-import { SpecialistProfile } from "../pages/private/doctor";
+import { AwaitingApproval, SpecialistProfile } from "../pages/private/doctor";
 import { fetchUserProfile } from "../states/user/authSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { connectSocket, disconnectSocket } from "../services/sockets";
 import SpecialistSignIn from "../pages/public/SpecialistSignIn";
+import { CallDetail } from "../pages/private/patient";
 
-export default function Router() {
+
+const AuthWrapper = ({ children }) => {
   const dispatch = useDispatch();
-  const { user, isAuthenticated } = useSelector((state) => state.auth);
-  let userId = null;
+
+  const { user, isAuthenticated, loading } = useSelector(
+    (state) => state.auth
+  );
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(fetchUserProfile());
+    if (isAuthenticated && !isInitialized) {
+      dispatch(fetchUserProfile()).then(() => {
+        setIsInitialized(true);
+      });
+    } else if (!isAuthenticated) {
+      setIsInitialized(true);
     }
-  }, [dispatch, isAuthenticated]);
+  }, [dispatch, isAuthenticated, isInitialized]);
+
+  if (!user && !isInitialized) {
+    return <LoadingScreen dark/>;
+  }    
+
+  return children;
+};
+
+export default function Router() {
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     if (user) {
       connectSocket(user._id);
-      userId = user._id;
     }
-
     return () => {
       disconnectSocket();
     };
   }, [user]);
 
-  const userRole = useSelector((state) => state.auth.userRole);
-  // const userRole = "user"
-
-  // console.log(userRole);
-
   return useRoutes([
     {
       path: DEFAULT_PATH,
-      element: <LazyLayout />,
+      element: (
+        <AuthWrapper>
+          <LazyLayout />
+        </AuthWrapper>
+      ),
       children: [
         { element: <Home />, index: true },
         { path: PATH.general.home, element: <Navigate to="/" replace /> },
@@ -85,36 +101,39 @@ export default function Router() {
         { path: PATH.general.privacy, element: <PrivacyPolicy /> },
         { path: PATH.general.cookie, element: <CookiePolicy /> },
         { path: PATH.general.terms, element: <Terms /> },
+        { path: PATH.doctor.awaitingApproval, element: <AwaitingApproval /> },
+
         { path: PATH.general.page404, element: <NotFound /> },
         { path: "*", element: <Navigate to={PATH.general.page404} replace /> },
       ],
     },
     {
       path: PATH.chat.default,
-      element: <Setup userId={userId} />,
+      element: (
+        <AuthWrapper>
+          <Setup userId={user?._id} />
+        </AuthWrapper>
+      ),
     },
     {
       path: PATH.chat.default + ":callId",
       element: (
-        <PrivateRoute
-          userRole='all'
-          requiredRole='all'
-          route={<LazyChat />}
-        />
+        <PrivateRoute userRole="all" requiredRole="all" route={<LazyChat />} />
       ),
     },
     {
       path: PATH.dashboard.default,
       element: (
-        <PrivateRoute
-          userRole={userRole}
-          requiredRole="user"
-          route={<LazyLayout layout="patient" />}
-        />
+        <AuthWrapper>
+          <PrivateRoute
+            userRole={user?.role}
+            requiredRole="user"
+            route={<LazyLayout layout="patient" />}
+          />
+        </AuthWrapper>
       ),
       children: [
         {
-          path: PATH.dashboard.dashboard,
           element: <LazyDashboard />,
           index: true,
         },
@@ -124,17 +143,21 @@ export default function Router() {
         { path: PATH.dashboard.prescription, element: <LazyPrescription /> },
         { path: PATH.dashboard.consultant, element: <LazySpecialist /> },
         { path: PATH.dashboard.history, element: <LazyHistory /> },
+        { path: PATH.dashboard.callDetail + "/:id", element: <CallDetail /> },
         { path: "*", element: <Navigate to={PATH.general.page404} replace /> },
       ],
     },
     {
       path: PATH.doctor.default,
       element: (
-        <PrivateRoute
-          userRole={userRole}
-          requiredRole="specialist"
-          route={<LazyLayout layout="doctor" />}
-        />
+        <AuthWrapper>
+          <PrivateRoute
+            userRole={user?.role}
+            requiredRole="specialist"
+            route={<LazyLayout layout="doctor" />}
+            isApproved={user?.isApproved}
+          />
+        </AuthWrapper>
       ),
       children: [
         {
@@ -148,7 +171,11 @@ export default function Router() {
     },
     {
       path: PATH.blog.default,
-      element: <LazyLayout />,
+      element: (
+        <AuthWrapper>
+          <LazyLayout />
+        </AuthWrapper>
+      ),
       children: [
         { element: <BlogList blogs={blogs} />, index: true },
         {
@@ -163,7 +190,13 @@ export default function Router() {
   ]);
 }
 
-const PrivateRoute = ({ userRole, requiredRole, redirectTo, route }) => {
+const PrivateRoute = ({
+  userRole,
+  requiredRole,
+  isApproved,
+  redirectTo,
+  route,
+}) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   if (!isAuthenticated) {
@@ -172,6 +205,10 @@ const PrivateRoute = ({ userRole, requiredRole, redirectTo, route }) => {
 
   if (requiredRole && userRole !== requiredRole) {
     return <Navigate to={PATH.general.page404} />;
+  }
+
+  if (userRole === "specialist" && !isApproved) {
+    return <Navigate to={PATH.doctor.awaitingApproval} />;
   }
 
   return route;

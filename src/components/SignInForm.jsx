@@ -21,7 +21,7 @@ const SignInForm = ({ specialist, client }) => {
 
   const handleNavigate = () => {
     if (client) {
-      navigate(PATH.dashboard.dashboard);
+      navigate(PATH.dashboard.default);
     } else if (specialist) {
       navigate(PATH.doctor.dashboard);
     }

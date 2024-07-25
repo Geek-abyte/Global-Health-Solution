@@ -480,47 +480,6 @@ const SpecialistSignUpForm = () => {
                 </div>
                 <div>
                   <label
-                    htmlFor="fullRegistrationCertificate"
-                    className={formLabel}
-                  >
-                    Full Registration Certificate
-                  </label>
-                  <div className="flex items-center">
-                    <input
-                      type="file"
-                      name="fullRegistrationCertificate"
-                      id="fullRegistrationCertificate"
-                      accept=".jpg,.jpeg,.pdf,.doc"
-                      className="hidden"
-                      onChange={(event) => {
-                        const file = event.currentTarget.files[0];
-                        setFieldValue("fullRegistrationCertificate", file);
-                        setUploadedCertificate(file);
-                      }}
-                    />
-                    <label
-                      htmlFor="fullRegistrationCertificate"
-                      className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 cursor-pointer transition duration-150 ease-in-out"
-                    >
-                      <FaCloudUploadAlt className="mr-2" />
-                      {uploadedCertificate
-                        ? uploadedCertificate.name
-                        : "Upload Certificate"}
-                    </label>
-                  </div>
-                  {uploadedCertificate && (
-                    <p className="mt-2 text-sm text-green-600">
-                      File uploaded: {uploadedCertificate.name}
-                    </p>
-                  )}
-                  <ErrorMessage
-                    name="fullRegistrationCertificate"
-                    component="div"
-                    className={formError}
-                  />
-                </div>
-                <div>
-                  <label
                     htmlFor="doctorsRegistrationNumber"
                     className={formLabel}
                   >

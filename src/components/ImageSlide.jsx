@@ -18,8 +18,8 @@ export default class extends React.Component {
         className={`${className} relative flex justify-center items-center`}
       >
         <Slider className>
-          {cards.map((card) => (
-            <Slide index={0} className="mx-[10px]"><ImageCard image={card.image}>{card.content}</ImageCard></Slide>
+          {cards.map((card, index) => (
+            <Slide index={0} key={index+card.content} className="mx-[10px]"><ImageCard image={card.image}>{card.content}</ImageCard></Slide>
           ))}
         </Slider>
         <ButtonBack className='absolute -left-4 z-12 top-[50%] translate-y-[-50%]'><IoIosArrowDropleftCircle size={60} className='opacity-25 text-gray-3 hover:opacity-100'/></ButtonBack>
