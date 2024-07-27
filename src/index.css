@@ -1,0 +1,195 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+/* :root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+} */
+
+@keyframes rotatePop {
+  0% {
+    transform: scale(.1);
+  }
+  80% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.rotate-pop {
+  animation: rotatePop 0.3s ease-out forwards;
+}
+
+
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0.7);
+  }
+  25% {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  }
+  50% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0.3);
+  }
+  75% {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+.heartbeat {
+  animation: heartbeat 1.5s infinite;
+}
+
+.error {
+  color: red;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  transition: ease-in .2;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #c9c9c9;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.scroll-2::-webkit-scrollbar-track {
+  background: linear-gradient(#194e9d, #1e5dbc, #ffffff) !important;
+}
+
+.scroll-2::-webkit-scrollbar-thumb {
+  background-color: #b4c9e9;
+}
+
+.scroll-2::-webkit-scrollbar-thumb:hover {
+  background: #8faede;
+}
+
+.message-enter {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.message-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Add this to your Tailwind CSS file */
+.video-call-container {
+  @apply flex flex-col items-center justify-center h-screen bg-gray-800;
+}
+
+.local-video,
+.remote-video-container div {
+  @apply w-64 h-64 bg-black rounded-lg;
+}
+
+.controls {
+  @apply flex space-x-4 mt-4;
+}
+
+.btn-accept,
+.btn-reject,
+.btn-end {
+  @apply px-4 py-2 rounded-lg text-white;
+}
+
+.btn-accept {
+  @apply bg-green-500 hover:bg-green-600;
+}
+
+.btn-reject {
+  @apply bg-red-500 hover:bg-red-600;
+}
+
+.btn-end {
+  @apply bg-gray-500 hover:bg-gray-600;
+}
