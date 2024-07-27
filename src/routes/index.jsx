@@ -34,20 +34,22 @@ import { blogs } from "../data/blogs";
 import DoctorDashboard from "../pages/private/doctor/DoctorDashboard";
 import { ChatRoom, Setup } from "../pages/private/chat";
 import { useDispatch, useSelector } from "react-redux";
-import { AwaitingApproval, SpecialistProfile } from "../pages/private/doctor";
+import {
+  AwaitingApproval,
+  DoctorCallDetail,
+  DoctorHistory,
+  SpecialistProfile,
+} from "../pages/private/doctor";
 import { fetchUserProfile } from "../states/user/authSlice";
 import { useEffect, useState } from "react";
 import { connectSocket, disconnectSocket } from "../services/sockets";
 import SpecialistSignIn from "../pages/public/SpecialistSignIn";
 import { CallDetail } from "../pages/private/patient";
 
-
 const AuthWrapper = ({ children }) => {
   const dispatch = useDispatch();
 
-  const { user, isAuthenticated, loading } = useSelector(
-    (state) => state.auth
-  );
+  const { user, isAuthenticated, loading } = useSelector((state) => state.auth);
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
@@ -61,9 +63,8 @@ const AuthWrapper = ({ children }) => {
   }, [dispatch, isAuthenticated, isInitialized, loading]);
 
   if (!isInitialized && !user) {
-    return <LoadingScreen dark/>;
-  }    
-
+    return <LoadingScreen dark />;
+  }
 
   return children;
 };
@@ -168,6 +169,11 @@ export default function Router() {
         },
         { path: PATH.doctor.profile, element: <SpecialistProfile /> },
         { path: "*", element: <Navigate to={PATH.general.page404} replace /> },
+        {
+          path: PATH.doctor.callDetail + "/:id",
+          element: <DoctorCallDetail />,
+        },
+        { path: PATH.doctor.history, element: <DoctorHistory /> },
       ],
     },
     {

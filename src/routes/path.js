@@ -42,7 +42,9 @@ export const PATH = {
     dashboard: path(DOCTOR, "dashboard"),
     profile: path(DOCTOR, "profile"),
     chat: path(DOCTOR, "chat"),
-    awaitingApproval: path(DOCTOR, "awaiting-approval")
+    awaitingApproval: path(DOCTOR, "awaiting-approval"),
+    history: path(DOCTOR, "history"),
+    callDetail: path(DOCTOR, "history/call-detail")
   },
   blog: {
     default: BLOG,

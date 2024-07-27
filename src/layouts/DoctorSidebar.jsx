@@ -56,9 +56,9 @@ const DoctorSidebar = ({ className }) => {
           <LuUser size={25} className="mr-2" />
         </Link>
         <Link
-          to={"#"}
+          to={PATH.doctor.history}
           className={`px-4 py-3 text-[20px] font-medium flex flex-row justify-start items-center ${
-            selectedItem === "Ai" ? "text-[#FFE500]" : ""
+            selectedItem === "medical-history" ? "text-[#FFE500]" : ""
           }`}
         >
           <HiChip size={25} className="mr-2" />
