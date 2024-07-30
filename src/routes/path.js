@@ -7,6 +7,7 @@ const DOCTOR = `/doctor/`
 const PATIENT = `/user/`
 const BLOG = `/blog/`
 const CHAT = `/chat/`
+const ADMIN = `/admin/`
 
 export const PATH = {
   root: ROOT,
@@ -52,7 +53,11 @@ export const PATH = {
   },
   chat: {
     default: CHAT,
-  }
+  },
+  admin: {
+    dashboard: ADMIN,
+    login: path(ADMIN, 'login')
+  },
 };
 
 export const DEFAULT_PATH = PATH.general.home

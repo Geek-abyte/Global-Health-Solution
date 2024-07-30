@@ -45,6 +45,8 @@ import { useEffect, useState } from "react";
 import { connectSocket, disconnectSocket } from "../services/sockets";
 import SpecialistSignIn from "../pages/public/SpecialistSignIn";
 import { CallDetail } from "../pages/private/patient";
+import AdminLayout from "../layouts/AdminLayout";
+import { AdminDashboard, AdminLogin } from "../pages/private/admin";
 
 const AuthWrapper = ({ children }) => {
   const dispatch = useDispatch();
@@ -193,6 +195,21 @@ export default function Router() {
         { path: "*", element: <Navigate to={PATH.general.page404} replace /> },
       ],
     },
+    {
+      path: PATH.admin.dashboard,
+      element: (
+        <AuthWrapper>
+          <PrivateRoute
+            userRole={user?.role}
+            requiredRole="admin"
+            route={<AdminLayout />}
+            redirectTo={PATH.admin.login}
+          />
+        </AuthWrapper>
+      ),
+      children: [{ element: <AdminDashboard />, index: true }],
+    },
+    { path: PATH.admin.login, element: <AdminLogin /> },
     { path: "*", element: <Navigate to={PATH.general.page404} replace /> },
   ]);
 }
@@ -205,6 +222,7 @@ const PrivateRoute = ({
   route,
 }) => {
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  // const isAuthenticated = true;
 
   if (!isAuthenticated) {
     return <Navigate to={redirectTo || PATH.general.signIn} />;

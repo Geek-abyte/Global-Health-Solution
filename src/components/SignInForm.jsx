@@ -14,7 +14,7 @@ const formInput =
 const SignInForm = ({ specialist, client }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isAuthenticated, error, isLoading, user } = useSelector(
+  const { isAuthenticated, error, loading, user } = useSelector(
     (state) => state.auth
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -101,10 +101,10 @@ const SignInForm = ({ specialist, client }) => {
           </div>
           <Button
             type="submit"
-            disabled={isSubmitting || isLoading}
+            disabled={isSubmitting || loading}
             className="w-[60%]"
           >
-            {isSubmitting || isLoading ? <LoadingSpinner /> : "Sign In"}
+            {isSubmitting || loading ? <LoadingSpinner /> : "Sign In"}
           </Button>
           <div>
             Don't have an account?{" "}

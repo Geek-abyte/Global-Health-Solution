@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import axiosInstance from "../utils/axiosConfig"; 
+import axiosInstance from "../utils/axiosConfig";
 import Button from "./Button";
 import { LoadingSpinner } from "./";
 import {
@@ -107,7 +107,6 @@ const SpecialistSignUpForm = () => {
             password: "",
             confirmPassword: "",
             currentPracticingLicense: null,
-            fullRegistrationCertificate: null,
             doctorsRegistrationNumber: "",
             specialistCategory: "",
             agreeTerms: false,
@@ -141,11 +140,10 @@ const SpecialistSignUpForm = () => {
             }
             if (!values.currentPracticingLicense)
               errors.currentPracticingLicense = "Required";
-            if (!values.fullRegistrationCertificate)
-              errors.fullRegistrationCertificate = "Required";
             if (!values.doctorsRegistrationNumber)
               errors.doctorsRegistrationNumber = "Required";
-            if (!values.specialistCategory) errors.specialistCategory = "Required";
+            if (!values.specialistCategory)
+              errors.specialistCategory = "Required";
             if (!values.agreeTerms)
               errors.agreeTerms = "You must agree to the terms and conditions";
             if (!values.recaptcha)
@@ -153,14 +151,34 @@ const SpecialistSignUpForm = () => {
             return errors;
           }}
           onSubmit={(values, { setSubmitting, setStatus }) => {
+            const formData = new FormData();
+
+            // Append all text fields
+            Object.keys(values).forEach((key) => {
+              if (key !== "currentPracticingLicense") {
+                formData.append(key, values[key]);
+              }
+            });
+
+            // Append files
+            if (values.currentPracticingLicense) {
+              formData.append(
+                "currentPracticingLicense",
+                values.currentPracticingLicense
+              );
+            }
+
+            // Append role
+            formData.append("role", "specialist");
+
             axiosInstance
-              .post(`${apiUrl}/api/users/register`, {
-                ...values,
-                role: "specialist",
+              .post(`${apiUrl}/api/users/register`, formData, {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
               })
               .then((response) => {
                 if (response.status === 201) {
-                  // Check if response status is 201 Created
                   dispatch(
                     showToast({
                       status: "success",
@@ -597,7 +615,11 @@ const SpecialistSignUpForm = () => {
               />
 
               <div>
-                <Button type="submit" disabled={isSubmitting} className={'m-auto w-full'}>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className={"m-auto w-full"}
+                >
                   {isSubmitting ? <LoadingSpinner /> : "Sign Up"}
                 </Button>
               </div>

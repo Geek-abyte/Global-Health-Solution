@@ -1,12 +1,15 @@
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../utils/axiosConfig";
+import { removeProperty } from "../../utils/helperFunctions";
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const response = await axiosInstance.post("/users/login", userData);
+      const response = await axiosInstance.post(
+        userData.hasOwnProperty("admin") ? "/admin/login" : "/users/login",
+        removeProperty(userData, "admin")
+      );
       const { token, role } = response.data;
       localStorage.setItem("authToken", token);
       localStorage.setItem("userRole", role);
@@ -32,9 +35,9 @@ export const fetchUserProfile = createAsyncThunk(
 export const updateUserProfile = createAsyncThunk(
   "auth/updateUserProfile",
   async (formData, { rejectWithValue }) => {
-    console.log()
+    console.log();
     try {
-      const response = await axiosInstance.put("/users/profile", formData );
+      const response = await axiosInstance.put("/users/profile", formData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -71,8 +74,8 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.token = action.payload.token;
         state.isAuthenticated = true;
+        state.user = action.payload;
         state.userRole = action.payload.role;
-        state.userId = action.payload.userId;
         state.loading = false;
       })
       .addCase(loginUser.rejected, (state, action) => {
