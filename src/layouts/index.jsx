@@ -33,7 +33,6 @@ const Layout = ({ layout, selected }) => {
             <Outlet />
           </section>
         </div>
-        {commonElements}
       </div>
     );
   }
@@ -43,7 +42,6 @@ const Layout = ({ layout, selected }) => {
       <Navbar />
       <Outlet />
       <Footer />
-      {commonElements}
     </>
   );
 };

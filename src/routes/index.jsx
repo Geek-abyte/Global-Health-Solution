@@ -46,7 +46,7 @@ import { connectSocket, disconnectSocket } from "../services/sockets";
 import SpecialistSignIn from "../pages/public/SpecialistSignIn";
 import { CallDetail } from "../pages/private/patient";
 import AdminLayout from "../layouts/AdminLayout";
-import { AdminDashboard, AdminLogin } from "../pages/private/admin";
+import { AdminAllUsers, AdminDashboard, AdminLogin, AdminManageSpecialists, AdminSpecialistDetail } from "../pages/private/admin";
 
 const AuthWrapper = ({ children }) => {
   const dispatch = useDispatch();
@@ -207,7 +207,12 @@ export default function Router() {
           />
         </AuthWrapper>
       ),
-      children: [{ element: <AdminDashboard />, index: true }],
+      children: [
+        { element: <AdminDashboard />, index: true },
+        { path: PATH.admin.manage, element: <AdminManageSpecialists /> },
+        { path: PATH.admin.specialist + "/:id", element: <AdminSpecialistDetail /> },
+        { path: PATH.admin.users, element: <AdminAllUsers /> },
+      ],
     },
     { path: PATH.admin.login, element: <AdminLogin /> },
     { path: "*", element: <Navigate to={PATH.general.page404} replace /> },

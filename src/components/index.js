@@ -17,3 +17,4 @@ export { default as OTPModal } from "./OTPModal";
 export { default as PricingModal } from "./PricingModal";
 export { default as LogoutModal } from "./LogoutModal";
 export { default as CheckoutModal } from "./CheckoutModal";
+export { default as LoadingAnimation } from "./LoadingAnimation";

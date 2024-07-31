@@ -56,7 +56,12 @@ export const PATH = {
   },
   admin: {
     dashboard: ADMIN,
-    login: path(ADMIN, 'login')
+    login: path(ADMIN, 'login'),
+    users: path(ADMIN, 'users'),
+    manage: path(ADMIN, 'manage-specialists'),
+    specialist: path(ADMIN, 'specialist'),
+    payments: path(ADMIN, 'payments'),
+    Preference: path(ADMIN, 'preferences')
   },
 };
 
