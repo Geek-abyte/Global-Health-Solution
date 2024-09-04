@@ -53,12 +53,11 @@ const SetupPage = ({ userId }) => {
     }
   }, [dispatch, isAuthenticated]);
 
-  const toggleCamera = () => dispatch(setCameraEnabled({ camera: !isCameraEnabled  }));
+  const toggleCamera = () => dispatch(setCameraEnabled({ camera: !isCameraEnabled }));
   const toggleMic = () => dispatch(setMicEnabled({ mic: !isMicEnabled }));
 
   const onJoinCall = () => {
     if (user) {
-      // dispatch(initiateCall({ userId: user._id, specialistCategory: currentSpecialistCategory }));
       dispatch(
         initiateCall({ userId: user._id, specialistCategory: currentSpecialistCategory })
       );
@@ -68,7 +67,6 @@ const SetupPage = ({ userId }) => {
 
   useEffect(() => {
     if (currentCall) {
-      console.log('from setup: ', currentCall)
       if (currentCall.status === 'accepted') navigate(`${PATH.chat.default}${currentCall.callId}`);
     }
   }, [currentCall]);
@@ -96,11 +94,10 @@ const SetupPage = ({ userId }) => {
           <div className="flex justify-between gap-4 mb-8">
             <button
               onClick={toggleCamera}
-              className={`flex-1 flex items-center justify-center py-3 rounded-full transition-all duration-300 ${
-                isCameraEnabled
+              className={`flex-1 flex items-center justify-center py-3 rounded-full transition-all duration-300 ${isCameraEnabled
                   ? "bg-green-500 text-white hover:bg-green-600"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+                }`}
             >
               {isCameraEnabled ? (
                 <FaVideo size={20} />
@@ -113,11 +110,10 @@ const SetupPage = ({ userId }) => {
             </button>
             <button
               onClick={toggleMic}
-              className={`flex-1 flex items-center justify-center py-3 rounded-full transition-all duration-300 ${
-                isMicEnabled
+              className={`flex-1 flex items-center justify-center py-3 rounded-full transition-all duration-300 ${isMicEnabled
                   ? "bg-green-500 text-white hover:bg-green-600"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-              }`}
+                }`}
             >
               {isMicEnabled ? (
                 <FaMicrophone size={20} />

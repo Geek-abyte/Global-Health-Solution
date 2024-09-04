@@ -50,7 +50,7 @@ const Specialist = () => {
       {showModal && modalContent === "pricingModal" ? (
         <ModalContainer modal={<PricingModal closeModal={closeModal} setPrice={setPrice} />} />
       ) : showModal && modalContent === "checkoutModal" ? (
-        <ModalContainer modal={<CheckoutModal closeModal={closeModal} amount={price}/>} />
+        <ModalContainer modal={<CheckoutModal closeModal={closeModal} amount={price} onSuccess={() => navigate(PATH.chat.setup)} />} />
       ) : (
         ""
       )}

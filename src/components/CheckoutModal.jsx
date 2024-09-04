@@ -2,12 +2,15 @@ import React, { useEffect, useState } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { IoCloseOutline } from "react-icons/io5";
 import axiosInstance from "../utils/axiosConfig";
+import { useNavigate } from "react-router-dom";
+import { PATH } from "../routes/path";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const CheckoutModal = ({ amount, closeModal, onSuccess }) => {
   const stripe = useStripe();
   const elements = useElements();
+  const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [succeeded, setSucceeded] = useState(false);
@@ -30,6 +33,8 @@ const CheckoutModal = ({ amount, closeModal, onSuccess }) => {
         );
 
         if (!response.ok) {
+          const errorText = await response.text();
+          console.error(`Server responded with ${response.status}: ${errorText}`);
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
@@ -65,6 +70,7 @@ const CheckoutModal = ({ amount, closeModal, onSuccess }) => {
       setError(null);
       setProcessing(false);
       onSuccess && onSuccess(result.paymentIntent);
+      navigate(PATH.chat.setup); // Navigate to the setup page
     }
   };
 
@@ -147,11 +153,10 @@ const CheckoutModal = ({ amount, closeModal, onSuccess }) => {
           <button
             type="submit"
             disabled={!stripe || processing || succeeded}
-            className={`w-full py-2 px-4 rounded-md text-white font-semibold transition duration-300 ${
-              !stripe || processing || succeeded
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
-            }`}
+            className={`w-full py-2 px-4 rounded-md text-white font-semibold transition duration-300 ${!stripe || processing || succeeded
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
+              }`}
           >
             {processing ? "Processing..." : `Pay $${amount}`}
           </button>
@@ -168,7 +173,7 @@ const CheckoutModal = ({ amount, closeModal, onSuccess }) => {
         {succeeded && (
           <div className="mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative">
             <strong className="font-bold">Success! </strong>
-            <span className="block sm:inline">
+            <span className="block sm-inline">
               Your payment was processed successfully.
             </span>
             <button

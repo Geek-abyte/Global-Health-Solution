@@ -47,7 +47,6 @@ const CallRoom = () => {
     await client.current.join(
       APP_ID,
       callData.channelName,
-      // callData.token,
       null
     );
 
@@ -117,9 +116,6 @@ const CallRoom = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-900">
-    {console.log('token: ', callData)}
-      {console.log("mic:", isMicEnabled)}
-      {console.log("mic:", isMicEnabled)}
       <div className="flex flex-1 relative">
         <div className="absolute inset-0">
           <div id="remote-video" className="w-full h-full bg-black"></div>

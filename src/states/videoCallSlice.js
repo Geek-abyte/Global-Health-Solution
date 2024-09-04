@@ -64,7 +64,6 @@ export const acceptCall = createAsyncThunk(
     }
   }
 );
-
 export const rejectCall = createAsyncThunk(
   "videoCall/reject",
   async (callId, { dispatch }) => {
@@ -113,7 +112,6 @@ export const callAccepted = createAsyncThunk(
     return callData;
   }
 );
-
 export const callRejected = createAsyncThunk(
   "videoCall/callRejected",
   async (callData) => {
