@@ -67,13 +67,13 @@ const CheckoutModal = ({ amount, currency = 'USD', closeModal, onSuccess }) => {
       setProcessing(false);
       onSuccess && onSuccess(result.paymentIntent);
 
-      // Initiate call and navigate to chatroom
+      // Initiate call and navigate to setup page
       try {
         const callResult = await dispatch(initiateCall({
           userId: user._id,
           specialistCategory: currentSpecialistCategory
         })).unwrap();
-        navigate(`${PATH.chat.default}${callResult.data.callId}`);
+        navigate(PATH.chat.setup);
       } catch (err) {
         console.error('Failed to initiate call:', err);
         setError('Payment successful, but failed to initiate call. Please try again.');
@@ -167,8 +167,8 @@ const CheckoutModal = ({ amount, currency = 'USD', closeModal, onSuccess }) => {
             type="submit"
             disabled={!stripe || processing || succeeded}
             className={`w-full py-2 px-4 rounded-md text-white font-semibold transition duration-300 ${!stripe || processing || succeeded
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-700"
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
               }`}
           >
             {processing ? "Processing..." : `Pay ${currency} ${formatAmount(amount)}`}

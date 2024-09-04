@@ -12,7 +12,7 @@ import { initiateCall, setMicEnabled, setCameraEnabled } from "../../../states/v
 import { fetchUserProfile } from "../../../states/user/authSlice";
 import { PATH } from "../../../routes/path";
 
-const SetupPage = ({ userId }) => {
+const SetupPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentSpecialistCategory } = useSelector((state) => state.videoCall);
@@ -95,8 +95,8 @@ const SetupPage = ({ userId }) => {
             <button
               onClick={toggleCamera}
               className={`flex-1 flex items-center justify-center py-3 rounded-full transition-all duration-300 ${isCameraEnabled
-                  ? "bg-green-500 text-white hover:bg-green-600"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                ? "bg-green-500 text-white hover:bg-green-600"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
             >
               {isCameraEnabled ? (
@@ -111,8 +111,8 @@ const SetupPage = ({ userId }) => {
             <button
               onClick={toggleMic}
               className={`flex-1 flex items-center justify-center py-3 rounded-full transition-all duration-300 ${isMicEnabled
-                  ? "bg-green-500 text-white hover:bg-green-600"
-                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                ? "bg-green-500 text-white hover:bg-green-600"
+                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
                 }`}
             >
               {isMicEnabled ? (

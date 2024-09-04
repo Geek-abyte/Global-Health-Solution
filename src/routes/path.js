@@ -3,11 +3,11 @@ function path(root, sublink) {
 }
 
 const ROOT = "/";
-const DOCTOR = `/doctor/`
-const PATIENT = `/user/`
-const BLOG = `/blog/`
-const CHAT = `/chat/`
-const ADMIN = `/admin/`
+const DOCTOR = `/doctor/`;
+const PATIENT = `/user/`;
+const BLOG = `/blog/`;
+const CHAT = `/chat/`;
+const ADMIN = `/admin/`;
 
 export const PATH = {
   root: ROOT,
@@ -42,27 +42,33 @@ export const PATH = {
     default: DOCTOR,
     dashboard: path(DOCTOR, "dashboard"),
     profile: path(DOCTOR, "profile"),
+    edit: path(DOCTOR, "profile/edit"),
     chat: path(DOCTOR, "chat"),
     awaitingApproval: path(DOCTOR, "awaiting-approval"),
     history: path(DOCTOR, "history"),
-    callDetail: path(DOCTOR, "history/call-detail")
+    callDetail: path(DOCTOR, "history/call-detail"),
   },
   blog: {
     default: BLOG,
-    article: path(BLOG, ":id")
+    article: path(BLOG, ":id"),
   },
   chat: {
-    default: CHAT,
+    setup: path(CHAT, "setup"),
+    chatroom: path(CHAT, "room"),
   },
   admin: {
     dashboard: ADMIN,
-    login: path(ADMIN, 'login'),
-    users: path(ADMIN, 'users'),
-    manage: path(ADMIN, 'manage-specialists'),
-    specialist: path(ADMIN, 'specialist'),
-    payments: path(ADMIN, 'payments'),
-    Preference: path(ADMIN, 'preferences')
+    login: path(ADMIN, "login"),
+    users: path(ADMIN, "users"),
+    manage: path(ADMIN, "manage-specialists"),
+    specialist: path(ADMIN, "specialist"),
+    payments: path(ADMIN, "payments"),
+    Preference: path(ADMIN, "preferences"),
+    blogs: "/admin/blogs",
+    createBlog: "/admin/blogs/create",
+    editBlog: "/admin/blogs/edit",
+    previewBlog: "/admin/blogs/preview",
   },
 };
 
-export const DEFAULT_PATH = PATH.general.home
+export const DEFAULT_PATH = PATH.general.home;
