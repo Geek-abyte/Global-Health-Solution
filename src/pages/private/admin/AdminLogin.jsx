@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaUser, FaLock, FaSignInAlt } from "react-icons/fa";
+import { FaUser, FaLock, FaSignInAlt, FaEye, FaEyeSlash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { loginUser } from "../../../states/user/authSlice";
@@ -9,6 +9,7 @@ import { PATH } from "../../../routes/path";
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isAuthenticated, error, loading, user } = useSelector(
@@ -66,7 +67,7 @@ const AdminLogin = () => {
               required
             />
           </div>
-          <div className="mb-6">
+          <div className="mb-6 relative">
             <label
               htmlFor="password"
               className="block text-gray-700 text-sm font-bold mb-2"
@@ -75,14 +76,21 @@ const AdminLogin = () => {
               Password
             </label>
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               id="password"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 mt-8"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? <FaEyeSlash /> : <FaEye />}
+            </button>
           </div>
           <button
             type="submit"

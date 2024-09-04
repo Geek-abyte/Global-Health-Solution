@@ -6,3 +6,6 @@ export { default as AdminManageSpecialists } from "./ManageSpecialists";
 export { default as AdminSpecialistDetail } from "./SpecialistDetail";
 export { default as AdminPayments } from "./Payments";
 export { default as AdminPreference } from "./Preference";
+export { default as AdminBlogs } from "./AdminBlogs";
+export { default as BlogPreview } from "./BlogPreview";
+export { default as CreateEditBlog } from "./CreateEditBlog";
