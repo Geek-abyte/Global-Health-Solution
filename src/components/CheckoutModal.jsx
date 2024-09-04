@@ -2,15 +2,20 @@ import React, { useEffect, useState } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { IoCloseOutline } from "react-icons/io5";
 import axiosInstance from "../utils/axiosConfig";
-import { useNavigate } from "react-router-dom";
-import { PATH } from "../routes/path";
+import { toSmallestUnit } from "../utils/helperFunctions";
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { initiateCall } from '../states/videoCallSlice';
+import { PATH } from '../routes/path';
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const CheckoutModal = ({ amount, currency = 'USD', closeModal, onSuccess }) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { currentSpecialistCategory } = useSelector((state) => state.videoCall);
+  const { user } = useSelector((state) => state.auth);
 
-const CheckoutModal = ({ amount, closeModal, onSuccess }) => {
   const stripe = useStripe();
   const elements = useElements();
-  const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [processing, setProcessing] = useState(false);
   const [succeeded, setSucceeded] = useState(false);
@@ -21,33 +26,24 @@ const CheckoutModal = ({ amount, closeModal, onSuccess }) => {
   useEffect(() => {
     const fetchPaymentIntent = async () => {
       try {
-        const response = await fetch(
-          `${apiUrl}/api/payment/create-payment-intent`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ amount }),
-          }
-        );
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error(`Server responded with ${response.status}: ${errorText}`);
-          throw new Error(`HTTP error! status: ${response.status}`);
+        const numericAmount = Number(amount);
+        if (isNaN(numericAmount)) {
+          throw new Error('Invalid amount');
         }
-
-        const data = await response.json();
-        setClientSecret(data.clientSecret);
+        const amountInSmallestUnit = toSmallestUnit(numericAmount, currency);
+        const response = await axiosInstance.post(
+          "/payment/create-payment-intent",
+          { amount: amountInSmallestUnit, currency }
+        );
+        setClientSecret(response.data.clientSecret);
       } catch (err) {
-        console.error("Error fetching payment intent:", err);
+        console.error("Error fetching payment intent:", err.response?.data || err.message);
         setError("Failed to initialize payment. Please try again.");
       }
     };
 
     fetchPaymentIntent();
-  }, [amount]);
+  }, [amount, currency]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -70,8 +66,25 @@ const CheckoutModal = ({ amount, closeModal, onSuccess }) => {
       setError(null);
       setProcessing(false);
       onSuccess && onSuccess(result.paymentIntent);
-      navigate(PATH.chat.setup); // Navigate to the setup page
+
+      // Initiate call and navigate to chatroom
+      try {
+        const callResult = await dispatch(initiateCall({
+          userId: user._id,
+          specialistCategory: currentSpecialistCategory
+        })).unwrap();
+        navigate(`${PATH.chat.default}${callResult.data.callId}`);
+      } catch (err) {
+        console.error('Failed to initiate call:', err);
+        setError('Payment successful, but failed to initiate call. Please try again.');
+      }
     }
+  };
+
+  // Helper function to format the amount
+  const formatAmount = (value) => {
+    if (typeof value !== 'number') return Number(value).toFixed(2)
+    return value.toFixed(2);
   };
 
   return (
@@ -147,18 +160,18 @@ const CheckoutModal = ({ amount, closeModal, onSuccess }) => {
           </div>
           <div className="text-right">
             <span className="text-lg font-semibold text-gray-700">
-              Total: ${amount}
+              Total: {currency} {formatAmount(amount)}
             </span>
           </div>
           <button
             type="submit"
             disabled={!stripe || processing || succeeded}
             className={`w-full py-2 px-4 rounded-md text-white font-semibold transition duration-300 ${!stripe || processing || succeeded
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700"
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700"
               }`}
           >
-            {processing ? "Processing..." : `Pay $${amount}`}
+            {processing ? "Processing..." : `Pay ${currency} ${formatAmount(amount)}`}
           </button>
         </form>
         {error && (
