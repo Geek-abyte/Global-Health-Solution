@@ -14,6 +14,7 @@ const Home = () => {
   const iconlist = ['Medical Supplies', 'Medical Equipment', 'Air Ambulance Services']
 
   useEffect(() => {
+
     const mediaQuery = window.matchMedia('(max-width: 768px)');
 
     const handleMediaQueryChange = (event) => {

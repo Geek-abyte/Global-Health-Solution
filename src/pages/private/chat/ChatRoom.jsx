@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import AgoraRTC from "agora-rtc-sdk-ng";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   setMicEnabled,
   setCameraEnabled,
@@ -15,101 +14,68 @@ import {
   FaPhoneSlash,
 } from "react-icons/fa";
 
-const APP_ID = import.meta.env.VITE_AGORA_API_ID;
-
 const CallRoom = () => {
   const {
-    currentCall: callData,
+    currentCall,
     isCameraEnabled,
     isMicEnabled,
   } = useSelector((state) => state.videoCall);
   const dispatch = useDispatch();
-  const client = useRef(null);
-  const [localTrack, setLocalTrack] = useState(null);
-  const [remoteTrack, setRemoteTrack] = useState(null);
+  const jitsiContainerRef = useRef(null);
   const navigate = useNavigate();
+  const { callId } = useParams();
 
   useEffect(() => {
-    if (!callData) {
+    if (!currentCall || !callId) {
       navigate("/");
       return;
     }
 
-    client.current = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
-    joinChannel();
+    const domain = 'meet.jit.si';
+    const options = {
+      roomName: callId,
+      width: '100%',
+      height: '100%',
+      parentNode: jitsiContainerRef.current,
+      interfaceConfigOverwrite: {
+        TOOLBAR_BUTTONS: [
+          'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
+          'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
+          'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
+          'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
+          'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone',
+          'e2ee'
+        ],
+      },
+      configOverwrite: {
+        prejoinPageEnabled: false,
+      },
+    };
+
+    const api = new window.JitsiMeetExternalAPI(domain, options);
+
+    api.executeCommand('displayName', currentCall.userName);
+    api.executeCommand('toggleAudio', isMicEnabled);
+    api.executeCommand('toggleVideo', isCameraEnabled);
+
+    api.addEventListener('readyToClose', () => {
+      handleEndCall();
+    });
 
     return () => {
-      leaveChannel();
+      api.dispose();
     };
-  }, [callData, navigate]);
-
-  const joinChannel = async () => {
-    await client.current.join(
-      APP_ID,
-      callData.channelName,
-      null
-    );
-
-    const [audioTrack, videoTrack] =
-      await AgoraRTC.createMicrophoneAndCameraTracks();
-    setLocalTrack(videoTrack);
-
-    videoTrack.play("local-video");
-    await client.current.publish([audioTrack, videoTrack]);
-
-    client.current.on("user-published", handleUserPublished);
-    client.current.on("user-unpublished", handleUserUnpublished);
-  };
-
-  const leaveChannel = async () => {
-    localTrack && localTrack.close();
-    remoteTrack && remoteTrack.close();
-    await client.current.leave();
-  };
-
-  const handleUserPublished = async (user, mediaType) => {
-    await client.current.subscribe(user, mediaType);
-
-    if (mediaType === "video") {
-      const remoteVideoTrack = user.videoTrack;
-      setRemoteTrack(remoteVideoTrack);
-      remoteVideoTrack.play("remote-video");
-    }
-
-    if (mediaType === "audio") {
-      user.audioTrack.play();
-    }
-  };
-
-  const handleUserUnpublished = (user) => {
-    if (user.videoTrack) {
-      user.videoTrack.stop();
-    }
-    setRemoteTrack(null);
-  };
+  }, [currentCall, callId, navigate, isMicEnabled, isCameraEnabled]);
 
   const toggleCamera = () => {
-    if (localTrack) {
-      if (isCameraEnabled) {
-        localTrack.stop();
-      } else {
-        localTrack.play("local-video");
-      }
-      localTrack.setEnabled(!isCameraEnabled);
-      dispatch(setCameraEnabled({ camera: !isCameraEnabled }));
-    }
+    dispatch(setCameraEnabled({ camera: !isCameraEnabled }));
   };
 
   const toggleMic = () => {
-    if (client.current && client.current.localTracks[0]) {
-      const audioTrack = client.current.localTracks[0];
-      audioTrack.setEnabled(!isMicEnabled);
-      dispatch(setMicEnabled({ mic: !isMicEnabled }));
-    }
+    dispatch(setMicEnabled({ mic: !isMicEnabled }));
   };
 
   const handleEndCall = () => {
-    leaveChannel();
     dispatch(endCall());
     navigate("/");
   };
@@ -117,12 +83,7 @@ const CallRoom = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-900">
       <div className="flex flex-1 relative">
-        <div className="absolute inset-0">
-          <div id="remote-video" className="w-full h-full bg-black"></div>
-        </div>
-        <div className="absolute top-4 right-4 w-1/4 h-1/4 rounded-lg overflow-hidden">
-          <div id="local-video" className="w-full h-full bg-gray-700"></div>
-        </div>
+        <div ref={jitsiContainerRef} className="absolute inset-0"></div>
       </div>
       <div className="flex justify-center items-center p-4 bg-gray-800">
         <button

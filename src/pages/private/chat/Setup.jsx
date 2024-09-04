@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import AgoraRTC from "agora-rtc-sdk-ng";
 import {
   FaVideo,
   FaVideoSlash,
@@ -23,35 +22,19 @@ const SetupPage = () => {
   } = useSelector((state) => state.videoCall);
   const [canConnect, setCanConnect] = useState(false);
   const { user, isAuthenticated } = useSelector((state) => state.auth);
-  const [localTrack, setLocalTrack] = useState(null);
   const videoPreviewRef = useRef(null);
-
-  useEffect(() => {
-    const initCamera = async () => {
-      if (isCameraEnabled) {
-        const track = await AgoraRTC.createCameraVideoTrack();
-        setLocalTrack(track);
-        track.play(videoPreviewRef.current);
-      } else if (localTrack) {
-        localTrack.stop();
-        localTrack.close();
-        setLocalTrack(null);
-      }
-    };
-    initCamera();
-    return () => {
-      if (localTrack) {
-        localTrack.stop();
-        localTrack.close();
-      }
-    };
-  }, [isCameraEnabled, localTrack]);
 
   useEffect(() => {
     if (isAuthenticated) {
       dispatch(fetchUserProfile());
     }
   }, [dispatch, isAuthenticated]);
+
+  useEffect(() => {
+    if (currentCall) {
+      if (currentCall.status === 'accepted') navigate(`${PATH.chat.default}${currentCall.callId}`);
+    }
+  }, [currentCall]);
 
   const toggleCamera = () => dispatch(setCameraEnabled({ camera: !isCameraEnabled }));
   const toggleMic = () => dispatch(setMicEnabled({ mic: !isMicEnabled }));
@@ -64,12 +47,6 @@ const SetupPage = () => {
       setCanConnect(true);
     }
   };
-
-  useEffect(() => {
-    if (currentCall) {
-      if (currentCall.status === 'accepted') navigate(`${PATH.chat.default}${currentCall.callId}`);
-    }
-  }, [currentCall]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center p-4">

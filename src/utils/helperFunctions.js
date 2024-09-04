@@ -24,18 +24,16 @@ export const setTokenWithExpiry = (token, expiryInSeconds) => {
 };
 
 export const getToken = () => {
-  const itemStr = localStorage.getItem("authToken");
-  if (!itemStr) {
-    return null;
+  const tokenData = localStorage.getItem("token");
+  if (tokenData) {
+    try {
+      return JSON.parse(tokenData).token;
+    } catch (error) {
+      console.error("Error parsing token data:", error);
+      return null;
+    }
   }
-  const item = JSON.parse(itemStr);
-  const now = new Date();
-  if (now.getTime() > item.expiry) {
-    // Token has expired, remove it from localStorage
-    localStorage.removeItem("authToken");
-    return null;
-  }
-  return item.value;
+  return null;
 };
 
 /**

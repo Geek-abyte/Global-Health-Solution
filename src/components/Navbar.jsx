@@ -45,9 +45,8 @@ const Navbar = ({ className }) => {
     return (
       <Link
         to={to}
-        className={`${
-          isActive ? "text-primary-6" : "text-gray-600"
-        } hover:text-primary-6 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium`}
+        className={`${isActive ? "text-primary-6" : "text-gray-600"
+          } hover:text-primary-6 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium`}
       >
         {children}
       </Link>
@@ -89,6 +88,7 @@ const Navbar = ({ className }) => {
                       src={`${apiUrl}${user.profileImage}` || defaultUser}
                       alt={user.firstName}
                     />
+                    {/* {console.log('profile', user)} */}
                     <span className="text-gray-700 font-medium">
                       {user.firstName}
                     </span>

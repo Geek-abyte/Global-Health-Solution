@@ -8,8 +8,10 @@ import {
   FiChevronRight,
   FiSettings,
   FiLogOut,
+  FiBook,
+  FiPlusCircle
 } from "react-icons/fi";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, Link } from "react-router-dom";
 import { PATH } from "../routes/path";
 import { logoDark, logoWhite } from "../assets";
 
@@ -28,7 +30,7 @@ const AdminLayout = () => {
   useEffect(() => {
     setIsUserMenuOpen(
       location.pathname === PATH.admin.users ||
-        location.pathname === PATH.admin.manage
+      location.pathname === PATH.admin.manage
     );
   }, [location.pathname]);
 
@@ -102,6 +104,14 @@ const AdminLayout = () => {
                 className="flex items-center p-2 hover:bg-gray-700 rounded"
               >
                 <FiSettings className="mr-2" /> Preferences
+              </a>
+            </li>
+            <li className={`mb-2 ${isActive(PATH.admin.blogs)}`}>
+              <a
+                href={PATH.admin.blogs}
+                className="flex items-center p-2 hover:bg-gray-700 rounded"
+              >
+                <FiBook className="mr-2" /> Blogs
               </a>
             </li>
             <li className="mt-auto">

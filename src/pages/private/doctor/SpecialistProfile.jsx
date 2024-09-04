@@ -1,43 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { fetchUserProfile, updateUserProfile } from '../../../states/user/authSlice'; 
+import { fetchUserProfile } from '../../../states/user/authSlice';
 import { Button } from '../../../components';
 import { IoLocationOutline } from "react-icons/io5";
 import { LuMail, LuPhoneCall } from 'react-icons/lu';
 import { FaStethoscope } from 'react-icons/fa';
-import { PATH } from '../../../routes/path';
 import { defaultUser } from '../../../assets';
+import { PATH } from '../../../routes/path';
 
 const SpecialistProfile = ({ className }) => {
   const dispatch = useDispatch();
-  const { user, loading, error } = useSelector((state) => state.auth);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedUser, setEditedUser] = useState(null);
+  const { user, error } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(fetchUserProfile());
   }, [dispatch]);
-
-  useEffect(() => {
-    if (user) {
-      setEditedUser(user);
-    }
-  }, [user]);
-
-  const handleInputChange = (e) => {
-    setEditedUser({ ...editedUser, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    dispatch(updateUserProfile(editedUser));
-    setIsEditing(false);
-  };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   if (error) {
     return <div>Error: {error}</div>;
@@ -57,16 +35,15 @@ const SpecialistProfile = ({ className }) => {
               <div className='flex flex-col items-center md:items-start'>
                 <h1 className='font-bold text-2xl md:text-3xl text-primary-7 mb-2'>{`${user.firstName} ${user.lastName}`}</h1>
                 <div className="text-primary-6 mb-4">{user.specialistCategory}</div>
-                {!isEditing && (
+                <Link to={PATH.doctor.edit}>
                   <Button
-                    onClick={() => setIsEditing(true)}
                     background="bg-primary-6 hover:bg-primary-7 transition-colors"
                     borderRadius='rounded-full'
                     className='px-6 py-2 text-white'
                   >
                     Edit Profile
                   </Button>
-                )}
+                </Link>
               </div>
             </div>
           </div>
@@ -81,94 +58,27 @@ const SpecialistProfile = ({ className }) => {
         </div>
       </div>
 
-      {isEditing ? (
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-white shadow-lg rounded-2xl p-6 md:p-8 border border-primary-2">
-            <h2 className="text-xl md:text-2xl font-bold mb-4 text-primary-7">Personal Information</h2>
-            <div className="space-y-4">
-              <InputField label="First Name" name="firstName" value={editedUser.firstName} onChange={handleInputChange} />
-              <InputField label="Last Name" name="lastName" value={editedUser.lastName} onChange={handleInputChange} />
-              <InputField label="Email" name="email" value={editedUser.email} onChange={handleInputChange} type="email" />
-              <InputField label="Phone" name="phone" value={editedUser.phone} onChange={handleInputChange} />
-              <InputField label="Location" name="location" value={editedUser.location} onChange={handleInputChange} />
-              <SelectField label="Gender" name="gender" value={editedUser.gender} onChange={handleInputChange} options={['Male', 'Female', 'Other']} />
-              <InputField label="Date of Birth" name="dateOfBirth" value={editedUser.dateOfBirth} onChange={handleInputChange} type="date" />
-            </div>
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <InfoCard title="Personal Information">
+          <InfoItem label="First Name" value={user.firstName} />
+          <InfoItem label="Last Name" value={user.lastName} />
+          <InfoItem label="Email" value={user.email} />
+          <InfoItem label="Phone" value={user.phone} />
+          <InfoItem label="Location" value={user.location} />
+          <InfoItem label="Gender" value={user.gender} />
+          <InfoItem label="Date of Birth" value={user.dateOfBirth} />
+        </InfoCard>
 
-          <div className="bg-white shadow-lg rounded-2xl p-6 md:p-8 border border-primary-2">
-            <h2 className="text-xl md:text-2xl font-bold mb-4 text-primary-7">Professional Information</h2>
-            <div className="space-y-4">
-              <InputField label="Specialist Category" name="specialistCategory" value={editedUser.specialistCategory} onChange={handleInputChange} />
-              <InputField label="Certifications" name="certifications" value={editedUser.certifications} onChange={handleInputChange} />
-            </div>
-          </div>
-
-          <div className="md:col-span-2 flex justify-end mt-4">
-            <Button
-              type="submit"
-              background="bg-primary-6 hover:bg-primary-7 transition-colors"
-              borderRadius='rounded-full'
-              className='px-6 py-2 text-white'
-            >
-              Save Changes
-            </Button>
-          </div>
-        </form>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <InfoCard title="Personal Information">
-            <InfoItem label="First Name" value={user.firstName} />
-            <InfoItem label="Last Name" value={user.lastName} />
-            <InfoItem label="Email" value={user.email} />
-            <InfoItem label="Phone" value={user.phone} />
-            <InfoItem label="Location" value={user.location} />
-            <InfoItem label="Gender" value={user.gender} />
-            <InfoItem label="Date of Birth" value={user.dateOfBirth} />
-          </InfoCard>
-
-          <InfoCard title="Professional Information">
-            <InfoItem label="Specialist Category" value={user.specialistCategory} />
-            <InfoItem label="Certifications" value={user.certifications} />
-            <InfoItem label="Approval Status" value={user.isApproved ? 'Approved' : 'Pending Approval'} />
-            <InfoItem label="Online Status" value={user.isOnline ? 'Online' : 'Offline'} />
-          </InfoCard>
-        </div>
-      )}
+        <InfoCard title="Professional Information">
+          <InfoItem label="Specialist Category" value={user.specialistCategory} />
+          <InfoItem label="Certifications" value={user.certifications} />
+          <InfoItem label="Approval Status" value={user.isApproved ? 'Approved' : 'Pending Approval'} />
+          <InfoItem label="Online Status" value={user.isOnline ? 'Online' : 'Offline'} />
+        </InfoCard>
+      </div>
     </main>
   );
 }
-
-const InputField = ({ label, name, value, onChange, type = "text" }) => (
-  <div className="flex flex-col">
-    <label htmlFor={name} className="mb-1 text-primary-6">{label}</label>
-    <input
-      type={type}
-      id={name}
-      name={name}
-      value={value}
-      onChange={onChange}
-      className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-6"
-    />
-  </div>
-);
-
-const SelectField = ({ label, name, value, onChange, options }) => (
-  <div className="flex flex-col">
-    <label htmlFor={name} className="mb-1 text-primary-6">{label}</label>
-    <select
-      id={name}
-      name={name}
-      value={value}
-      onChange={onChange}
-      className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-6"
-    >
-      {options.map(option => (
-        <option key={option} value={option}>{option}</option>
-      ))}
-    </select>
-  </div>
-);
 
 const InfoCard = ({ title, children }) => (
   <div className="bg-white shadow-lg rounded-2xl p-6 md:p-8 border border-primary-2">

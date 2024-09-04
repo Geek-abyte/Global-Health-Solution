@@ -67,13 +67,13 @@ const CheckoutModal = ({ amount, currency = 'USD', closeModal, onSuccess }) => {
       setProcessing(false);
       onSuccess && onSuccess(result.paymentIntent);
 
-      // Initiate call and navigate to setup page
+      // Initiate call and navigate to chatroom
       try {
         const callResult = await dispatch(initiateCall({
           userId: user._id,
           specialistCategory: currentSpecialistCategory
         })).unwrap();
-        navigate(PATH.chat.setup);
+        navigate(`${PATH.chat.default}${callResult.data.callId}`);
       } catch (err) {
         console.error('Failed to initiate call:', err);
         setError('Payment successful, but failed to initiate call. Please try again.');

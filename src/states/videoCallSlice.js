@@ -22,10 +22,9 @@ export const initiateCall = createAsyncThunk(
 
       socket.emit("callInitiated", {
         callId: data.callId,
-        channelName: data.channelName,
+        roomName: data.roomName,
         callerId: userId,
         receiverId: data.specialistId,
-        token: data.token,
       });
 
       return { data };
@@ -37,7 +36,7 @@ export const initiateCall = createAsyncThunk(
 
 export const acceptCall = createAsyncThunk(
   "videoCall/accept",
-  async ({ callId, token }, { dispatch }) => {
+  async ({ callId }, { dispatch }) => {
     if (!callId) {
       throw new Error("callId is undefined");
     }
@@ -48,14 +47,16 @@ export const acceptCall = createAsyncThunk(
       socket.emit("callAccepted", {
         callId,
         callerId: data.userId,
-        channelName: data.channelName,
+        roomName: data.roomName,
         receiverId: data.specialistId,
-        token,
         status: "accepted",
       });
       dispatch(showToast({ message: "Call accepted", status: "success" }));
 
-      return { ...data, token };
+      // Navigate to the call room
+      window.location.href = `/chat/${callId}`;
+
+      return data;
     } catch (error) {
       dispatch(
         showToast({ message: "Failed to accept call", status: "error" })
@@ -170,12 +171,10 @@ const videoCallSlice = createSlice({
       })
       .addCase(initiateCall.fulfilled, (state, action) => {
         state.currentCall = action.payload;
-        console.log("at init", action.payload);
         state.isInCall = true;
       })
       .addCase(acceptCall.fulfilled, (state, action) => {
         state.currentCall = action.payload;
-        console.log("at accept", action.payload);
         state.incomingCall = null;
         state.isInCall = true;
       })

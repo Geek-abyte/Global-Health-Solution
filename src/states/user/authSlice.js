@@ -1,6 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../utils/axiosConfig";
-import { removeProperty } from "../../utils/helperFunctions";
+import {
+  getToken,
+  removeProperty,
+  setTokenWithExpiry,
+} from "../../utils/helperFunctions";
 
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
@@ -11,7 +15,7 @@ export const loginUser = createAsyncThunk(
         removeProperty(userData, "admin")
       );
       const { token, role } = response.data;
-      localStorage.setItem("authToken", token);
+      setTokenWithExpiry(token, 259200);
       localStorage.setItem("userRole", role);
       return response.data;
     } catch (error) {
@@ -49,8 +53,8 @@ const authSlice = createSlice({
   name: "auth",
   initialState: {
     user: null,
-    token: localStorage.getItem("authToken") || null,
-    isAuthenticated: !!localStorage.getItem("authToken"),
+    token: getToken() || null,
+    isAuthenticated: !!getToken(),
     userRole: localStorage.getItem("userRole") || null,
     loading: false,
     error: null,
