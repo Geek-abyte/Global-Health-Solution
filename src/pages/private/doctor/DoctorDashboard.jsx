@@ -3,6 +3,8 @@ import { FaToggleOn, FaToggleOff } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserProfile } from "../../../states/user/authSlice";
 import axiosInstance from "../../../utils/axiosConfig";
+import { Link } from "react-router-dom";
+import { PATH } from "../../../routes/path";
 
 const DoctorDashboard = () => {
   const dispatch = useDispatch();
@@ -54,9 +56,8 @@ const DoctorDashboard = () => {
         <header className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-primary-5">Doctor Dashboard</h1>
           <button
-            className={`flex items-center space-x-2 px-4 py-2 rounded-full text-white ${
-              isOnline ? "bg-green-500" : "bg-red-500"
-            }`}
+            className={`flex items-center space-x-2 px-4 py-2 rounded-full text-white ${isOnline ? "bg-green-500" : "bg-red-500"
+              }`}
             onClick={toggleOnlineStatus}
           >
             <span>{isOnline ? "Online" : "Offline"}</span>
@@ -75,11 +76,10 @@ const DoctorDashboard = () => {
                 {notifications.map((notification) => (
                   <li
                     key={notification.id}
-                    className={`p-4 rounded-md ${
-                      notification.type === "appointment"
-                        ? "bg-blue-100"
-                        : "bg-yellow-100"
-                    }`}
+                    className={`p-4 rounded-md ${notification.type === "appointment"
+                      ? "bg-blue-100"
+                      : "bg-yellow-100"
+                      }`}
                   >
                     <p className="text-lg font-medium">{notification.message}</p>
                     <button
@@ -128,6 +128,13 @@ const DoctorDashboard = () => {
               </li>
               {/* Add more call logs here */}
             </ul>
+          </section>
+
+          <section className="bg-white shadow-md rounded-lg p-6">
+            <h2 className="text-xl font-semibold mb-4">Appointments</h2>
+            <Link to={PATH.doctor.appointments} className="text-blue-600 hover:underline">
+              View All Appointments
+            </Link>
           </section>
         </div>
       </div>

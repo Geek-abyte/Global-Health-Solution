@@ -37,6 +37,8 @@ export const PATH = {
     consultant: path(PATIENT, "specialist"),
     history: path(PATIENT, "history"),
     callDetail: path(PATIENT, "history/call-detail"),
+    appointments: path(PATIENT, "appointments"),
+    createAppointment: path(PATIENT, "create-appointment"),
   },
   doctor: {
     default: DOCTOR,

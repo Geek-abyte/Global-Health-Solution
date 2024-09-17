@@ -27,6 +27,10 @@ const PatientDashboard = ({ className }) => {
     navigate(PATH.dashboard.history);
   };
 
+  const handleAppointments = () => {
+    navigate(PATH.dashboard.appointments);
+  };
+
   const cards = [
     {
       title: "Chat with AI",
@@ -45,6 +49,12 @@ const PatientDashboard = ({ className }) => {
       image: cardfile,
       color: "text-[#3AADD9]",
       onClick: handleHistory,
+    },
+    {
+      title: "Appointments",
+      image: cardfile, // You might want to use a different image for appointments
+      color: "text-green-600",
+      onClick: handleAppointments,
     },
   ];
 

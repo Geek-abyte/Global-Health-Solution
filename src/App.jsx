@@ -4,11 +4,15 @@ import { toast, ToastContainer } from "react-toastify";
 import IncomingCallNotification from "./components/IncomingCallNotification";
 import { useDispatch, useSelector } from "react-redux";
 import { hideToast } from "./states/popUpSlice";
+import { addNotification } from "./states/notificationSlice";
+import io from "socket.io-client";
 
 function App() {
   const dispatch = useDispatch();
   const { showToast, toastMessage, toastStatus, showModal, modalContent } =
     useSelector((state) => state.popUp);
+
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const commonElements = (
     <>
@@ -19,7 +23,7 @@ function App() {
     </>
   );
 
-  useEffect (() => {
+  useEffect(() => {
     if (showToast) {
       if (toastStatus === "success") {
         toast.success(toastMessage, {
@@ -36,6 +40,19 @@ function App() {
       }
     }
   }, [showToast, toastMessage, toastStatus, dispatch]);
+
+  useEffect(() => {
+    const socket = io(API_URL); // Replace with your server URL
+
+
+    socket.on('notification', (notification) => {
+      dispatch(addNotification(notification));
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [dispatch]);
 
   return (
     <>

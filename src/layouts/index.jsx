@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Outlet } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import { ChatBot, Footer, Navbar } from "../components";
+import { ChatBot, Footer, Navbar, Notification } from "../components";
 import PatientSidebar from "./PatientSidebar";
 import DoctorSidebar from "./DoctorSidebar";
 
@@ -19,6 +19,7 @@ const Layout = ({ layout, selected }) => {
             <ChatBot />
           </section>
         </div>
+        <Notification />
       </div>
     );
   }
@@ -33,6 +34,7 @@ const Layout = ({ layout, selected }) => {
             <Outlet />
           </section>
         </div>
+        <Notification />
       </div>
     );
   }
@@ -42,6 +44,7 @@ const Layout = ({ layout, selected }) => {
       <Navbar />
       <Outlet />
       <Footer />
+      <Notification />
     </>
   );
 };

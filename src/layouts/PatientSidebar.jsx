@@ -7,6 +7,7 @@ import { FaRegHospital, FaUserDoctor } from "react-icons/fa6";
 import { PATH } from '../routes/path';
 import { useDispatch, useSelector } from 'react-redux';
 import { showModal } from '../states/popUpSlice';
+import { FaCalendarAlt } from "react-icons/fa";
 
 const PatientSidebar = ({ isOpen, onClose }) => {
   const location = useLocation();
@@ -14,12 +15,15 @@ const PatientSidebar = ({ isOpen, onClose }) => {
   const dispatch = useDispatch();
   const { user, isAuthenticated } = useSelector((state) => state.auth)
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   const navItems = [
     { path: PATH.dashboard.default, icon: <LuLayoutDashboard />, label: "Dashboard" },
     { path: PATH.dashboard.profile, icon: <LuUser />, label: "Profile" },
     { path: PATH.dashboard.consultant, icon: <FaUserDoctor />, label: "Specialist" },
     { path: PATH.dashboard.prescription, icon: <BsCapsulePill />, label: "Prescription" },
     { path: PATH.dashboard.history, icon: <FaRegHospital />, label: "Medical History" },
+    { path: PATH.dashboard.appointments, icon: <FaCalendarAlt />, label: "Appointments" },
   ];
 
   const handleLogout = () => {
@@ -48,7 +52,12 @@ const PatientSidebar = ({ isOpen, onClose }) => {
   return (
     <div className={`fixed inset-y-0 left-0 transform ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition duration-200 ease-in-out md:flex md:flex-col w-64 bg-white shadow-lg overflow-y-hidden z-40`}>
       <div className="flex flex-col items-center p-4 border-b border-gray-200">
-        <img src={user?.profileImage || defaultUser} alt="User" className="w-20 h-20 rounded-full mb-2"/>
+        <img
+          src={user.profileImage ? `${apiUrl}${user.profileImage}` : defaultUser}
+          crossOrigin="anonymous"
+          alt="User" className="w-20 h-20 rounded-full mb-2"
+        />
+
         <h2 className="text-xl font-semibold text-gray-800">{user?.firstName}</h2>
         <p className="text-sm text-gray-600">{user?.role}</p>
       </div>
@@ -70,7 +79,7 @@ const PatientSidebar = ({ isOpen, onClose }) => {
       </div>
 
       <div className="p-4 border-t border-gray-200">
-        <img src={logoWhite} alt="Logo" className="w-32 mx-auto"/>
+        <img src={logoWhite} alt="Logo" className="w-32 mx-auto" />
       </div>
     </div>
   );

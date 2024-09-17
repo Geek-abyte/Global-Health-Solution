@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { fetchUserProfile } from '../../../states/user/authSlice';
@@ -8,6 +8,62 @@ import { LuMail, LuPhoneCall } from 'react-icons/lu';
 import { FaStethoscope } from 'react-icons/fa';
 import { defaultUser } from '../../../assets';
 import { PATH } from '../../../routes/path';
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
+
+const AvailabilitySettings = () => {
+  const [selectedDates, setSelectedDates] = useState([]);
+  const [availableTimes, setAvailableTimes] = useState([]);
+
+  const handleDateChange = (dates) => {
+    setSelectedDates(dates);
+  };
+
+  const handleTimeChange = (e) => {
+    const { checked, value } = e.target;
+    if (checked) {
+      setAvailableTimes([...availableTimes, value]);
+    } else {
+      setAvailableTimes(availableTimes.filter(time => time !== value));
+    }
+  };
+
+  const saveAvailability = async () => {
+    // Save availability to backend
+    await saveSpecialistAvailability(selectedDates, availableTimes);
+  };
+
+  return (
+    <div>
+      <h2 className="text-xl font-semibold mb-4">Set Your Availability</h2>
+      <Calendar
+        onChange={handleDateChange}
+        value={selectedDates}
+        selectRange={true}
+      />
+      <div className="mt-4">
+        <h3 className="text-lg font-semibold mb-2">Available Times</h3>
+        {['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'].map(time => (
+          <label key={time} className="block">
+            <input
+              type="checkbox"
+              value={time}
+              checked={availableTimes.includes(time)}
+              onChange={handleTimeChange}
+            />
+            {time}
+          </label>
+        ))}
+      </div>
+      <button
+        onClick={saveAvailability}
+        className="mt-4 bg-blue-500 text-white p-2 rounded"
+      >
+        Save Availability
+      </button>
+    </div>
+  );
+};
 
 const SpecialistProfile = ({ className }) => {
   const dispatch = useDispatch();
@@ -75,6 +131,10 @@ const SpecialistProfile = ({ className }) => {
           <InfoItem label="Approval Status" value={user.isApproved ? 'Approved' : 'Pending Approval'} />
           <InfoItem label="Online Status" value={user.isOnline ? 'Online' : 'Offline'} />
         </InfoCard>
+      </div>
+
+      <div className="mt-8">
+        <AvailabilitySettings />
       </div>
     </main>
   );

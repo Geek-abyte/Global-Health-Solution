@@ -1,116 +1,100 @@
-import React, { useEffect, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
-import {
-  setMicEnabled,
-  setCameraEnabled,
-  endCall,
-} from "../../../states/videoCallSlice";
-import {
-  FaVideo,
-  FaVideoSlash,
-  FaMicrophone,
-  FaMicrophoneSlash,
-  FaPhoneSlash,
-} from "react-icons/fa";
+import React, { useEffect, useState, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import AgoraRTC from 'agora-rtc-sdk-ng';
+import { initializeAgoraEngine } from '../../../states/videoCallSlice';
 
-const CallRoom = () => {
-  const {
-    currentCall,
-    isCameraEnabled,
-    isMicEnabled,
-  } = useSelector((state) => state.videoCall);
-  const dispatch = useDispatch();
-  const jitsiContainerRef = useRef(null);
-  const navigate = useNavigate();
+const ChatRoom = () => {
   const { callId } = useParams();
+  const dispatch = useDispatch();
+  const { agoraAppId, agoraToken, agoraChannelName } = useSelector((state) => state.videoCall);
+  const [users, setUsers] = useState([]);
+  const [localVideoTrack, setLocalVideoTrack] = useState(null);
+  const [localAudioTrack, setLocalAudioTrack] = useState(null);
+  const clientRef = useRef(null);
 
   useEffect(() => {
-    if (!currentCall || !callId) {
-      navigate("/");
-      return;
-    }
+    dispatch(initializeAgoraEngine());
+  }, [dispatch]);
 
-    const domain = 'meet.jit.si';
-    const options = {
-      roomName: callId,
-      width: '100%',
-      height: '100%',
-      parentNode: jitsiContainerRef.current,
-      interfaceConfigOverwrite: {
-        TOOLBAR_BUTTONS: [
-          'microphone', 'camera', 'closedcaptions', 'desktop', 'fullscreen',
-          'fodeviceselection', 'hangup', 'profile', 'chat', 'recording',
-          'livestreaming', 'etherpad', 'sharedvideo', 'settings', 'raisehand',
-          'videoquality', 'filmstrip', 'invite', 'feedback', 'stats', 'shortcuts',
-          'tileview', 'videobackgroundblur', 'download', 'help', 'mute-everyone',
-          'e2ee'
-        ],
-      },
-      configOverwrite: {
-        prejoinPageEnabled: false,
-      },
+  useEffect(() => {
+    if (!agoraAppId || !agoraToken || !agoraChannelName) return;
+
+    const client = AgoraRTC.createClient({ mode: 'rtc', codec: 'vp8' });
+    clientRef.current = client;
+
+    const init = async () => {
+      client.on('user-published', handleUserPublished);
+      client.on('user-unpublished', handleUserUnpublished);
+
+      try {
+        await client.join(agoraAppId, agoraChannelName, agoraToken, null);
+        const audioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+        const videoTrack = await AgoraRTC.createCameraVideoTrack();
+
+        setLocalAudioTrack(audioTrack);
+        setLocalVideoTrack(videoTrack);
+
+        await client.publish([audioTrack, videoTrack]);
+        videoTrack.play('local-video');
+      } catch (error) {
+        console.log('Error joining channel:', error);
+      }
     };
 
-    const api = new window.JitsiMeetExternalAPI(domain, options);
-
-    api.executeCommand('displayName', currentCall.userName);
-    api.executeCommand('toggleAudio', isMicEnabled);
-    api.executeCommand('toggleVideo', isCameraEnabled);
-
-    api.addEventListener('readyToClose', () => {
-      handleEndCall();
-    });
+    init();
 
     return () => {
-      api.dispose();
+      if (clientRef.current) {
+        clientRef.current.leave();
+        clientRef.current.removeAllListeners();
+      }
+      if (localAudioTrack) localAudioTrack.close();
+      if (localVideoTrack) localVideoTrack.close();
     };
-  }, [currentCall, callId, navigate, isMicEnabled, isCameraEnabled]);
+  }, [agoraAppId, agoraToken, agoraChannelName]);
 
-  const toggleCamera = () => {
-    dispatch(setCameraEnabled({ camera: !isCameraEnabled }));
+  const handleUserPublished = async (user, mediaType) => {
+    await clientRef.current.subscribe(user, mediaType);
+    if (mediaType === 'video') {
+      setUsers((prevUsers) => {
+        if (prevUsers.find((u) => u.uid === user.uid)) {
+          return prevUsers;
+        }
+        return [...prevUsers, user];
+      });
+      user.videoTrack.play(`remote-video-${user.uid}`);
+    }
+    if (mediaType === 'audio') {
+      user.audioTrack.play();
+    }
   };
 
-  const toggleMic = () => {
-    dispatch(setMicEnabled({ mic: !isMicEnabled }));
-  };
-
-  const handleEndCall = () => {
-    dispatch(endCall());
-    navigate("/");
+  const handleUserUnpublished = (user, mediaType) => {
+    if (mediaType === 'audio') {
+      if (user.audioTrack) user.audioTrack.stop();
+    }
+    if (mediaType === 'video') {
+      setUsers((prevUsers) => prevUsers.filter((u) => u.uid !== user.uid));
+    }
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-900">
-      <div className="flex flex-1 relative">
-        <div ref={jitsiContainerRef} className="absolute inset-0"></div>
-      </div>
-      <div className="flex justify-center items-center p-4 bg-gray-800">
-        <button
-          onClick={toggleCamera}
-          className="mx-2 p-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-300"
-        >
-          {isCameraEnabled ? <FaVideo size={24} /> : <FaVideoSlash size={24} />}
-        </button>
-        <button
-          onClick={toggleMic}
-          className="mx-2 p-3 bg-blue-500 text-white rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-300"
-        >
-          {isMicEnabled ? (
-            <FaMicrophone size={24} />
-          ) : (
-            <FaMicrophoneSlash size={24} />
-          )}
-        </button>
-        <button
-          onClick={handleEndCall}
-          className="mx-2 p-3 bg-red-500 text-white rounded-full hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition-colors duration-300"
-        >
-          <FaPhoneSlash size={24} />
-        </button>
+    <div className="flex flex-col h-screen">
+      <div className="flex-1 p-4">
+        <div className="w-full h-1/2">
+          <div id="local-video" className="w-full h-full"></div>
+        </div>
+        <div className="w-full h-1/2 grid grid-cols-2 gap-2">
+          {users.map((user) => (
+            <div key={user.uid} className="w-full h-full">
+              <div id={`remote-video-${user.uid}`} className="w-full h-full"></div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 };
 
-export default CallRoom;
+export default ChatRoom;

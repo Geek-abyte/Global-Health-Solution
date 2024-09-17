@@ -13,10 +13,11 @@ export const setIncomingCall = createAsyncThunk(
 
 export const initiateCall = createAsyncThunk(
   "videoCall/initiate",
-  async ({ userId, specialistCategory }, { rejectWithValue }) => {
+  async ({ userId, specialistId, specialistCategory }, { rejectWithValue }) => {
     try {
       const { data } = await axiosInstance.post("/calls/initiate", {
         userId,
+        specialistId,
         specialistCategory,
       });
 
@@ -36,28 +37,27 @@ export const initiateCall = createAsyncThunk(
 
 export const acceptCall = createAsyncThunk(
   "videoCall/accept",
-  async ({ callId }, { dispatch }) => {
-    if (!callId) {
-      throw new Error("callId is undefined");
-    }
+  async ({ callId }, { dispatch, getState }) => {
     try {
-      const { data } = await axiosInstance.patch(`calls/status/${callId}`, {
+      const { data } = await axiosInstance.patch(`/calls/status/${callId}`, {
         status: "accepted",
       });
+
+      const callData = data;
+
       socket.emit("callAccepted", {
         callId,
-        callerId: data.userId,
-        roomName: data.roomName,
-        receiverId: data.specialistId,
-        status: "accepted",
+        callerId: callData.userId,
+        receiverId: callData.specialistId,
+        channelName: data.channelName,
+        token: data.token,
       });
+
       dispatch(showToast({ message: "Call accepted", status: "success" }));
 
-      // Navigate to the call room
-      window.location.href = `/chat/${callId}`;
-
-      return data;
+      return { ...data, callId, status: "accepted" };
     } catch (error) {
+      console.error("Error accepting call:", error);
       dispatch(
         showToast({ message: "Failed to accept call", status: "error" })
       );
@@ -65,6 +65,7 @@ export const acceptCall = createAsyncThunk(
     }
   }
 );
+
 export const rejectCall = createAsyncThunk(
   "videoCall/reject",
   async (callId, { dispatch }) => {
@@ -105,7 +106,7 @@ export const callAccepted = createAsyncThunk(
   "videoCall/callAccepted",
   async (callData) => {
     const { data } = await axiosInstance.patch(
-      `calls/status/${callData.callId}`,
+      `/calls/status/${callData.callId}`,
       {
         status: "accepted",
       }
@@ -139,6 +140,18 @@ export const callEnded = createAsyncThunk(
   }
 );
 
+export const initializeAgoraEngine = createAsyncThunk(
+  "videoCall/initializeAgoraEngine",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axiosInstance.get("/calls/agora-token");
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const videoCallSlice = createSlice({
   name: "videoCall",
   initialState: {
@@ -149,6 +162,9 @@ const videoCallSlice = createSlice({
     isInCall: false,
     error: null,
     currentSpecialistCategory: "",
+    agoraAppId: null,
+    agoraToken: null,
+    agoraChannelName: null,
   },
   reducers: {
     updateCallStatus: (state, action) => {
@@ -163,6 +179,11 @@ const videoCallSlice = createSlice({
     setMicEnabled: (state, action) => {
       state.isMicEnabled = action.payload.mic;
     },
+    setAgoraCredentials: (state, action) => {
+      state.agoraAppId = action.payload.appId;
+      state.agoraToken = action.payload.token;
+      state.agoraChannelName = action.payload.channelName;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -176,7 +197,9 @@ const videoCallSlice = createSlice({
       .addCase(acceptCall.fulfilled, (state, action) => {
         state.currentCall = action.payload;
         state.incomingCall = null;
-        state.isInCall = true;
+      })
+      .addCase(acceptCall.rejected, (state, action) => {
+        state.error = action.error.message;
       })
       .addCase(rejectCall.fulfilled, (state, action) => {
         state.incomingCall = null;
@@ -189,8 +212,6 @@ const videoCallSlice = createSlice({
       })
       .addCase(callAccepted.fulfilled, (state, action) => {
         state.currentCall = action.payload;
-        console.log("at accepted", action.payload);
-
         state.isInCall = true;
       })
       .addCase(callRejected.fulfilled, (state, action) => {
@@ -200,6 +221,11 @@ const videoCallSlice = createSlice({
       .addCase(callEnded.fulfilled, (state, action) => {
         state.currentCall = action.payload;
         state.isInCall = false;
+      })
+      .addCase(initializeAgoraEngine.fulfilled, (state, action) => {
+        state.agoraAppId = action.payload.appId;
+        state.agoraToken = action.payload.token;
+        state.agoraChannelName = action.payload.channelName;
       });
   },
 });
@@ -209,6 +235,7 @@ export const {
   updateSpecialistCategory,
   setCameraEnabled,
   setMicEnabled,
+  setAgoraCredentials,
 } = videoCallSlice.actions;
 
 export default videoCallSlice.reducer;

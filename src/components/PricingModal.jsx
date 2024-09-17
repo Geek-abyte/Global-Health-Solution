@@ -3,23 +3,29 @@ import { IoCloseOutline, IoCheckmarkOutline } from "react-icons/io5";
 import { useNavigate } from "react-router";
 import { PATH } from "../routes/path";
 import { useDispatch } from "react-redux";
-import { showModal } from "../states/popUpSlice";
+import { showModal as showModalAction } from "../states/popUpSlice";
 
 const PricingModal = ({ closeModal, setPrice }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const onSelected = (price) => {
-    setPrice(price);
-    dispatch(showModal({ content: "checkoutModal" }));
+    const numericPrice = parseFloat(price);
+    if (!isNaN(numericPrice) && numericPrice > 0) {
+      setPrice(numericPrice);
+      dispatch(showModalAction({ content: "checkoutModal" }));
+      // closeModal();
+    } else {
+      console.error('Invalid price selected');
+    }
   };
+
   // onClick={() => navigate(PATH.general.payment)}
 
   const PricingCard = ({ title, price, features, isRecommended }) => (
     <div
-      className={`bg-white rounded-xl shadow-md p-6 transition-all duration-300 hover:shadow-lg ${
-        isRecommended ? "ring-2 ring-indigo-400 transform scale-102" : ""
-      }`}
+      className={`bg-white rounded-xl shadow-md p-6 transition-all duration-300 hover:shadow-lg ${isRecommended ? "ring-2 ring-indigo-400 transform scale-102" : ""
+        }`}
     >
       {isRecommended && (
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">

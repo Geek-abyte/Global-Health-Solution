@@ -39,9 +39,12 @@ export const fetchUserProfile = createAsyncThunk(
 export const updateUserProfile = createAsyncThunk(
   "auth/updateUserProfile",
   async (formData, { rejectWithValue }) => {
-    console.log();
     try {
-      const response = await axiosInstance.put("/users/profile", formData);
+      const response = await axiosInstance.put("/users/profile", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);

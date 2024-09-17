@@ -1,18 +1,20 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./states/user/authSlice";
+import appointmentReducer from "./states/appointmentSlice";
+import notificationReducer from "./states/notificationSlice";
 import popUpReducer from "./states/popUpSlice";
-import navBarReducer from "./states/navBarSlice";
-import videoCallReducer from "./states/videoCallSlice";
 import blogReducer from "./states/blog/blogSlice";
+import videoCallReducer from "./states/videoCallSlice";
 
 // Create the Redux store
 const store = configureStore({
   reducer: {
     auth: authReducer,
+    appointments: appointmentReducer,
+    notifications: notificationReducer,
     popUp: popUpReducer,
-    navBar: navBarReducer,
-    videoCall: videoCallReducer,
     blog: blogReducer,
+    videoCall: videoCallReducer,
   },
 });
 

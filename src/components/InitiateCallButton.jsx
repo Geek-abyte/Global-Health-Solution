@@ -1,17 +1,16 @@
-// src/components/InitiateCallButton.js
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { initiateCall } from '../features/videoCall/videoCallSlice';
+import { initiateCall } from '../states/videoCallSlice';
 
-function InitiateCallButton({ specialistId, specialistName }) {
+function InitiateCallButton({ specialistId, specialistName, specialistCategory }) {
   const dispatch = useDispatch();
-  const currentUserId = useSelector(state => state.auth.user.id); // Assuming you have an auth slice
+  const currentUserId = useSelector(state => state.auth.user._id);
 
   const handleInitiateCall = () => {
-    dispatch(initiateCall({ 
-      userId: currentUserId, 
-      specialistId, 
-      specialistCategory: 'example_category'
+    dispatch(initiateCall({
+      userId: currentUserId,
+      specialistId,
+      specialistCategory
     }));
   };
 

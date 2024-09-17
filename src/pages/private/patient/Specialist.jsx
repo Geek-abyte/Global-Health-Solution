@@ -1,32 +1,31 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { CheckoutModal, ImageCard, PricingModal } from "../../../components";
+import { ImageCard, PricingModal, CheckoutModal } from "../../../components";
 import ModalContainer from "../../../components/ModalContainer";
+import FindSpecialistModal from "../../../components/FindSpecialistModal";
 import {
   showModal as showModalAction,
   hideModal,
 } from "../../../states/popUpSlice";
-import { MdOutlineClose } from "react-icons/md";
 import { PATH } from "../../../routes/path";
 import { cards } from "../../../data/cards";
 import { updateSpecialistCategory } from "../../../states/videoCallSlice";
 
 const Specialist = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [price, setPrice] = useState()
+  const navigate = useNavigate();
+  const [price, setPrice] = useState(null);
+  const [specialist, setSpecialist] = useState(null);
   const { showModal, modalContent } = useSelector((state) => state.popUp);
+  const { currentSpecialistCategory } = useSelector((state) => state.videoCall);
 
   const onCardSelected = (category) => {
     dispatch(updateSpecialistCategory(category));
-    dispatch(showModalAction({ content: "pricingModal" }));
+    dispatch(showModalAction({ content: "findSpecialistModal" }));
   };
 
   const closeModal = () => dispatch(hideModal());
-  const handleGoToDoctor = () => {
-    navigate(PATH.chat.default);
-  };
 
   return (
     <section className="py-12 px-4 md:px-8 bg-gray-50">
@@ -47,12 +46,30 @@ const Specialist = () => {
           ))}
         </div>
       </div>
-      {showModal && modalContent === "pricingModal" ? (
+      {showModal && modalContent === "findSpecialistModal" && (
+        <ModalContainer
+          modal={
+            <FindSpecialistModal
+              category={currentSpecialistCategory}
+              setTheSpecialist={setSpecialist}
+              closeModal={closeModal}
+            />
+          }
+        />
+      )}
+      {showModal && modalContent === "pricingModal" && (
         <ModalContainer modal={<PricingModal closeModal={closeModal} setPrice={setPrice} />} />
-      ) : showModal && modalContent === "checkoutModal" ? (
-        <ModalContainer modal={<CheckoutModal closeModal={closeModal} amount={price} onSuccess={() => navigate(PATH.chat.setup)} />} />
-      ) : (
-        ""
+      )}
+      {showModal && modalContent === "checkoutModal" && (
+        <ModalContainer modal={
+          <CheckoutModal
+            closeModal={closeModal}
+            amount={price}
+            currency="USD"
+            // onSuccess={() => navigate(PATH.chat.setup)}
+            specialist={specialist}
+          />
+        } />
       )}
     </section>
   );

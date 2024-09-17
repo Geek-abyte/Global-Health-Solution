@@ -48,6 +48,9 @@ import { CallDetail } from "../pages/private/patient";
 import AdminLayout from "../layouts/AdminLayout";
 import { AdminAllUsers, AdminDashboard, AdminLogin, AdminManageSpecialists, AdminSpecialistDetail, AdminBlogs, CreateEditBlog, BlogPreview } from "../pages/private/admin";
 import EditSpecialistProfile from "../pages/private/doctor/EditSpecialistPage";
+import SpecialistAppointments from "../pages/private/doctor/SpecialistAppointment";
+import Appointments from "../pages/private/patient/Appointment";
+import CreateAppointment from '../pages/private/patient/CreateAppointment';
 
 const AuthWrapper = ({ children }) => {
   const dispatch = useDispatch();
@@ -113,7 +116,7 @@ export default function Router() {
       ],
     },
     {
-      path: PATH.chat.setup,
+      path: PATH.chat.setup + "/:callId",
       element: (
         <AuthWrapper>
           <Setup />
@@ -121,7 +124,7 @@ export default function Router() {
       ),
     },
     {
-      path: PATH.chat.default + ":callId",
+      path: PATH.chat.chatroom + "/:callId",
       element: (
         <PrivateRoute userRole="all" requiredRole="all" route={<LazyChat />} />
       ),
@@ -149,6 +152,8 @@ export default function Router() {
         { path: PATH.dashboard.consultant, element: <LazySpecialist /> },
         { path: PATH.dashboard.history, element: <LazyHistory /> },
         { path: PATH.dashboard.callDetail + "/:id", element: <CallDetail /> },
+        { path: PATH.dashboard.appointments, element: < Appointments /> },
+        { path: PATH.dashboard.createAppointment, element: <CreateAppointment /> },
         { path: "*", element: <Navigate to={PATH.general.page404} replace /> },
       ],
     },
@@ -178,6 +183,7 @@ export default function Router() {
           element: <DoctorCallDetail />,
         },
         { path: PATH.doctor.history, element: <DoctorHistory /> },
+        { path: PATH.doctor.appointments, element: <SpecialistAppointments /> },
       ],
     },
     {

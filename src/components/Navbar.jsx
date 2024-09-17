@@ -85,10 +85,11 @@ const Navbar = ({ className }) => {
                   <div className="flex items-center space-x-3">
                     <img
                       className="h-8 w-8 rounded-full object-cover border-2"
-                      src={`${apiUrl}${user.profileImage}` || defaultUser}
+                      src={user.profileImage ? `${apiUrl}${user.profileImage}` : defaultUser}
                       alt={user.firstName}
+                      crossOrigin="anonymous"
                     />
-                    {/* {console.log('profile', user)} */}
+                    {/* {console.log('profile Image', defaultUser)} */}
                     <span className="text-gray-700 font-medium">
                       {user.firstName}
                     </span>
@@ -203,8 +204,9 @@ const Navbar = ({ className }) => {
                   <div className="flex items-center space-x-2">
                     <img
                       className="h-8 w-8 rounded-full object-cover border-2"
-                      src={user.profileImage || defaultUser}
+                      src={user.profileImage ? `${apiUrl}${user.profileImage}` : defaultUser}
                       alt={user.firstName}
+                      crossOrigin="anonymous"
                     />
                     <span className="text-gray-700 font-medium">
                       {user.firstName}

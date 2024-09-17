@@ -13,7 +13,7 @@ const EditProfile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user, loading, error } = useSelector((state) => state.auth);
-
+  const apiUrl = import.meta.env.VITE_API_URL;
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -69,21 +69,24 @@ const EditProfile = () => {
 
     // Append all form fields
     Object.keys(formData).forEach((key) => {
-      formDataToSend.append(key, formData[key]);
+      if (key !== 'surgeries') {
+        formDataToSend.append(key, formData[key]);
+      }
     });
+
+    // Handle surgeries array separately
+    if (Array.isArray(formData.surgeries)) {
+      formData.surgeries.forEach((surgery, index) => {
+        formDataToSend.append(`surgeries[${index}]`, surgery);
+      });
+    }
 
     // Explicitly handle the profile image
     if (selectedImage) {
       formDataToSend.append("profileImage", selectedImage);
-      console.log("Profile image added:", selectedImage.name);
-    } else {
-      console.log("No profile image selected");
     }
 
-    // Log all form data entries
-    for (let pair of formDataToSend.entries()) {
-      console.log(`${pair[0]}: ${pair[1]}`);
-    }
+    console.log("see the form", formDataToSend);
 
     try {
       const response = await dispatch(
@@ -121,9 +124,10 @@ const EditProfile = () => {
                   src={
                     selectedImage
                       ? URL.createObjectURL(selectedImage)
-                      : user?.profileImage || defaultUser
+                      : user?.profileImage ? `${apiUrl}${user.profileImage}` : defaultUser
                   }
                   alt="User"
+                  crossOrigin="anonymous"
                 />
                 <label
                   htmlFor="profileImage"
@@ -164,7 +168,7 @@ const EditProfile = () => {
           </div>
           <form
             className="p-6 md:p-8 text-sm md:text-base"
-            encType="multipart/form-data"
+            onSubmit={handleSubmit}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>

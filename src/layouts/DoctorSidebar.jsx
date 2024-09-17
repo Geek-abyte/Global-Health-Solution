@@ -6,12 +6,15 @@ import { HiChip } from "react-icons/hi";
 import { PATH } from "../routes/path";
 import { fetchUserProfile } from "../states/user/authSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { FaCalendarAlt } from 'react-icons/fa';
 
 const DoctorSidebar = ({ className }) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const [selectedItem, setSelectedItem] = useState("dashboard");
   const { user } = useSelector((state) => state.auth);
+
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     dispatch(fetchUserProfile());
@@ -25,6 +28,9 @@ const DoctorSidebar = ({ className }) => {
       case PATH.dashboard.history:
         setSelectedItem("medical-history");
         break;
+      case PATH.doctor.appointments:
+        setSelectedItem("appointments");
+        break;
       default:
         setSelectedItem("dashboard");
         break;
@@ -36,32 +42,40 @@ const DoctorSidebar = ({ className }) => {
       className={`${className} relative flex flex-col w-20 h-screen bg-primary-10 text-white overflow-hidden`}
     >
       <div className="image flex items-center px-4 w-full py-[30px]">
-        <img src={defaultUser} alt="" className="w-[70px]" />
+        <img
+          src={user.profileImage ? `${apiUrl}${user.profileImage}` : defaultUser}
+          crossOrigin="anonymous"
+          alt=""
+          className="w-[70px]" />
       </div>
       <div className="flex flex-col flex-1 overflow-y-auto items-center">
         <Link
           to={PATH.doctor.dashboard}
-          className={`px-4 py-3 text-[20px] font-medium flex flex-row justify-start items-center ${
-            selectedItem === "dashboard" ? "text-[#FFE500]" : ""
-          }`}
+          className={`px-4 py-3 text-[20px] font-medium flex flex-row justify-start items-center ${selectedItem === "dashboard" ? "text-[#FFE500]" : ""
+            }`}
         >
           <LuLayoutDashboard size={25} className="mr-2" />
         </Link>
         <Link
           to={PATH.doctor.profile}
-          className={`px-4 py-3 text-[20px] font-medium flex flex-row justify-start items-center ${
-            selectedItem === "profile" ? "text-[#FFE500]" : ""
-          }`}
+          className={`px-4 py-3 text-[20px] font-medium flex flex-row justify-start items-center ${selectedItem === "profile" ? "text-[#FFE500]" : ""
+            }`}
         >
           <LuUser size={25} className="mr-2" />
         </Link>
         <Link
           to={PATH.doctor.history}
-          className={`px-4 py-3 text-[20px] font-medium flex flex-row justify-start items-center ${
-            selectedItem === "medical-history" ? "text-[#FFE500]" : ""
-          }`}
+          className={`px-4 py-3 text-[20px] font-medium flex flex-row justify-start items-center ${selectedItem === "medical-history" ? "text-[#FFE500]" : ""
+            }`}
         >
           <HiChip size={25} className="mr-2" />
+        </Link>
+        <Link
+          to={PATH.doctor.appointments}
+          className={`px-4 py-3 text-[20px] font-medium flex flex-row justify-start items-center ${selectedItem === "appointments" ? "text-[#FFE500]" : ""
+            }`}
+        >
+          <FaCalendarAlt size={25} className="mr-2" />
         </Link>
       </div>
     </nav>

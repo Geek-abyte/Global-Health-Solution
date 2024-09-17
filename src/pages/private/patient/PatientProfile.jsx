@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { fetchUserProfile } from '../../../states/user/authSlice'; 
+import { fetchUserProfile } from '../../../states/user/authSlice';
 import { Button } from '../../../components';
 import { IoLocationOutline } from "react-icons/io5";
 import { LuMail, LuPhoneCall } from 'react-icons/lu';
@@ -11,6 +11,7 @@ import { defaultUser } from '../../../assets';
 const PatientProfile = ({ className }) => {
   const dispatch = useDispatch();
   const { user, loading, error } = useSelector((state) => state.auth);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     dispatch(fetchUserProfile());
@@ -30,7 +31,12 @@ const PatientProfile = ({ className }) => {
         <div className="bg-white shadow-lg rounded-2xl overflow-hidden">
           <div className="bg-primary-1 p-6 md:p-8">
             <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
-              <img className="border-4 rounded-full w-24 h-24 md:w-32 md:h-32 border-white object-cover" src={user?.profileImage || defaultUser } alt="User" />
+              <img
+                className="border-4 rounded-full w-24 h-24 md:w-32 md:h-32 border-white object-cover"
+                src={user?.profileImage ? `${apiUrl}${user.profileImage}` : defaultUser}
+                crossOrigin='anonymous'
+                alt="User"
+              />
               <div className='flex flex-col items-center md:items-start'>
                 <h1 className='font-bold text-2xl md:text-3xl text-primary-7 mb-2'>{user?.firstName} {user?.lastName}</h1>
                 <div className="text-primary-6 mb-4">{user?.gender}</div>
