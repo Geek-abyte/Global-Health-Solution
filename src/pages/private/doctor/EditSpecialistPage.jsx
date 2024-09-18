@@ -9,6 +9,48 @@ import { IoLocationOutline } from "react-icons/io5";
 import { LuMail, LuPhoneCall } from 'react-icons/lu';
 import { FaStethoscope } from 'react-icons/fa';
 
+
+const SelectField = ({ label, name, value, onChange, options }) => {
+  return (
+    <div className="flex flex-col">
+      <label htmlFor={name} className="mb-1 text-sm font-medium text-gray-700">
+        {label}
+      </label>
+      <select
+        id={name}
+        name={name}
+        value={value}
+        onChange={onChange}
+        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-6"
+      >
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};
+
+const InputField = ({ label, name, value, onChange, type = 'text' }) => {
+  return (
+    <div className="flex flex-col">
+      <label htmlFor={name} className="mb-1 text-sm font-medium text-gray-700">
+        {label}
+      </label>
+      <input
+        type={type}
+        id={name}
+        name={name}
+        value={value}
+        onChange={onChange}
+        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-6"
+      />
+    </div>
+  );
+};
+
 const EditSpecialistProfile = ({ className }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -142,7 +184,5 @@ const EditSpecialistProfile = ({ className }) => {
     </main>
   );
 }
-
-// ... (InputField and SelectField components remain the same)
 
 export default EditSpecialistProfile;
