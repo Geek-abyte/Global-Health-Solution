@@ -9,6 +9,47 @@ import { IoLocationOutline } from "react-icons/io5";
 import { LuMail, LuPhoneCall } from 'react-icons/lu';
 import { FaStethoscope } from 'react-icons/fa';
 
+const SelectField = ({ label, name, value, onChange, options }) => {
+  return (
+    <div className="flex flex-col">
+      <label htmlFor={name} className="mb-1 text-sm font-medium text-gray-700">
+        {label}
+      </label>
+      <select
+        id={name}
+        name={name}
+        value={value}
+        onChange={onChange}
+        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-6"
+      >
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+};
+
+const InputField = ({ label, name, value, onChange, type = 'text' }) => {
+  return (
+    <div className="flex flex-col">
+      <label htmlFor={name} className="mb-1 text-sm font-medium text-gray-700">
+        {label}
+      </label>
+      <input
+        type={type}
+        id={name}
+        name={name}
+        value={value}
+        onChange={onChange}
+        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-6"
+      />
+    </div>
+  );
+};
+
 const EditSpecialistProfile = ({ className }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -26,13 +67,24 @@ const EditSpecialistProfile = ({ className }) => {
     certifications: "",
   });
   const [selectedImage, setSelectedImage] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    dispatch(fetchUserProfile());
+    const fetchData = async () => {
+      try {
+        await dispatch(fetchUserProfile()).unwrap();
+        setIsLoading(false);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+        setIsLoading(false);
+      }
+    };
+    fetchData();
   }, [dispatch]);
 
   useEffect(() => {
     if (user) {
+      console.log("User data received:", user);
       setFormData({
         firstName: user.firstName || "",
         lastName: user.lastName || "",
@@ -64,12 +116,10 @@ const EditSpecialistProfile = ({ className }) => {
     e.preventDefault();
     const formDataToSend = new FormData();
 
-    // Append all form fields
     Object.keys(formData).forEach((key) => {
       formDataToSend.append(key, formData[key]);
     });
 
-    // Explicitly handle the profile image
     if (selectedImage) {
       formDataToSend.append("profileImage", selectedImage);
     }
@@ -83,12 +133,16 @@ const EditSpecialistProfile = ({ className }) => {
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
+  if (isLoading) {
+    return <div className="text-center py-8">Loading...</div>;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="text-center py-8 text-red-500">Error: {error}</div>;
+  }
+
+  if (!user) {
+    return <div className="text-center py-8">No user data available.</div>;
   }
 
   return (
@@ -118,7 +172,6 @@ const EditSpecialistProfile = ({ className }) => {
                     type="file"
                     className="hidden"
                     onChange={handleImageChange}
-                    accept="image/*"
                   />
                 </label>
               </div>
@@ -143,42 +196,21 @@ const EditSpecialistProfile = ({ className }) => {
         <div className="bg-white shadow-lg rounded-2xl p-6 md:p-8 border border-primary-2">
           <h2 className="text-xl md:text-2xl font-bold mb-4 text-primary-7">Personal Information</h2>
           <div className="space-y-4">
-            {['firstName', 'lastName', 'email', 'phone', 'location', 'gender', 'dateOfBirth'].map((field) => (
-              <div key={field} className="flex flex-col">
-                <label htmlFor={field} className="mb-1 text-sm font-medium text-gray-700">
-                  {field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1').trim()}
-                </label>
-                <input
-                  type={field === 'dateOfBirth' ? 'date' : field === 'email' ? 'email' : 'text'}
-                  id={field}
-                  name={field}
-                  value={formData[field]}
-                  onChange={handleChange}
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-6"
-                />
-              </div>
-            ))}
+            <InputField label="First Name" name="firstName" value={formData.firstName} onChange={handleChange} />
+            <InputField label="Last Name" name="lastName" value={formData.lastName} onChange={handleChange} />
+            <InputField label="Email" name="email" value={formData.email} onChange={handleChange} type="email" />
+            <InputField label="Phone" name="phone" value={formData.phone} onChange={handleChange} />
+            <InputField label="Location" name="location" value={formData.location} onChange={handleChange} />
+            <SelectField label="Gender" name="gender" value={formData.gender} onChange={handleChange} options={['Male', 'Female', 'Other']} />
+            <InputField label="Date of Birth" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} type="date" />
           </div>
         </div>
 
         <div className="bg-white shadow-lg rounded-2xl p-6 md:p-8 border border-primary-2">
           <h2 className="text-xl md:text-2xl font-bold mb-4 text-primary-7">Professional Information</h2>
           <div className="space-y-4">
-            {['specialistCategory', 'certifications'].map((field) => (
-              <div key={field} className="flex flex-col">
-                <label htmlFor={field} className="mb-1 text-sm font-medium text-gray-700">
-                  {field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1').trim()}
-                </label>
-                <input
-                  type="text"
-                  id={field}
-                  name={field}
-                  value={formData[field]}
-                  onChange={handleChange}
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-6"
-                />
-              </div>
-            ))}
+            <InputField label="Specialist Category" name="specialistCategory" value={formData.specialistCategory} onChange={handleChange} />
+            <InputField label="Certifications" name="certifications" value={formData.certifications} onChange={handleChange} />
           </div>
         </div>
 

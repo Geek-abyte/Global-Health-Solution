@@ -39,14 +39,14 @@ const DoctorSidebar = ({ className }) => {
 
   return (
     <nav
-      className={`${className} relative flex flex-col w-20 h-screen bg-primary-10 text-white overflow-hidden`}
+      className={`${className} relative flex flex-col items-center p-4 w-20 h-screen bg-primary-10 text-white overflow-hidden`}
     >
-      <div className="image flex items-center px-4 w-full py-[30px]">
+      <div className="flex w-12 h-12 m-2 items-center rounded-full justify-center overflow-hidden">
         <img
           src={user.profileImage ? `${apiUrl}${user.profileImage}` : defaultUser}
           crossOrigin="anonymous"
           alt=""
-          className="w-[70px]" />
+          className="object-cover" />
       </div>
       <div className="flex flex-col flex-1 overflow-y-auto items-center">
         <Link
