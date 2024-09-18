@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { fetchUserProfile, updateUserProfile } from '../../../states/user/authSlice';
@@ -9,55 +9,23 @@ import { IoLocationOutline } from "react-icons/io5";
 import { LuMail, LuPhoneCall } from 'react-icons/lu';
 import { FaStethoscope } from 'react-icons/fa';
 
-
-const SelectField = ({ label, name, value, onChange, options }) => {
-  return (
-    <div className="flex flex-col">
-      <label htmlFor={name} className="mb-1 text-sm font-medium text-gray-700">
-        {label}
-      </label>
-      <select
-        id={name}
-        name={name}
-        value={value}
-        onChange={onChange}
-        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-6"
-      >
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-    </div>
-  );
-};
-
-const InputField = ({ label, name, value, onChange, type = 'text' }) => {
-  return (
-    <div className="flex flex-col">
-      <label htmlFor={name} className="mb-1 text-sm font-medium text-gray-700">
-        {label}
-      </label>
-      <input
-        type={type}
-        id={name}
-        name={name}
-        value={value}
-        onChange={onChange}
-        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-6"
-      />
-    </div>
-  );
-};
-
 const EditSpecialistProfile = ({ className }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, error } = useSelector((state) => state.auth);
-  const [editedUser, setEditedUser] = useState(null);
-  const [profileImage, setProfileImage] = useState(null);
-  const fileInputRef = useRef(null);
+  const { user, loading, error } = useSelector((state) => state.auth);
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    location: "",
+    gender: "",
+    dateOfBirth: "",
+    specialistCategory: "",
+    certifications: "",
+  });
+  const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     dispatch(fetchUserProfile());
@@ -65,44 +33,62 @@ const EditSpecialistProfile = ({ className }) => {
 
   useEffect(() => {
     if (user) {
-      setEditedUser({ ...user });
-      setProfileImage(user.profileImage || defaultUser);
+      setFormData({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        location: user.location || "",
+        gender: user.gender || "",
+        dateOfBirth: user.dateOfBirth ? user.dateOfBirth.split("T")[0] : "",
+        specialistCategory: user.specialistCategory || "",
+        certifications: user.certifications || "",
+      });
     }
   }, [user]);
 
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setEditedUser(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleImageClick = () => {
-    fileInputRef.current.click();
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result);
-        setEditedUser(prev => ({ ...prev, profileImage: reader.result }));
-      };
-      reader.readAsDataURL(file);
+      setSelectedImage(file);
+      console.log("Image selected:", file.name);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    dispatch(updateUserProfile(editedUser));
-    navigate('/profile'); // Redirect to profile page after update
+    const formDataToSend = new FormData();
+
+    // Append all form fields
+    Object.keys(formData).forEach((key) => {
+      formDataToSend.append(key, formData[key]);
+    });
+
+    // Explicitly handle the profile image
+    if (selectedImage) {
+      formDataToSend.append("profileImage", selectedImage);
+    }
+
+    try {
+      const response = await dispatch(updateUserProfile(formDataToSend)).unwrap();
+      console.log("Profile update response:", response);
+      navigate('/profile'); // Redirect to profile page after update
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   if (error) {
     return <div>Error: {error}</div>;
-  }
-
-  if (!editedUser) {
-    return <div>Loading...</div>;
   }
 
   return (
@@ -114,35 +100,40 @@ const EditSpecialistProfile = ({ className }) => {
               <div className="relative">
                 <img
                   className="border-4 rounded-full w-24 h-24 md:w-32 md:h-32 border-white object-cover"
-                  src={profileImage}
+                  src={
+                    selectedImage
+                      ? URL.createObjectURL(selectedImage)
+                      : user?.profileImage ? `${apiUrl}${user.profileImage}` : defaultUser
+                  }
                   alt="Specialist"
+                  crossOrigin="anonymous"
                 />
-                <button
-                  className="absolute bottom-0 right-0 bg-primary-6 text-white p-2 rounded-full"
-                  onClick={handleImageClick}
+                <label
+                  htmlFor="profileImage"
+                  className="absolute bottom-0 right-0 bg-primary-6 text-white p-2 rounded-full cursor-pointer"
                 >
                   <FaCamera />
-                </button>
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handleImageChange}
-                  accept="image/*"
-                  className="hidden"
-                />
+                  <input
+                    id="profileImage"
+                    type="file"
+                    className="hidden"
+                    onChange={handleImageChange}
+                    accept="image/*"
+                  />
+                </label>
               </div>
               <div className='flex flex-col items-center md:items-start'>
-                <h1 className='font-bold text-2xl md:text-3xl text-primary-7 mb-2'>{`${editedUser.firstName} ${editedUser.lastName}`}</h1>
-                <div className="text-primary-6 mb-4">{editedUser.specialistCategory}</div>
+                <h1 className='font-bold text-2xl md:text-3xl text-primary-7 mb-2'>{`${formData.firstName} ${formData.lastName}`}</h1>
+                <div className="text-primary-6 mb-4">{formData.specialistCategory}</div>
               </div>
             </div>
           </div>
           <div className="p-6 md:p-8 text-sm md:text-base">
             <div className="flex flex-col md:flex-row gap-4 md:gap-8 justify-center items-center text-primary-6">
-              <div className="flex items-center gap-2"><IoLocationOutline className="text-xl" />{editedUser.location}</div>
-              <div className="flex items-center gap-2"><LuPhoneCall className="text-xl" />{editedUser.phone}</div>
-              <div className="flex items-center gap-2"><LuMail className="text-xl" />{editedUser.email}</div>
-              <div className="flex items-center gap-2"><FaStethoscope className="text-xl" />{editedUser.isApproved ? 'Approved' : 'Pending Approval'}</div>
+              <div className="flex items-center gap-2"><IoLocationOutline className="text-xl" />{formData.location}</div>
+              <div className="flex items-center gap-2"><LuPhoneCall className="text-xl" />{formData.phone}</div>
+              <div className="flex items-center gap-2"><LuMail className="text-xl" />{formData.email}</div>
+              <div className="flex items-center gap-2"><FaStethoscope className="text-xl" />{user?.isApproved ? 'Approved' : 'Pending Approval'}</div>
             </div>
           </div>
         </div>
@@ -152,21 +143,42 @@ const EditSpecialistProfile = ({ className }) => {
         <div className="bg-white shadow-lg rounded-2xl p-6 md:p-8 border border-primary-2">
           <h2 className="text-xl md:text-2xl font-bold mb-4 text-primary-7">Personal Information</h2>
           <div className="space-y-4">
-            <InputField label="First Name" name="firstName" value={editedUser.firstName} onChange={handleInputChange} />
-            <InputField label="Last Name" name="lastName" value={editedUser.lastName} onChange={handleInputChange} />
-            <InputField label="Email" name="email" value={editedUser.email} onChange={handleInputChange} type="email" />
-            <InputField label="Phone" name="phone" value={editedUser.phone} onChange={handleInputChange} />
-            <InputField label="Location" name="location" value={editedUser.location} onChange={handleInputChange} />
-            <SelectField label="Gender" name="gender" value={editedUser.gender} onChange={handleInputChange} options={['Male', 'Female', 'Other']} />
-            <InputField label="Date of Birth" name="dateOfBirth" value={editedUser.dateOfBirth} onChange={handleInputChange} type="date" />
+            {['firstName', 'lastName', 'email', 'phone', 'location', 'gender', 'dateOfBirth'].map((field) => (
+              <div key={field} className="flex flex-col">
+                <label htmlFor={field} className="mb-1 text-sm font-medium text-gray-700">
+                  {field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1').trim()}
+                </label>
+                <input
+                  type={field === 'dateOfBirth' ? 'date' : field === 'email' ? 'email' : 'text'}
+                  id={field}
+                  name={field}
+                  value={formData[field]}
+                  onChange={handleChange}
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-6"
+                />
+              </div>
+            ))}
           </div>
         </div>
 
         <div className="bg-white shadow-lg rounded-2xl p-6 md:p-8 border border-primary-2">
           <h2 className="text-xl md:text-2xl font-bold mb-4 text-primary-7">Professional Information</h2>
           <div className="space-y-4">
-            <InputField label="Specialist Category" name="specialistCategory" value={editedUser.specialistCategory} onChange={handleInputChange} />
-            <InputField label="Certifications" name="certifications" value={editedUser.certifications} onChange={handleInputChange} />
+            {['specialistCategory', 'certifications'].map((field) => (
+              <div key={field} className="flex flex-col">
+                <label htmlFor={field} className="mb-1 text-sm font-medium text-gray-700">
+                  {field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1').trim()}
+                </label>
+                <input
+                  type="text"
+                  id={field}
+                  name={field}
+                  value={formData[field]}
+                  onChange={handleChange}
+                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-primary-6"
+                />
+              </div>
+            ))}
           </div>
         </div>
 
