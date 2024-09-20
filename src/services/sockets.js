@@ -51,8 +51,6 @@ export const connectSocket = (userId) => {
   socket.on("callAccepted", (callData) => {
     store.dispatch(callAccepted(callData));
     store.dispatch(showToast({ message: "Call accepted", status: "success" }));
-    // const navigate = useNavigate();
-    // navigate(`${PATH.chat.setup}/${callData.callId}`);
   });
 
   socket.on("callRejected", (callData) => {

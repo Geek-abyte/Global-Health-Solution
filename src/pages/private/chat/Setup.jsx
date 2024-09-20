@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   FaVideo,
   FaVideoSlash,
@@ -6,7 +6,7 @@ import {
   FaMicrophoneSlash,
   FaExclamationTriangle
 } from "react-icons/fa";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { initiateCall, setMicEnabled, setCameraEnabled } from "../../../states/videoCallSlice";
 import { fetchUserProfile } from "../../../states/user/authSlice";
@@ -15,40 +15,32 @@ import { PATH } from "../../../routes/path";
 const SetupPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { callId } = useParams();
   const { currentSpecialistCategory } = useSelector((state) => state.videoCall);
   const { currentCall, isCameraEnabled, isMicEnabled } = useSelector((state) => state.videoCall);
+
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const videoPreviewRef = useRef(null);
   const [localStream, setLocalStream] = useState(null);
   const [mediaError, setMediaError] = useState(null);
+  const [isVideoReady, setIsVideoReady] = useState(false);
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      dispatch(fetchUserProfile());
-    }
-  }, [dispatch, isAuthenticated]);
-
-  useEffect(() => {
-    if (currentCall && currentCall.status === 'accepted') {
-      navigate(`${PATH.chat.default}${currentCall.callId}`);
-    }
-  }, [currentCall, navigate]);
-
-  useEffect(() => {
-    const initializeMedia = async () => {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        setLocalStream(stream);
-        if (videoPreviewRef.current) {
-          videoPreviewRef.current.srcObject = stream;
-        }
-        setMediaError(null);
-      } catch (error) {
-        console.error("Error accessing media devices:", error);
-        setMediaError("Unable to access camera or microphone. Please check your device settings.");
+  const initializeMedia = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      setLocalStream(stream);
+      if (videoPreviewRef.current) {
+        videoPreviewRef.current.srcObject = stream;
       }
-    };
+      setMediaError(null);
+      setIsVideoReady(true);
+    } catch (error) {
+      console.error("Error accessing media devices:", error);
+      setMediaError("Unable to access camera or microphone. Please check your device settings.");
+    }
+  }, []);
 
+  useEffect(() => {
     initializeMedia();
 
     return () => {
@@ -56,7 +48,7 @@ const SetupPage = () => {
         localStream.getTracks().forEach(track => track.stop());
       }
     };
-  }, []);
+  }, [initializeMedia]);
 
   useEffect(() => {
     if (localStream) {
@@ -65,12 +57,22 @@ const SetupPage = () => {
     }
   }, [isCameraEnabled, isMicEnabled, localStream]);
 
+  const handleVideoPlay = useCallback(() => {
+    if (videoPreviewRef.current && isVideoReady) {
+      videoPreviewRef.current.play().catch(error => {
+        if (error.name !== 'AbortError') {
+          console.error('Error playing video:', error);
+        }
+      });
+    }
+  }, [isVideoReady]);
+
   const toggleCamera = () => dispatch(setCameraEnabled({ camera: !isCameraEnabled }));
   const toggleMic = () => dispatch(setMicEnabled({ mic: !isMicEnabled }));
 
   const onJoinCall = () => {
     if (user && currentCall) {
-      navigate(`${PATH.chat.default}${currentCall.callId}`);
+      navigate(`${PATH.chat.chatroom}/${callId}`);
     } else {
       console.error('User or currentCall not available');
     }
@@ -139,6 +141,7 @@ const SetupPage = () => {
                     playsInline
                     muted
                     className="w-full h-full object-cover"
+                    onCanPlay={handleVideoPlay}
                   />
                   {!isCameraEnabled && localStream && (
                     <div className="absolute inset-0 flex items-center justify-center text-white bg-gray-800 bg-opacity-75">

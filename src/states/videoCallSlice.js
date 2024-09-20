@@ -70,7 +70,7 @@ export const rejectCall = createAsyncThunk(
   "videoCall/reject",
   async (callId, { dispatch }) => {
     try {
-      const { data } = await axiosInstance.patch(`calls/status/${callId}`, {
+      const { data } = await axiosInstance.patch(`/calls/status/${callId}`, {
         status: "rejected",
       });
       socket.emit("callRejected", { callId });
@@ -89,7 +89,7 @@ export const endCall = createAsyncThunk(
   "videoCall/end",
   async (callId, { dispatch }) => {
     try {
-      const { data } = await axiosInstance.patch(`calls/status/${callId}`, {
+      const { data } = await axiosInstance.patch(`/calls/status/${callId}`, {
         status: "completed",
       });
       socket.emit("callEnded", { callId });
@@ -111,14 +111,14 @@ export const callAccepted = createAsyncThunk(
         status: "accepted",
       }
     );
-    return callData;
+    return { ...data, callId: callData.callId };
   }
 );
 export const callRejected = createAsyncThunk(
   "videoCall/callRejected",
   async (callData) => {
     const { data } = await axiosInstance.patch(
-      `calls/status/${callData.callId}`,
+      `/calls/status/${callData.callId}`,
       {
         status: "rejected",
       }
@@ -131,7 +131,7 @@ export const callEnded = createAsyncThunk(
   "videoCall/callEnded",
   async (callData) => {
     const { data } = await axiosInstance.patch(
-      `calls/status/${callData.callId}`,
+      `/calls/status/${callData.callId}`,
       {
         status: "completed",
       }
@@ -142,9 +142,12 @@ export const callEnded = createAsyncThunk(
 
 export const initializeAgoraEngine = createAsyncThunk(
   "videoCall/initializeAgoraEngine",
-  async (_, { rejectWithValue }) => {
+  async (channelName, { rejectWithValue }) => {
     try {
-      const { data } = await axiosInstance.get("/calls/agora-token");
+      const { data } = await axiosInstance.get(
+        `/calls/agora-token/${channelName}`
+      );
+
       return data;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -211,7 +214,7 @@ const videoCallSlice = createSlice({
         state.isInCall = false;
       })
       .addCase(callAccepted.fulfilled, (state, action) => {
-        state.currentCall = action.payload;
+        state.currentCall = { ...state.currentCall, ...action.payload };
         state.isInCall = true;
       })
       .addCase(callRejected.fulfilled, (state, action) => {

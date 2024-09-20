@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import { IoCloseOutline } from "react-icons/io5";
 import axiosInstance from "../utils/axiosConfig";
@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { initiateCall } from '../states/videoCallSlice';
 import { PATH } from '../routes/path';
+import { endCall } from '../states/videoCallSlice';
 
 const CheckoutModal = ({ closeModal, amount, currency = 'USD', specialist }) => {
   const navigate = useNavigate();
@@ -22,7 +23,18 @@ const CheckoutModal = ({ closeModal, amount, currency = 'USD', specialist }) => 
   const [clientSecret, setClientSecret] = useState("");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  const [callStatus, setCallStatus] = useState("idle"); // New state for call status
+  const [callStatus, setCallStatus] = useState("idle");
+  const [timeoutId, setTimeoutId] = useState(null);
+  const CALL_TIMEOUT = 30000; // 30 seconds
+
+  const handleCallTimeout = useCallback(() => {
+    console.log("Call timeout triggered");
+    if (currentCall) {
+      dispatch(endCall(currentCall.callId));
+    }
+    setCallStatus("timeout");
+    setError("Specialist did not respond. You can try again.");
+  }, [currentCall, dispatch]);
 
   useEffect(() => {
     const fetchPaymentIntent = async () => {
@@ -49,11 +61,27 @@ const CheckoutModal = ({ closeModal, amount, currency = 'USD', specialist }) => 
   }, [amount, currency]);
 
   useEffect(() => {
-    if (currentCall && currentCall.status === 'accepted') {
-      console.log("Navigating to call setup page");
-      navigate(`${PATH.chat.setup}/${currentCall.callId}`);
+    if (currentCall) {
+      console.log("call status:", currentCall.status)
+      if (currentCall.status === 'accepted') {
+        console.log("Call accepted, navigating to setup page");
+        setCallStatus("accepted");
+        navigate(`${PATH.chat.setup}/${currentCall.callId}`);
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+      } else {
+        console.log("Call pending, setting timeout");
+        const newTimeoutId = setTimeout(handleCallTimeout, CALL_TIMEOUT);
+        setTimeoutId(newTimeoutId);
+      }
     }
-  }, [currentCall, navigate]);
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [currentCall, navigate, handleCallTimeout, timeoutId, CALL_TIMEOUT]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -77,7 +105,6 @@ const CheckoutModal = ({ closeModal, amount, currency = 'USD', specialist }) => 
       setSucceeded(true);
       setProcessing(false);
 
-      // Initiate call
       setCallStatus("initiating");
 
       try {
@@ -86,7 +113,10 @@ const CheckoutModal = ({ closeModal, amount, currency = 'USD', specialist }) => 
           specialistId: specialist._id,
           specialistCategory: specialist.specialistCategory
         })).unwrap();
+
         setCallStatus("waiting");
+
+        // The timeout will be set in the useEffect hook when currentCall updates
       } catch (err) {
         console.error('Failed to initiate call:', err);
         setError('Payment successful, but failed to initiate call. Please try again.');
@@ -95,7 +125,6 @@ const CheckoutModal = ({ closeModal, amount, currency = 'USD', specialist }) => 
     }
   };
 
-  // Helper function to format the amount
   const formatAmount = (value) => {
     if (typeof value !== 'number') return Number(value).toFixed(2)
     return value.toFixed(2);
@@ -103,8 +132,9 @@ const CheckoutModal = ({ closeModal, amount, currency = 'USD', specialist }) => 
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+      {console.log("call status:", callStatus)}
       <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
-        {callStatus === "idle" || callStatus === "error" ? (
+        {callStatus === "idle" || callStatus === "error" || callStatus === "timeout" ? (
           <form onSubmit={handleSubmit}>
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-2xl font-bold">Checkout</h2>
@@ -165,7 +195,7 @@ const CheckoutModal = ({ closeModal, amount, currency = 'USD', specialist }) => 
               disabled={processing || !stripe}
               className={`w-full bg-indigo-600 text-white py-2 px-4 rounded-md ${processing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-indigo-700'}`}
             >
-              {processing ? 'Processing...' : `Pay ${formatAmount(amount)} ${currency}`}
+              {processing ? 'Processing...' : callStatus === "timeout" ? 'Retry Call' : `Pay ${formatAmount(amount)} ${currency}`}
             </button>
           </form>
         ) : (

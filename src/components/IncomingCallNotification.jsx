@@ -30,6 +30,7 @@ const IncomingCallNotification = () => {
     }
   }, [currentCall, navigate]);
 
+
   if (!incomingCall) return null;
 
   const handleAccept = () => {
@@ -66,11 +67,14 @@ const IncomingCallNotification = () => {
       <div className="p-6">
         <div className="flex items-center mb-6">
           {incomingCall.callerImage ? (
-            <img
-              src={incomingCall.callerImage}
-              alt={incomingCall.callerName}
-              className="w-20 h-20 rounded-full mr-4 object-cover border-4 border-indigo-200"
-            />
+            <>
+              {console.log(incomingCall.callerImage)}
+              < img
+                src={incomingCall.callerImage}
+                alt={incomingCall.callerName}
+                className="w-20 h-20 rounded-full mr-4 object-cover border-4 border-indigo-200"
+              />
+            </>
           ) : (
             <div className="w-20 h-20 rounded-full bg-indigo-100 flex items-center justify-center mr-4">
               <FaUser className="text-indigo-500 text-3xl" />
