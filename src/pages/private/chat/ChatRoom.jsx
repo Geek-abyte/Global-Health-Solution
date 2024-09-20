@@ -64,11 +64,10 @@ const ChatRoom = () => {
     if (mediaType === 'video') {
       setUsers((prevUsers) => {
         if (prevUsers.find((u) => u.uid === user.uid)) {
-          return prevUsers;
+          return prevUsers.map((u) => u.uid === user.uid ? { ...u, videoTrack: user.videoTrack } : u);
         }
-        return [...prevUsers, user];
+        return [...prevUsers, { ...user, videoTrack: user.videoTrack }];
       });
-      user.videoTrack.play(`remote-video-${user.uid}`);
     }
     if (mediaType === 'audio') {
       user.audioTrack.play();
@@ -108,41 +107,49 @@ const ChatRoom = () => {
     }
   };
 
+  useEffect(() => {
+    users.forEach((user) => {
+      if (user.videoTrack) {
+        user.videoTrack.play(`remote-video-${user.uid}`);
+      }
+    });
+  }, [users]);
+
   return (
     <div className="flex flex-col h-screen bg-gray-900">
-      <div className="flex-1 p-4">
-        <div className="grid grid-cols-2 gap-4 h-full">
-          <div className="relative">
-            <div id="local-video" className="w-full h-full rounded-lg overflow-hidden bg-gray-800"></div>
-            <div className="absolute bottom-4 left-4 text-white bg-gray-800 px-2 py-1 rounded">You</div>
+      <div className="flex-1 p-2 sm:p-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4 h-full">
+          <div className="relative aspect-video">
+            <div id="local-video" className="absolute inset-0 rounded-lg overflow-hidden bg-gray-800"></div>
+            <div className="absolute bottom-2 left-2 text-white bg-gray-800 px-2 py-1 rounded text-sm">You</div>
           </div>
           {users.map((user) => (
-            <div key={user.uid} className="relative">
-              <div id={`remote-video-${user.uid}`} className="w-full h-full rounded-lg overflow-hidden bg-gray-800"></div>
-              <div className="absolute bottom-4 left-4 text-white bg-gray-800 px-2 py-1 rounded">Remote User</div>
+            <div key={user.uid} className="relative aspect-video">
+              <div id={`remote-video-${user.uid}`} className="absolute inset-0 rounded-lg overflow-hidden bg-gray-800"></div>
+              <div className="absolute bottom-2 left-2 text-white bg-gray-800 px-2 py-1 rounded text-sm">Remote User</div>
             </div>
           ))}
         </div>
       </div>
-      <div className="bg-gray-800 p-4">
-        <div className="flex justify-center space-x-4">
+      <div className="bg-gray-800 p-2 sm:p-4">
+        <div className="flex justify-center space-x-2 sm:space-x-4">
           <button
             onClick={toggleAudio}
-            className={`p-4 rounded-full ${isAudioMuted ? 'bg-red-500' : 'bg-green-500'}`}
+            className={`p-2 sm:p-4 rounded-full ${isAudioMuted ? 'bg-red-500' : 'bg-green-500'}`}
           >
-            {isAudioMuted ? <FaMicrophoneSlash size={24} /> : <FaMicrophone size={24} />}
+            {isAudioMuted ? <FaMicrophoneSlash size={20} /> : <FaMicrophone size={20} />}
           </button>
           <button
             onClick={toggleVideo}
-            className={`p-4 rounded-full ${isVideoMuted ? 'bg-red-500' : 'bg-green-500'}`}
+            className={`p-2 sm:p-4 rounded-full ${isVideoMuted ? 'bg-red-500' : 'bg-green-500'}`}
           >
-            {isVideoMuted ? <FaVideoSlash size={24} /> : <FaVideo size={24} />}
+            {isVideoMuted ? <FaVideoSlash size={20} /> : <FaVideo size={20} />}
           </button>
           <button
             onClick={endCall}
-            className="p-4 rounded-full bg-red-500"
+            className="p-2 sm:p-4 rounded-full bg-red-500"
           >
-            <FaPhoneSlash size={24} />
+            <FaPhoneSlash size={20} />
           </button>
         </div>
       </div>
