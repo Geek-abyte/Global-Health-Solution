@@ -11,7 +11,7 @@ import { showToast } from "../states/popUpSlice";
 import { useNavigate } from "react-router";
 import { PATH } from "../routes/path";
 
-const SOCKET_URL = "http://localhost:8000";
+const SOCKET_URL = import.meta.env.VITE_API_URL;
 
 export const socket = io(SOCKET_URL, {
   autoConnect: false,
