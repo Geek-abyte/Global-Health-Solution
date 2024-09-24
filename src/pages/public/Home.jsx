@@ -1,17 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { consult, doctorIcon, medicMask, pngwing1, roboDoc, userIcon } from '../../assets';
 import { Button, ChatBot, ImageSlide } from '../../components';
+import TypewriterEffect from '../../components/TypewriterEffect';
 import { useNavigate } from 'react-router';
 import { PATH } from '../../routes/path';
 import { cards } from '../../data/cards';
 import BlogCarousel from '../../components/BlogCarousel';
 import { blogs } from '../../data/blogs';
 import { Link } from 'react-router-dom';
+import { BsXDiamondFill } from 'react-icons/bs';
 
 const Home = () => {
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(false);
-  const iconlist = ['Medical Supplies', 'Medical Equipment', 'Air Ambulance Services']
+  const iconlist = ['Medical Tourism Solutions', 'Medical Equipment', 'Air Ambulance Services']
+  const services = [
+    'AI and Medical Consultations',
+    'Medical Tourism Solutions',
+    'Medical Devices and Equipment',
+    'Air Ambulance Services'
+  ];
 
   useEffect(() => {
 
@@ -35,7 +43,12 @@ const Home = () => {
       <section className="Hero relative md:grid md:grid-cols-2 h-[90vh] bg-gradient-to-b md:bg-gradient-to-r from-primary-6 to-white transition-colors">
         <div className="right intro-text p-6 md:p-10 md:pl-20 flex flex-col gap-6 md:gap-8 justify-center items-center md:items-start h-full md:h-auto">
           <h1 className="font-extrabold text-3xl sm:text-4xl md:text-[45px] md:text-left text-center lg:text-[60px] lg:leading-[60px] text-white">
-            Step into the next generation <span className="text-white">Health care service</span> with <span className="text-primary-9">our AI</span>
+            Step into the next generation
+            <span className="text-white block">Healthcare Services</span>
+            with our
+            <span className="block my-4">
+              <TypewriterEffect words={services} typingSpeed={100} erasingSpeed={50} delayBetweenWords={2000} />
+            </span>
           </h1>
           <Button
             className="self-center md:self-start mt-4 md:mt-5 w-full sm:w-auto"
@@ -49,7 +62,7 @@ const Home = () => {
           </Button>
         </div>
         <img src={roboDoc} alt="robo doctor" className="absolute right-0 top-0 h-full md:block hidden" />
-      </section>
+      </section >
 
       <section className="card-section flex flex-col py-10 md:py-16 justify-center items-center bg-gray-100">
         <ImageSlide cards={cards} visible={isMobile ? 1 : 4} className='w-[90vw] md:w-[1000px] px-4 md:px-0' />

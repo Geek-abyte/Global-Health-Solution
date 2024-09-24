@@ -14,9 +14,7 @@ const PatientDashboard = ({ className }) => {
   const navigate = useNavigate();
 
   const handleChat = () => {
-    if (!chatBotOpen) {
-      dispatch(openChatBot(true));
-    }
+    dispatch(openChatBot(true));
   };
 
   const handleConsult = () => {
@@ -39,7 +37,7 @@ const PatientDashboard = ({ className }) => {
       onClick: handleChat,
     },
     {
-      title: "Consultant",
+      title: "Specialist",
       image: carddoc,
       color: "text-primary-6",
       onClick: handleConsult,

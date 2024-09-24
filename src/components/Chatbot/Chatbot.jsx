@@ -9,14 +9,14 @@ import { symptoms } from "../../data/symptoms";
 import axiosInstance from "../../utils/axiosConfig";
 import { useDispatch, useSelector } from "react-redux";
 import { openChatBot } from "../../states/popUpSlice";
-import { Navigate } from "react-router";
+import { Navigate, useNavigate } from "react-router";
 import { PATH } from "../../routes/path";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 const exampleMessages = [
   { text: "Hi there!", sender: "bot" },
   {
-    text: "Input your symptoms to determine the likely illness or consult a specialist",
+    text: "Input your symptoms to determine the likely illness or contact a consultant",
     sender: "bot",
   },
 ];
@@ -35,6 +35,7 @@ const ChatBot = () => {
   const [messages, setMessages] = useState(exampleMessages); // New state for messages
   const chatbotRef = useRef(null);
   const messageAreaRef = useRef(null); // Ref for the message area
+  const navigate = useNavigate();
 
   // tab options
   const tabs = ["home", "symptoms", "faq"];
@@ -122,14 +123,14 @@ const ChatBot = () => {
       setLoading(false);
       addMessage(response.data);
       addMessage(
-        "Try a different set of symptoms, or would you like to consult a specialist?"
+        "Try a different set of symptoms, or would you like to contact a consultant?"
       );
       console.log("Response:", response.data);
     } catch (error) {
       console.error("Error:", error);
       setLoading(false);
       addMessage("There was a problem with the result, please try again");
-      addMessage("Or would you like to consult a specialist?");
+      addMessage("Or would you like to contact a consultant?");
     }
   };
 
@@ -155,11 +156,10 @@ const ChatBot = () => {
     <div className="fixed font-roboto-condensed bottom-2 md:bottom-4 right-2 md:right-6 z-20">
       <div
         ref={chatbotRef}
-        className={`${chatClass} overflow-hidden  rounded-lg shadow-lg w-[95vw] sm:w-96 h-[400px] md:h-[450px] mb-[70px] md:mb-[100px] flex flex-col transition-transform duration-300 transform ${
-          isOpen
-            ? "translate-y-0 translate-x-0 scale-100"
-            : "translate-y-96 translate-x-44 scale-0"
-        }`}
+        className={`${chatClass} overflow-hidden  rounded-lg shadow-lg w-[95vw] sm:w-96 h-[400px] md:h-[450px] mb-[70px] md:mb-[100px] flex flex-col transition-transform duration-300 transform ${isOpen
+          ? "translate-y-0 translate-x-0 scale-100"
+          : "translate-y-96 translate-x-44 scale-0"
+          }`}
         onTransitionEnd={() => !isOpen && setChatClass("hidden")}
       >
         {selectedTab === tabs[0] && (
@@ -217,16 +217,14 @@ const ChatBot = () => {
                 {messages.map((message, index) => (
                   <div
                     key={index}
-                    className={`mb-2 ${
-                      message.sender === "user" ? "text-right" : "text-left"
-                    } message-enter message-enter-active`}
+                    className={`mb-2 ${message.sender === "user" ? "text-right" : "text-left"
+                      } message-enter message-enter-active`}
                   >
                     <div
-                      className={`bg-${
-                        message.sender === "user"
-                          ? "blue-500 text-white"
-                          : "secondary-8"
-                      } rounded-lg p-2 shadow-md inline-block max-w-[70%]`}
+                      className={`bg-${message.sender === "user"
+                        ? "blue-500 text-white"
+                        : "secondary-8"
+                        } rounded-lg p-2 shadow-md inline-block max-w-[70%]`}
                     >
                       {message.text}
                     </div>
@@ -240,24 +238,22 @@ const ChatBot = () => {
                 {isAddingTags === false && !loading && (
                   <div className="flex space-x-4 mt-10">
                     <button
-                      className={`border rounded-xl p-2 transition-transform duration-500 ease-out transform hover:scale-110 bg-gradient-to-r from-purple-500 to-indigo-500 text-white ${
-                        showButton
-                          ? "scale-100 opacity-100 inline-block"
-                          : "scale-0 opacity-0 none"
-                      }`}
+                      className={`border rounded-xl p-2 transition-transform duration-500 ease-out transform hover:scale-110 bg-gradient-to-r from-purple-500 to-indigo-500 text-white ${showButton
+                        ? "scale-100 opacity-100 inline-block"
+                        : "scale-0 opacity-0 none"
+                        }`}
                       onClick={() => handleAddingTags()}
                     >
                       Input Symptoms
                     </button>
                     <button
-                      className={`border rounded-xl p-2 duration-500 ease-out transition-transform transform hover:scale-110 bg-gradient-to-r from-pink-500 to-red-500 text-white ${
-                        showButton
-                          ? "scale-100 opacity-100 inline-block"
-                          : "scale-0 opacity-0 none"
-                      }`}
-                      onClick={() => Navigate(PATH.dashboard.consultant)}
+                      className={`border rounded-xl p-2 duration-500 ease-out transition-transform transform hover:scale-110 bg-gradient-to-r from-pink-500 to-red-500 text-white ${showButton
+                        ? "scale-100 opacity-100 inline-block"
+                        : "scale-0 opacity-0 none"
+                        }`}
+                      onClick={() => navigate(PATH.dashboard.consultant)}
                     >
-                      Consult a Specialist
+                      Contact a consultant
                     </button>
                   </div>
                 )}
@@ -280,11 +276,10 @@ const ChatBot = () => {
                     </ul>
                     <div className="flex justify-center mt-4">
                       <button
-                        className={`border rounded-xl p-2 bg-primary-4 text-white transition-all duration-500 ease-in-out transform hover:scale-110 ${
-                          tags.length > 4
-                            ? "scale-100 opacity-100 inline-block"
-                            : "scale-0 opacity-0 none"
-                        }`}
+                        className={`border rounded-xl p-2 bg-primary-4 text-white transition-all duration-500 ease-in-out transform hover:scale-110 ${tags.length > 4
+                          ? "scale-100 opacity-100 inline-block"
+                          : "scale-0 opacity-0 none"
+                          }`}
                         onClick={() => handleSeePrediction(tags)}
                       >
                         See Prediction
@@ -310,9 +305,8 @@ const ChatBot = () => {
                   </div>
                 )}
                 <div
-                  className={`bg-white p-4 flex justify-center ${
-                    isOpen ? "translate-y-0 translate-x-0" : "translate-y-12"
-                  }`}
+                  className={`bg-white p-4 flex justify-center ${isOpen ? "translate-y-0 translate-x-0" : "translate-y-12"
+                    }`}
                 >
                   <input
                     type="text"

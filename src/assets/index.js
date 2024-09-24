@@ -23,3 +23,6 @@ export { default as bridge } from "./bridge.jpg";
 export { default as womanDoc } from "./womanDoc.jpg";
 export { default as defaultUser } from "./defaultUser.png";
 export { default as doctor3 } from "./doctor3.png";
+export { default as generalPractitioner } from "./generalPractitioner.jpg";
+export { default as dentist } from "./dentist.jpg";
+export { default as allergist } from "./allergist.jpg";
