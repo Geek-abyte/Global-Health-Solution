@@ -2,8 +2,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import AgoraRTC from 'agora-rtc-sdk-ng';
-import { initializeAgoraEngine } from '../../../states/videoCallSlice';
+import { initializeAgoraEngine, endCall } from '../../../states/videoCallSlice';
 import { FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash, FaPhoneSlash } from 'react-icons/fa';
+import startCallTimer from '../../../utils/callTimer';
 
 const ChatRoom = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const ChatRoom = () => {
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [isVideoMuted, setIsVideoMuted] = useState(false);
   const clientRef = useRef(null);
+  const [timeLeft, setTimeLeft] = useState(null);
 
   useEffect(() => {
     dispatch(initializeAgoraEngine(currentCall.channelName));
@@ -49,6 +51,19 @@ const ChatRoom = () => {
 
     init();
 
+    // Start the call timer
+    if (currentCall && currentCall.duration) {
+      setTimeLeft(currentCall.duration);
+      const clearTimer = startCallTimer(currentCall.duration, () => {
+        dispatch(endCall(currentCall.callId));
+        navigate('/dashboard'); // or wherever you want to redirect after the call
+      });
+
+      return () => {
+        clearTimer(); // Clear the timer when component unmounts
+      };
+    }
+
     return () => {
       if (clientRef.current) {
         clientRef.current.leave();
@@ -57,7 +72,7 @@ const ChatRoom = () => {
       if (localAudioTrack) localAudioTrack.close();
       if (localVideoTrack) localVideoTrack.close();
     };
-  }, [agoraAppId, agoraToken, agoraChannelName]);
+  }, [agoraAppId, agoraToken, agoraChannelName, currentCall, dispatch, navigate]);
 
   const handleUserPublished = async (user, mediaType) => {
     await clientRef.current.subscribe(user, mediaType);
@@ -115,6 +130,12 @@ const ChatRoom = () => {
     });
   }, [users]);
 
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-900">
       <div className="flex-1 p-2 sm:p-4">
@@ -130,6 +151,12 @@ const ChatRoom = () => {
             </div>
           ))}
         </div>
+        {/* Add timer display */}
+        {timeLeft !== null && (
+          <div className="absolute top-2 right-2 bg-gray-800 text-white px-3 py-1 rounded-full">
+            {formatTime(timeLeft)}
+          </div>
+        )}
       </div>
       <div className="bg-gray-800 p-2 sm:p-4">
         <div className="flex justify-center space-x-2 sm:space-x-4">

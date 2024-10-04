@@ -111,7 +111,8 @@ const CheckoutModal = ({ closeModal, amount, currency = 'USD', specialist }) => 
         await dispatch(initiateCall({
           userId: user._id,
           specialistId: specialist._id,
-          specialistCategory: specialist.specialistCategory
+          specialistCategory: specialist.specialistCategory,
+          duration: 3600, // 1 hour in seconds, adjust based on the selected package
         })).unwrap();
 
         setCallStatus("waiting");
