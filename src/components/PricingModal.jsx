@@ -5,18 +5,20 @@ import { PATH } from "../routes/path";
 import { useDispatch } from "react-redux";
 import { showModal as showModalAction } from "../states/popUpSlice";
 
-const PricingModal = ({ closeModal, setPrice }) => {
+const PricingModal = ({ closeModal, setPrice, setDuration }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const onSelected = (price) => {
+  const onSelected = (price, duration) => {
     const numericPrice = parseFloat(price);
     if (!isNaN(numericPrice) && numericPrice > 0) {
       setPrice(numericPrice);
-      dispatch(showModalAction({ content: "checkoutModal" }));
-      // closeModal();
+      if (typeof setDuration === 'function') {
+        setDuration(duration);
+      }
+      dispatch(showModalAction({ content: "checkoutModal", props: { price, duration } }));
     } else {
-      console.error('Invalid price selected');
+      console.error('Invalid price or duration selected');
     }
   };
 
@@ -52,7 +54,7 @@ const PricingModal = ({ closeModal, setPrice }) => {
       </ul>
       <button
         className="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transform hover:scale-105 active:scale-95"
-        onClick={() => onSelected(price)}
+        onClick={() => onSelected(price, duration)}
       >
         Get Started
       </button>

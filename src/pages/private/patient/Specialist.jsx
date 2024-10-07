@@ -16,6 +16,7 @@ const Specialist = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [price, setPrice] = useState(null);
+  const [duration, setDuration] = useState(null);
   const [specialist, setSpecialist] = useState(null);
   const { showModal, modalContent } = useSelector((state) => state.popUp);
   const { currentSpecialistCategory } = useSelector((state) => state.videoCall);
@@ -58,7 +59,15 @@ const Specialist = () => {
         />
       )}
       {showModal && modalContent === "pricingModal" && (
-        <ModalContainer modal={<PricingModal closeModal={closeModal} setPrice={setPrice} />} />
+        <ModalContainer
+          modal={
+            <PricingModal
+              closeModal={closeModal}
+              setPrice={setPrice}
+              setDuration={setDuration}
+            />
+          }
+        />
       )}
       {showModal && modalContent === "checkoutModal" && (
         <ModalContainer modal={

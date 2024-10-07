@@ -108,19 +108,23 @@ const CheckoutModal = ({ closeModal, amount, currency = 'USD', specialist, durat
       setCallStatus("initiating");
 
       try {
+        console.log("Initiating call with:", {
+          userId: user._id,
+          specialistId: specialist._id,
+          specialistCategory: specialist.specialistCategory,
+          duration: duration,
+        });
         await dispatch(initiateCall({
           userId: user._id,
           specialistId: specialist._id,
           specialistCategory: specialist.specialistCategory,
-          duration: duration, // Use the duration passed from PricingModal
+          duration: duration,
         })).unwrap();
 
         setCallStatus("waiting");
-
-        // The timeout will be set in the useEffect hook when currentCall updates
       } catch (err) {
         console.error('Failed to initiate call:', err);
-        setError('Payment successful, but failed to initiate call. Please try again.');
+        setError(`Payment successful, but failed to initiate call: ${err.error || err.message}`);
         setCallStatus("error");
       }
     }

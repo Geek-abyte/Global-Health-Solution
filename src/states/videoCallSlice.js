@@ -18,12 +18,19 @@ export const initiateCall = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
+      console.log("Sending to server:", {
+        userId,
+        specialistId,
+        specialistCategory,
+        duration,
+      });
       const { data } = await axiosInstance.post("/calls/initiate", {
         userId,
         specialistId,
         specialistCategory,
         duration,
       });
+      console.log("Received from server:", data);
 
       socket.emit("callInitiated", {
         callId: data.callId,
@@ -35,7 +42,11 @@ export const initiateCall = createAsyncThunk(
 
       return { data };
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      console.error(
+        "Error in initiateCall:",
+        error.response ? error.response.data : error
+      );
+      return rejectWithValue(error.response ? error.response.data : error);
     }
   }
 );
