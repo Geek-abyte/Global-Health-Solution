@@ -12,41 +12,30 @@ export const setIncomingCall = createAsyncThunk(
 );
 
 export const initiateCall = createAsyncThunk(
-  "videoCall/initiate",
-  async (
-    { userId, specialistId, specialistCategory, duration },
-    { rejectWithValue }
-  ) => {
+  "videoCall/initiateCall",
+  async (callData, { rejectWithValue }) => {
     try {
-      console.log("Sending to server:", {
-        userId,
-        specialistId,
-        specialistCategory,
-        duration,
-      });
-      const { data } = await axiosInstance.post("/calls/initiate", {
-        userId,
-        specialistId,
-        specialistCategory,
-        duration,
-      });
-      console.log("Received from server:", data);
+      // Add duration to the callData object
+      const dataWithDuration = {
+        ...callData,
+        duration: callData.duration || 30, // Default to 30 minutes if not provided
+      };
 
-      socket.emit("callInitiated", {
-        callId: data.callId,
-        roomName: data.roomName,
-        callerId: userId,
-        receiverId: data.specialistId,
-        duration: data.duration,
-      });
-
-      return { data };
+      const response = await axiosInstance.post(
+        "/calls/initiate",
+        dataWithDuration
+      );
+      return response.data;
     } catch (error) {
       console.error(
         "Error in initiateCall:",
         error.response ? error.response.data : error
       );
-      return rejectWithValue(error.response ? error.response.data : error);
+      return rejectWithValue(
+        error.response
+          ? error.response.data
+          : { message: "Failed to initiate call" }
+      );
     }
   }
 );

@@ -108,24 +108,22 @@ const CheckoutModal = ({ closeModal, amount, currency = 'USD', specialist, durat
       setCallStatus("initiating");
 
       try {
-        console.log("Initiating call with:", {
+        const result = await dispatch(initiateCall({
           userId: user._id,
           specialistId: specialist._id,
           specialistCategory: specialist.specialistCategory,
-          duration: duration,
-        });
-        await dispatch(initiateCall({
-          userId: user._id,
-          specialistId: specialist._id,
-          specialistCategory: specialist.specialistCategory,
-          duration: duration,
-        })).unwrap();
+          duration: duration, // Use the duration prop here
+        }));
 
-        setCallStatus("waiting");
-      } catch (err) {
-        console.error('Failed to initiate call:', err);
-        setError(`Payment successful, but failed to initiate call: ${err.error || err.message}`);
-        setCallStatus("error");
+        if (initiateCall.fulfilled.match(result)) {
+          // ... handle success ...
+        } else {
+          console.error('Failed to initiate call:', result.payload);
+          setError('Failed to initiate call. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error in handleSubmit:', error);
+        setError('An unexpected error occurred. Please try again.');
       }
     }
   };
