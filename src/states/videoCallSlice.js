@@ -18,16 +18,12 @@ export const initiateCall = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      // Add duration to the callData object
-      const dataWithDuration = {
-        ...callData,
-        duration: callData.duration || 30, // Default to 30 minutes if not provided
-      };
-
-      const response = await axiosInstance.post(
-        "/calls/initiate",
-        dataWithDuration
-      );
+      const response = await axiosInstance.post("/calls/initiate", {
+        userId,
+        specialistId,
+        specialistCategory,
+        duration,
+      });
       return response.data;
     } catch (error) {
       console.error(
