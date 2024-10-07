@@ -9,7 +9,7 @@ import { initiateCall } from '../states/videoCallSlice';
 import { PATH } from '../routes/path';
 import { endCall } from '../states/videoCallSlice';
 
-const CheckoutModal = ({ closeModal, amount, currency = 'USD', specialist, duration }) => {
+const CheckoutModal = ({ closeModal, amount, currency = 'USD', specialist }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
@@ -112,18 +112,16 @@ const CheckoutModal = ({ closeModal, amount, currency = 'USD', specialist, durat
           userId: user._id,
           specialistId: specialist._id,
           specialistCategory: specialist.specialistCategory,
-          duration: duration, // Use the duration prop here
-        }));
+          duration: 3600, // 1 hour in seconds, adjust based on the selected package
+        })).unwrap();
 
-        if (initiateCall.fulfilled.match(result)) {
-          // ... handle success ...
-        } else {
-          console.error('Failed to initiate call:', result.payload);
-          setError('Failed to initiate call. Please try again.');
-        }
-      } catch (error) {
-        console.error('Error in handleSubmit:', error);
-        setError('An unexpected error occurred. Please try again.');
+        setCallStatus("waiting");
+
+        // The timeout will be set in the useEffect hook when currentCall updates
+      } catch (err) {
+        console.error('Failed to initiate call:', err);
+        setError('Payment successful, but failed to initiate call. Please try again.');
+        setCallStatus("error");
       }
     }
   };

@@ -12,8 +12,11 @@ export const setIncomingCall = createAsyncThunk(
 );
 
 export const initiateCall = createAsyncThunk(
-  "videoCall/initiateCall",
-  async (callData, { rejectWithValue }) => {
+  "videoCall/initiate",
+  async (
+    { userId, specialistId, specialistCategory, duration },
+    { rejectWithValue }
+  ) => {
     try {
       // Add duration to the callData object
       const dataWithDuration = {
