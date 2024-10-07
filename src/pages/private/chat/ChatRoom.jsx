@@ -54,14 +54,10 @@ const ChatRoom = () => {
     // Start the call timer
     if (currentCall && currentCall.duration) {
       setTimeLeft(currentCall.duration);
-      const clearTimer = startCallTimer(
-        currentCall.duration,
-        () => {
-          dispatch(endCall(currentCall.callId));
-          navigate('/dashboard'); // or wherever you want to redirect after the call
-        },
-        (newTimeLeft) => setTimeLeft(newTimeLeft)
-      );
+      const clearTimer = startCallTimer(currentCall.duration, () => {
+        dispatch(endCall(currentCall.callId));
+        navigate('/dashboard'); // or wherever you want to redirect after the call
+      });
 
       return () => {
         clearTimer(); // Clear the timer when component unmounts
@@ -155,10 +151,10 @@ const ChatRoom = () => {
             </div>
           ))}
         </div>
-        {/* Updated timer display */}
+        {/* Add timer display */}
         {timeLeft !== null && (
           <div className="absolute top-2 right-2 bg-gray-800 text-white px-3 py-1 rounded-full">
-            Time left: {formatTime(timeLeft)}
+            {formatTime(timeLeft)}
           </div>
         )}
       </div>
