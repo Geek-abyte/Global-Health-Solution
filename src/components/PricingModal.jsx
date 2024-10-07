@@ -5,16 +5,16 @@ import { PATH } from "../routes/path";
 import { useDispatch } from "react-redux";
 import { showModal as showModalAction } from "../states/popUpSlice";
 
-const PricingModal = ({ closeModal, setPrice }) => {
+const PricingModal = ({ closeModal, setPrice, setDuration }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const onSelected = (price) => {
+  const onSelected = (price, duration) => {
     const numericPrice = parseFloat(price);
     if (!isNaN(numericPrice) && numericPrice > 0) {
       setPrice(numericPrice);
+      setDuration(duration);
       dispatch(showModalAction({ content: "checkoutModal" }));
-      // closeModal();
     } else {
       console.error('Invalid price selected');
     }
@@ -22,7 +22,7 @@ const PricingModal = ({ closeModal, setPrice }) => {
 
   // onClick={() => navigate(PATH.general.payment)}
 
-  const PricingCard = ({ title, price, features, isRecommended }) => (
+  const PricingCard = ({ title, price, features, duration, isRecommended }) => (
     <div
       className={`bg-white rounded-xl shadow-md p-6 transition-all duration-300 hover:shadow-lg ${isRecommended ? "ring-2 ring-indigo-400 transform scale-102" : ""
         }`}
@@ -52,7 +52,7 @@ const PricingModal = ({ closeModal, setPrice }) => {
       </ul>
       <button
         className="w-full bg-indigo-600 text-white py-2 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 transform hover:scale-105 active:scale-95"
-        onClick={() => onSelected(price)}
+        onClick={() => onSelected(price, duration)}
       >
         Get Started
       </button>
@@ -83,6 +83,7 @@ const PricingModal = ({ closeModal, setPrice }) => {
                 "Basic guidance",
                 "Email summary",
               ]}
+              duration={30}
             />
             <PricingCard
               title="Pro"
@@ -93,6 +94,7 @@ const PricingModal = ({ closeModal, setPrice }) => {
                 "Personalized report",
                 "1 week email support",
               ]}
+              duration={45}
               isRecommended={true}
             />
             <PricingCard
@@ -105,6 +107,7 @@ const PricingModal = ({ closeModal, setPrice }) => {
                 "2 weeks email support",
                 "Follow-up call",
               ]}
+              duration={60}
             />
           </div>
         </div>

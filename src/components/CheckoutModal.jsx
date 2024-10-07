@@ -9,7 +9,7 @@ import { initiateCall } from '../states/videoCallSlice';
 import { PATH } from '../routes/path';
 import { endCall } from '../states/videoCallSlice';
 
-const CheckoutModal = ({ closeModal, amount, currency = 'USD', specialist }) => {
+const CheckoutModal = ({ closeModal, amount, currency = 'USD', specialist, duration }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
@@ -112,7 +112,7 @@ const CheckoutModal = ({ closeModal, amount, currency = 'USD', specialist }) => 
           userId: user._id,
           specialistId: specialist._id,
           specialistCategory: specialist.specialistCategory,
-          duration: 3600, // 1 hour in seconds, adjust based on the selected package
+          duration: duration, // Use the duration passed from PricingModal
         })).unwrap();
 
         setCallStatus("waiting");

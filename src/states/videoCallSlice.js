@@ -13,7 +13,10 @@ export const setIncomingCall = createAsyncThunk(
 
 export const initiateCall = createAsyncThunk(
   "videoCall/initiate",
-  async ({ userId, specialistId, specialistCategory, duration }, { rejectWithValue }) => {
+  async (
+    { userId, specialistId, specialistCategory, duration },
+    { rejectWithValue }
+  ) => {
     try {
       const { data } = await axiosInstance.post("/calls/initiate", {
         userId,
