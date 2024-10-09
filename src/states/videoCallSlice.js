@@ -12,7 +12,7 @@ export const setIncomingCall = createAsyncThunk(
 );
 
 export const initiateCall = createAsyncThunk(
-  "videoCall/initiate",
+  "videoCall/initiateCall",
   async (
     { userId, specialistId, specialistCategory, duration },
     { rejectWithValue }
@@ -26,15 +26,7 @@ export const initiateCall = createAsyncThunk(
       });
       return response.data;
     } catch (error) {
-      console.error(
-        "Error in initiateCall:",
-        error.response ? error.response.data : error
-      );
-      return rejectWithValue(
-        error.response
-          ? error.response.data
-          : { message: "Failed to initiate call" }
-      );
+      return rejectWithValue(error.response.data);
     }
   }
 );
