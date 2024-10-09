@@ -75,6 +75,7 @@ const Specialist = () => {
             closeModal={closeModal}
             amount={price}
             currency="USD"
+            duration={duration}
             // onSuccess={() => navigate(PATH.chat.setup)}
             specialist={specialist}
           />

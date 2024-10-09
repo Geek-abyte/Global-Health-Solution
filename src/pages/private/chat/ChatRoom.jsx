@@ -54,13 +54,26 @@ const ChatRoom = () => {
     // Start the call timer
     if (currentCall && currentCall.duration) {
       setTimeLeft(currentCall.duration);
-      const clearTimer = startCallTimer(currentCall.duration, () => {
-        dispatch(endCall(currentCall.callId));
-        navigate('/dashboard'); // or wherever you want to redirect after the call
-      });
+      const timerInterval = setInterval(() => {
+        setTimeLeft((prevTime) => {
+          if (prevTime <= 0) {
+            clearInterval(timerInterval);
+            dispatch(endCall(currentCall.callId));
+            navigate('/dashboard');
+            return 0;
+          }
+          return prevTime - 1;
+        });
+      }, 1000);
 
       return () => {
-        clearTimer(); // Clear the timer when component unmounts
+        clearInterval(timerInterval);
+        if (clientRef.current) {
+          clientRef.current.leave();
+          clientRef.current.removeAllListeners();
+        }
+        if (localAudioTrack) localAudioTrack.close();
+        if (localVideoTrack) localVideoTrack.close();
       };
     }
 
@@ -151,7 +164,6 @@ const ChatRoom = () => {
             </div>
           ))}
         </div>
-        {/* Add timer display */}
         {timeLeft !== null && (
           <div className="absolute top-2 right-2 bg-gray-800 text-white px-3 py-1 rounded-full">
             {formatTime(timeLeft)}

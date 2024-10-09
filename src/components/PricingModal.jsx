@@ -5,7 +5,7 @@ import { PATH } from "../routes/path";
 import { useDispatch } from "react-redux";
 import { showModal as showModalAction } from "../states/popUpSlice";
 
-const PricingModal = ({ closeModal, setPrice }) => {
+const PricingModal = ({ closeModal, setPrice, setDuration }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -13,7 +13,8 @@ const PricingModal = ({ closeModal, setPrice }) => {
     const numericPrice = parseFloat(price);
     if (!isNaN(numericPrice) && numericPrice > 0) {
       setPrice(numericPrice);
-      dispatch(showModalAction({ content: "checkoutModal", price: numericPrice, duration: duration }));
+      setDuration(duration);
+      dispatch(showModalAction({ content: "checkoutModal" }));
     } else {
       console.error('Invalid price or duration selected');
     }
