@@ -11,3 +11,4 @@ export { default as PrivacyPolicy } from "./PrivacyPolicy";
 export { default as CookiePolicy } from "./CookiePolicy";
 export { default as Terms } from "./Terms";
 export { default as LoginCrossroad } from "./LoginCrossRoad";
+export { default as Feedback } from "./Feedback";

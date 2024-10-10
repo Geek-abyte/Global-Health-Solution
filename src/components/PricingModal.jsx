@@ -77,20 +77,20 @@ const PricingModal = ({ closeModal, setPrice, setDuration }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <PricingCard
               title="Basic"
-              price="49.99"
-              duration={1800} // 30 minutes in seconds
+              price="20.00"
+              duration={1200} // 30 minutes in seconds
               features={[
-                "30-minute consultation",
+                "20-minute consultation",
                 "Basic guidance",
                 "Email summary",
               ]}
             />
             <PricingCard
               title="Pro"
-              price="79.99"
-              duration={2700} // 45 minutes in seconds
+              price="40.00"
+              duration={2400} // 45 minutes in seconds
               features={[
-                "45-minute consultation",
+                "40-minute consultation",
                 "In-depth discussion",
                 "Personalized report",
                 "1 week email support",
@@ -99,7 +99,7 @@ const PricingModal = ({ closeModal, setPrice, setDuration }) => {
             />
             <PricingCard
               title="Enterprise"
-              price="99.99"
+              price="60.00"
               duration={3600} // 60 minutes in seconds
               features={[
                 "60-minute consultation",

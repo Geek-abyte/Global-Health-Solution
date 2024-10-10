@@ -20,7 +20,7 @@ const PatientSidebar = ({ isOpen, onClose }) => {
   const navItems = [
     { path: PATH.dashboard.default, icon: <LuLayoutDashboard />, label: "Dashboard" },
     { path: PATH.dashboard.profile, icon: <LuUser />, label: "Profile" },
-    { path: PATH.dashboard.consultant, icon: <FaUserDoctor />, label: "Specialist" },
+    { path: PATH.dashboard.consultant, icon: <FaUserDoctor />, label: "Consultant" },
     { path: PATH.dashboard.prescription, icon: <BsCapsulePill />, label: "Prescription" },
     { path: PATH.dashboard.history, icon: <FaRegHospital />, label: "Medical History" },
     { path: PATH.dashboard.appointments, icon: <FaCalendarAlt />, label: "Appointments" },

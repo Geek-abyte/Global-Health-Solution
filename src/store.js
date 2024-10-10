@@ -5,6 +5,7 @@ import notificationReducer from "./states/notificationSlice";
 import popUpReducer from "./states/popUpSlice";
 import blogReducer from "./states/blog/blogSlice";
 import videoCallReducer from "./states/videoCallSlice";
+import medicalFileReducer from "./states/medicalFileSlice";
 
 // Create the Redux store
 const store = configureStore({
@@ -15,6 +16,7 @@ const store = configureStore({
     popUp: popUpReducer,
     blog: blogReducer,
     videoCall: videoCallReducer,
+    medicalFile: medicalFileReducer,
   },
 });
 

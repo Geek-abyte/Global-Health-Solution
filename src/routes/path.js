@@ -26,6 +26,7 @@ export const PATH = {
     privacy: path(ROOT, "privacy-policy"),
     cookie: path(ROOT, "cookie-policy"),
     terms: path(ROOT, "terms"),
+    feedback: path(ROOT, "feedback"),
   },
   checkout: path(PATIENT, "checkout"),
   dashboard: {

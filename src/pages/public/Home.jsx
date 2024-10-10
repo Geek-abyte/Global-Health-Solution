@@ -148,6 +148,22 @@ const Home = () => {
       <section className='w-[90vw] sm:w-[95vw] md:w-[1000px] mx-auto'>
         <BlogCarousel blogs={blogs} visible={isMobile ? 1 : 3} />
       </section>
+
+      <section className="feedback-section flex flex-col justify-center items-center py-10 md:py-16 bg-white">
+        <div className="w-full max-w-4xl p-4 md:p-8 text-center">
+          <h2 className="text-2xl md:text-3xl font-extrabold mb-6">Your Feedback Matters</h2>
+          <p className="text-base md:text-lg mb-6">Help us improve our services by sharing your thoughts and suggestions.</p>
+          <Button
+            className="mt-4"
+            borderRadius='rounded-lg'
+            background='bg-secondary-6 py-3 px-6'
+            textColor='text-white text-lg'
+            onClick={() => navigate(PATH.general.feedback)}
+          >
+            Give Feedback
+          </Button>
+        </div>
+      </section>
     </>
   );
 };

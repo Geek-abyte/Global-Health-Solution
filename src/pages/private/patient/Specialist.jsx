@@ -31,7 +31,7 @@ const Specialist = () => {
   return (
     <section className="py-12 px-4 md:px-8 bg-gray-50">
       <h1 className="text-center text-3xl md:text-4xl font-extrabold mb-12 text-gray-800">
-        Consult a Specialist
+        Find A Consultant
       </h1>
       <div className="container mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">

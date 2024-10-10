@@ -37,7 +37,7 @@ const PatientDashboard = ({ className }) => {
       onClick: handleChat,
     },
     {
-      title: "Specialist",
+      title: "Consultant",
       image: carddoc,
       color: "text-primary-6",
       onClick: handleConsult,

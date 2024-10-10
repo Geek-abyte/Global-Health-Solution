@@ -26,6 +26,7 @@ import {
   CookiePolicy,
   Terms,
   LoginCrossroad,
+  Feedback,
 } from "../pages/public";
 import { DEFAULT_PATH, PATH } from "./path";
 import { LoadingScreen } from "../components";
@@ -110,7 +111,7 @@ export default function Router() {
         { path: PATH.general.cookie, element: <CookiePolicy /> },
         { path: PATH.general.terms, element: <Terms /> },
         { path: PATH.doctor.awaitingApproval, element: <AwaitingApproval /> },
-
+        { path: PATH.general.feedback, element: <Feedback /> },
         { path: PATH.general.page404, element: <NotFound /> },
         { path: "*", element: <Navigate to={PATH.general.page404} replace /> },
       ],
