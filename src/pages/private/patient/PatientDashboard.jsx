@@ -1,17 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { DTable } from "../../../components";
 import { cardbrain, carddoc, cardfile } from "../../../assets";
-import { tableData } from "../../../data/tableData";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { openChatBot } from "../../../states/popUpSlice";
 import { PATH } from "../../../routes/path";
+import axiosInstance from "../../../utils/axiosConfig";
 
 const PatientDashboard = ({ className }) => {
   const { user } = useSelector((state) => state.auth);
   const { chatBotOpen } = useSelector((state) => state.popUp);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [calls, setCalls] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchCalls = async () => {
+      try {
+        const response = await axiosInstance.get(`/calls/history`, { userId: user.id });
+        setCalls(response.data);
+        setLoading(false);
+      } catch (err) {
+        console.log("Error fetching calls:", err);
+        if (err.response?.data?.message === 'No calls found') {
+          setCalls([]);
+          setLoading(false);
+        } else {
+          console.log('Failed to fetch call details', err);
+          setError('Failed to fetch call details');
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchCalls();
+  }, [user]);
 
   const handleChat = () => {
     dispatch(openChatBot(true));
@@ -90,7 +116,13 @@ const PatientDashboard = ({ className }) => {
           Recent Activities
         </h2>
         <div className="overflow-x-auto">
-          <DTable data={tableData.slice(0, 5)} />
+          {loading ? (
+            <div className="flex justify-center items-center h-32">Loading...</div>
+          ) : error ? (
+            <div className="text-red-500 text-center p-4">{error}</div>
+          ) : (
+            <DTable calls={calls} loading={loading} limit={5} />
+          )}
         </div>
       </div>
     </main>

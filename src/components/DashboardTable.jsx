@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { PATH } from "../routes/path";
 
-const DashboardTable = ({ calls, loading }) => {
+const DashboardTable = ({ calls, loading, limit = Infinity }) => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
@@ -45,6 +45,8 @@ const DashboardTable = ({ calls, loading }) => {
     );
   }
 
+  const displayedCalls = calls.slice(0, limit);
+
   return (
     <div className="overflow-x-auto shadow-sm sm:rounded-lg border border-gray-200">
       <table className="w-full text-sm text-left text-gray-600">
@@ -68,7 +70,7 @@ const DashboardTable = ({ calls, loading }) => {
           </tr>
         </thead>
         <tbody>
-          {calls.map((call) => (
+          {displayedCalls.map((call) => (
             <tr
               key={call._id}
               className="bg-white border-b hover:bg-blue-50 cursor-pointer transition duration-300"
@@ -81,6 +83,7 @@ const DashboardTable = ({ calls, loading }) => {
                 {call.specialistCategory}
               </td>
               <td className="px-6 py-4">
+                {console.log("see the time here", call.startTime, call.endTime)}
                 {calculateDuration(call.startTime, call.endTime)}
               </td>
               <td className="px-6 py-4">
@@ -93,6 +96,13 @@ const DashboardTable = ({ calls, loading }) => {
           ))}
         </tbody>
       </table>
+      {calls.length > limit && (
+        <div className="text-center py-3 bg-gray-50 border-t border-gray-200">
+          <p className="text-gray-500 text-sm">
+            Showing {limit} of {calls.length} calls
+          </p>
+        </div>
+      )}
     </div>
   );
 };

@@ -244,13 +244,9 @@ const PrivateRoute = ({
 
   if (!isAuthenticated) {
     return <Navigate to={redirectTo || PATH.general.signIn} />;
-  }
-
-  if (requiredRole && userRole !== requiredRole) {
+  } else if (requiredRole && userRole !== requiredRole) {
     return <Navigate to={PATH.general.page404} />;
-  }
-
-  if (userRole === "specialist" && !isApproved) {
+  } else if (userRole === "specialist" && !isApproved) {
     return <Navigate to={PATH.doctor.awaitingApproval} />;
   }
 

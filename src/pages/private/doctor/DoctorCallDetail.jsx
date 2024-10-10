@@ -11,7 +11,7 @@ const DoctorCallDetail = () => {
   useEffect(() => {
     const fetchDoctorCallDetails = async () => {
       try {
-        const response = await axiosInstance.get(`/calls/get-call/${id}`);
+        const response = await axiosInstance.get(`/calls/current/${id}`);
         setCall(response.data);
         setLoading(false);
       } catch (err) {
