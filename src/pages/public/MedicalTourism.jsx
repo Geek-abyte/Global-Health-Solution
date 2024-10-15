@@ -1,252 +1,345 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaPlane, FaHospital, FaUserMd, FaGlobe, FaMoneyBillWave, FaCalendarAlt, FaHandHoldingMedical, FaPassport } from 'react-icons/fa';
+import { FaPlane, FaHospital, FaUserMd, FaGlobe, FaMoneyBillWave, FaCalendarAlt, FaHandHoldingMedical, FaPassport, FaCut, FaBone, FaHeartbeat, FaBaby, FaTooth, FaStethoscope, FaWeight, FaYinYang } from 'react-icons/fa';
 import { PATH } from '../../routes/path';
 import { medicalTourismHero } from '../../assets';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import '../../mapIcons'; // Import the mapIcons file we just created
 
 const MedicalTourism = () => {
   const navigate = useNavigate();
+  const [activeService, setActiveService] = useState(0);
+  const [expandedService, setExpandedService] = useState(null);
+  const [expandedSpecialty, setExpandedSpecialty] = useState(null);
+  const [selectedDestination, setSelectedDestination] = useState(null);
 
   const handleContactClick = () => {
-    console.log("Navigating to:", PATH.general.contact);
     navigate(PATH.general.contact);
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveService((prev) => (prev + 1) % 6);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const services = [
+    {
+      icon: <FaUserMd />,
+      title: "Medical Consultations",
+      description: "Tailored treatment plans based on your medical history.",
+      details: "Our expert medical team provides in-depth consultations to understand your unique health needs. We analyze your medical history, current condition, and goals to create a personalized treatment plan that ensures the best possible outcomes."
+    },
+    {
+      icon: <FaHospital />,
+      title: "Hospital Selection",
+      description: "We connect you with accredited facilities worldwide.",
+      details: "We partner with Joint Commission International (JCI) accredited hospitals and clinics across the globe. Our rigorous selection process ensures you receive care at facilities that meet the highest international standards for quality and patient safety."
+    },
+    {
+      icon: <FaPlane />,
+      title: "Travel Coordination",
+      description: "Seamless travel arrangements for your medical journey.",
+      details: "From booking flights to arranging comfortable accommodations near your treatment facility, we handle all aspects of your travel. Our team also assists with visa applications and provides detailed information about your destination to ensure a stress-free journey."
+    },
+    {
+      icon: <FaHandHoldingMedical />,
+      title: "Treatment Management",
+      description: "Coordinating all aspects of your medical care.",
+      details: "We liaise between you, your home doctors, and your international medical team to ensure seamless communication and continuity of care. Our staff is available 24/7 to address any concerns and manage any aspects of your treatment process."
+    },
+    {
+      icon: <FaCalendarAlt />,
+      title: "Post-Treatment Care",
+      description: "Ongoing support for your recovery process.",
+      details: "Your care doesn't end when you return home. We provide comprehensive follow-up services, including virtual consultations with your treating physicians, coordination with local healthcare providers, and continuous support throughout your recovery journey."
+    },
+    {
+      icon: <FaGlobe />,
+      title: "Concierge Services",
+      description: "Personalized assistance throughout your stay.",
+      details: "Experience comfort and convenience with our premium concierge services. From arranging private transportation and interpreters to booking local tours and activities for accompanying family members, we ensure your medical journey is as comfortable and enjoyable as possible."
+    },
+  ];
+
+  const specialties = [
+    {
+      icon: <FaCut />,
+      title: "Cosmetic Surgery",
+      description: "Enhance your appearance with expert procedures.",
+      procedures: ["Facelifts", "Liposuction", "Breast augmentation", "Rhinoplasty"]
+    },
+    {
+      icon: <FaBone />,
+      title: "Orthopedic Procedures",
+      description: "Restore mobility and reduce pain with our orthopedic treatments.",
+      procedures: ["Knee replacements", "Hip replacements", "Spine surgeries", "Joint care"]
+    },
+    {
+      icon: <FaHeartbeat />,
+      title: "Cardiology",
+      description: "World-class care for your heart health needs.",
+      procedures: ["Heart surgeries", "Angioplasty", "Cardiovascular diagnostics"]
+    },
+    {
+      icon: <FaBaby />,
+      title: "Fertility Treatments",
+      description: "Cutting-edge treatments to help you start or grow your family.",
+      procedures: ["IVF", "Egg donation", "Reproductive health services"]
+    },
+    {
+      icon: <FaTooth />,
+      title: "Dental Care",
+      description: "Achieve the perfect smile with our advanced dental treatments.",
+      procedures: ["Dental implants", "Veneers", "Crowns", "Full-mouth restoration"]
+    },
+    {
+      icon: <FaStethoscope />,
+      title: "Oncology",
+      description: "Comprehensive cancer care with the latest treatment options.",
+      procedures: ["Cancer surgeries", "Chemotherapy", "Radiation therapy"]
+    },
+    {
+      icon: <FaWeight />,
+      title: "Bariatric Surgery",
+      description: "Effective weight loss solutions for a healthier life.",
+      procedures: ["Gastric bypass", "Gastric sleeve", "Adjustable gastric banding"]
+    },
+    {
+      icon: <FaYinYang />,
+      title: "Wellness and Rehabilitation",
+      description: "Holistic approaches to enhance your overall well-being.",
+      procedures: ["Physical therapy", "Detox programs", "Holistic wellness therapies"]
+    }
+  ];
+
+  const destinations = [
+    { name: "Thailand", coordinates: [13, 100], specialties: ["Cosmetic", "Dental"] },
+    { name: "India", coordinates: [20, 77], specialties: ["Cardiac", "Orthopedic"] },
+    { name: "Turkey", coordinates: [39, 35], specialties: ["Hair Transplant", "Dental"] },
+    { name: "Mexico", coordinates: [23, -102], specialties: ["Bariatric", "Dental"] },
+    { name: "Costa Rica", coordinates: [10, -84], specialties: ["Dental", "Wellness"] },
+    { name: "Hungary", coordinates: [47, 19], specialties: ["Dental", "Thermal Spa"] },
+  ];
 
   return (
     <div className="medical-tourism">
       {/* Hero Section */}
-      <div className="hero-section relative bg-cover bg-center overflow-hidden h-96 flex items-center justify-center" style={{ backgroundImage: `url(${medicalTourismHero})` }}>
-        <div className="overlay absolute inset-0 bg-black h-full opacity-50"></div>
-        <div className="text-center text-white z-10">
-          <h1 className="text-5xl font-bold mb-4">Welcome to Sozo-hal</h1>
-          <p className="text-2xl">Your Premier Medical Tourism Partner</p>
+      <div className="relative h-[80vh] flex items-center justify-center overflow-hidden">
+        <img src={medicalTourismHero} alt="Medical Tourism Hero" className='absolute h-full w-full object-cover' />
+        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+        <div className="relative z-10 text-center text-white">
+          <h1 className="text-6xl font-bold mb-4">Welcome to Sozo-hal</h1>
+          <p className="text-2xl mb-8">Your Trusted Medical Tourism Partner</p>
         </div>
       </div>
 
       {/* Main Content */}
       <div className="container mx-auto px-4 py-12">
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Why Choose Medical Tourism with Sozo-hal?</h2>
-          <p className="text-lg mb-6">
-            At Sozo-hal, we specialize in providing comprehensive medical tourism services, connecting individuals with world-class healthcare facilities and expert medical professionals across the globe. Our mission is to offer you high-quality healthcare solutions while ensuring a seamless, comfortable, and cost-effective experience.
-          </p>
-          <p className="text-lg mb-6">
-            Medical tourism allows you to access advanced medical treatments and procedures abroad, often at a fraction of the cost compared to your home country. With the rise of globally accredited hospitals, cutting-edge medical technology, and highly trained specialists worldwide, patients can combine their healthcare needs with the opportunity to recover in serene, relaxing environments.
-          </p>
+        {/* About Medical Tourism */}
+        <section className="mb-20">
+          <h2 className="text-4xl font-bold mb-8 text-center">Why Choose Medical Tourism?</h2>
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-600 transform skew-y-3"></div>
+            <div className="relative bg-white p-8 shadow-lg">
+              <p className="text-lg">
+                Medical tourism opens doors to advanced treatments abroad, often at a fraction of the cost. With globally accredited hospitals and cutting-edge technology, you can combine top-tier healthcare with the opportunity to recover in serene, exotic locations.
+              </p>
+            </div>
+          </div>
         </section>
 
-        {/* Benefits Section */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Key Benefits of Medical Tourism</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        {/* Key Benefits */}
+        <section className="mb-20">
+          <h2 className="text-4xl font-bold mb-12 text-center">Key Benefits of Medical Tourism</h2>
+          <div className="flex flex-wrap justify-center">
             {[
-              { icon: <FaMoneyBillWave />, title: "Affordable Healthcare", description: "Save up to 70% on medical procedures without compromising on quality. Many procedures cost a fraction of what they would in Western countries." },
-              { icon: <FaUserMd />, title: "Access to Expertise", description: "Benefit from world-class specialists and healthcare providers in leading international facilities, many of whom have trained in top medical schools globally." },
-              { icon: <FaCalendarAlt />, title: "No Long Wait Times", description: "Receive timely treatments without the long waiting periods commonly experienced in some countries. Most procedures can be scheduled within weeks." },
-              { icon: <FaGlobe />, title: "Combine Healthcare with Travel", description: "Explore new destinations and recuperate in beautiful, tranquil settings. Turn your medical journey into a rejuvenating vacation." },
-              { icon: <FaHandHoldingMedical />, title: "Personalized Care", description: "Enjoy customized care packages that cater to your medical and travel needs, with dedicated support throughout your journey." },
-              { icon: <FaHospital />, title: "State-of-the-Art Facilities", description: "Access cutting-edge medical technology and internationally accredited hospitals that often surpass the standards found in many Western countries." },
-              { icon: <FaPassport />, title: "Medical Visa Support", description: "We assist with obtaining medical visas, ensuring a smooth entry process for your healthcare journey abroad." },
-              { icon: <FaPlane />, title: "Comprehensive Travel Services", description: "From flights to accommodation and local transportation, we handle all aspects of your medical travel experience." },
+              { icon: <FaMoneyBillWave />, title: "Affordable Care", description: "Save up to 80% on procedures" },
+              { icon: <FaUserMd />, title: "Expert Doctors", description: "Access to world-class specialists" },
+              { icon: <FaCalendarAlt />, title: "No Wait Times", description: "Immediate treatment availability" },
+              { icon: <FaHandHoldingMedical />, title: "Personalized Care", description: "Tailored medical experiences" },
+              { icon: <FaGlobe />, title: "Travel & Heal", description: "Combine treatment with tourism" },
             ].map((benefit, index) => (
-              <div key={index} className="text-center p-6 bg-white rounded-lg shadow-md">
-                <div className="text-4xl mb-4 text-blue-500">{benefit.icon}</div>
-                <h3 className="text-xl font-semibold mb-2">{benefit.title}</h3>
-                <p>{benefit.description}</p>
+              <div key={index} className="w-1/2 md:w-1/5 p-4 text-center">
+                <div className="text-4xl mb-2 text-blue-500">{benefit.icon}</div>
+                <h3 className="font-semibold">{benefit.title}</h3>
+                <p className="text-sm">{benefit.description}</p>
               </div>
             ))}
           </div>
         </section>
 
-        {/* Services Section */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Our Comprehensive Services</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {[
-              {
-                title: "Medical Consultations",
-                description: "We begin with a detailed consultation to understand your medical requirements. Our network of healthcare specialists will review your medical history, offer advice, and propose a tailored treatment plan. We also provide second-opinion services if needed, connecting you with multiple experts to ensure you make an informed decision."
-              },
-              {
-                title: "Hospital and Doctor Selection",
-                description: "We work with internationally accredited hospitals and clinics that meet the highest standards of care. Our extensive network includes facilities accredited by organizations such as JCI, NABH, and ACHSI. We help you select the right facility and medical professionals based on your specific needs, considering factors such as specialization, success rates, and patient reviews."
-              },
-              {
-                title: "Travel and Accommodation Coordination",
-                description: "We take care of all your travel arrangements, including flights, visas, and accommodation. Choose from a variety of recovery-friendly hotels, resorts, or serviced apartments, ensuring a comfortable and peaceful stay while you recuperate. We also arrange airport transfers and provide local transportation services throughout your stay."
-              },
-              {
-                title: "Treatment and Procedure Management",
-                description: "We coordinate all aspects of your medical treatment, including scheduling consultations, surgeries, and follow-up appointments. Our team remains in close communication with you and your healthcare provider throughout the process to ensure everything runs smoothly. We also provide language interpretation services to facilitate clear communication with your medical team."
-              },
-              {
-                title: "Post-Treatment Care",
-                description: "After your procedure, we provide ongoing support to monitor your recovery and manage any follow-up care. If necessary, we can arrange for rehabilitation services, additional consultations, or coordinate with your local healthcare provider for continuity of care upon your return home. We also offer telemedicine follow-ups with your treating physician."
-              },
-              {
-                title: "Concierge Services",
-                description: "We offer personalized concierge services to make your stay as pleasant as possible. This includes arranging local transportation, providing translation services, organizing tours and leisure activities for you and your travel companions, and assisting with any special requests or dietary needs during your recovery period."
-              },
-            ].map((service, index) => (
-              <div key={index} className="bg-gray-100 p-6 rounded-lg">
+        {/* Our Services */}
+        <section className="mb-20">
+          <h2 className="text-4xl font-bold mb-12 text-center">Our Comprehensive Services</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {services.map((service, index) => (
+              <motion.div
+                key={index}
+                className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setExpandedService(expandedService === index ? null : index)}
+              >
+                <div className="text-4xl mb-4 text-blue-500">{service.icon}</div>
                 <h3 className="text-xl font-semibold mb-2">{service.title}</h3>
-                <p>{service.description}</p>
-              </div>
+                <p className="text-gray-600 mb-4">{service.description}</p>
+                {expandedService === index && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <p className="text-sm text-gray-700 mt-2">{service.details}</p>
+                  </motion.div>
+                )}
+                <button
+                  className="mt-4 text-blue-500 hover:text-blue-700 transition-colors duration-300"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setExpandedService(expandedService === index ? null : index);
+                  }}
+                >
+                  {expandedService === index ? 'Read Less' : 'Read More'}
+                </button>
+              </motion.div>
             ))}
           </div>
         </section>
 
-        {/* Specialties Section */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Our Medical Specialties</h2>
-          <p className="text-lg mb-6">
-            At Sozo-hal, we cater to a wide range of medical procedures and treatments. Our expertise spans across various medical fields, ensuring that we can meet diverse healthcare needs. Here are some of our key specialties:
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Cosmetic Surgery",
-                procedures: ["Facelifts", "Liposuction", "Breast augmentation", "Rhinoplasty", "Tummy tucks", "Body contouring"]
-              },
-              {
-                title: "Orthopedic Procedures",
-                procedures: ["Knee replacements", "Hip replacements", "Spine surgeries", "Sports injury treatments", "Shoulder surgeries", "Arthroscopic procedures"]
-              },
-              {
-                title: "Cardiology",
-                procedures: ["Coronary artery bypass", "Angioplasty", "Heart valve replacements", "Pacemaker implantations", "Cardiovascular diagnostics"]
-              },
-              {
-                title: "Fertility Treatments",
-                procedures: ["In Vitro Fertilization (IVF)", "Intracytoplasmic Sperm Injection (ICSI)", "Egg and sperm donation", "Surrogacy arrangements", "Fertility preservation"]
-              },
-              {
-                title: "Dental Care",
-                procedures: ["Dental implants", "Veneers", "Full mouth reconstruction", "Orthodontics", "Root canal treatments", "Cosmetic dentistry"]
-              },
-              {
-                title: "Oncology",
-                procedures: ["Cancer surgeries", "Chemotherapy", "Radiation therapy", "Immunotherapy", "Stem cell transplants", "Precision medicine treatments"]
-              },
-              {
-                title: "Bariatric Surgery",
-                procedures: ["Gastric bypass", "Gastric sleeve", "Adjustable gastric banding", "Duodenal switch", "Non-surgical weight loss treatments"]
-              },
-              {
-                title: "Neurology and Neurosurgery",
-                procedures: ["Brain tumor removals", "Spine surgeries", "Deep brain stimulation", "Epilepsy treatments", "Stroke rehabilitation"]
-              },
-              {
-                title: "Wellness and Rehabilitation",
-                procedures: ["Physical therapy", "Ayurvedic treatments", "Detox programs", "Holistic wellness therapies", "Stress management retreats", "Anti-aging treatments"]
-              },
-            ].map((specialty, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-xl font-semibold mb-2">{specialty.title}</h3>
-                <ul className="list-disc pl-5">
-                  {specialty.procedures.map((procedure, idx) => (
-                    <li key={idx}>{procedure}</li>
-                  ))}
-                </ul>
-              </div>
+        {/* Our Specialties */}
+        <section className="mb-20">
+          <h2 className="text-4xl font-bold mb-12 text-center">Our Medical Specialties</h2>
+          <p className="text-xl text-center mb-8">We cater to a wide range of medical procedures and treatments, with expertise in the following areas:</p>
+          <div className="space-y-4">
+            {specialties.map((specialty, index) => (
+              <motion.div
+                key={index}
+                className="border border-gray-200 rounded-lg overflow-hidden"
+                initial={false}
+              >
+                <motion.header
+                  className="bg-gray-100 px-4 py-2 flex items-center cursor-pointer"
+                  onClick={() => setExpandedSpecialty(expandedSpecialty === index ? null : index)}
+                >
+                  <div className="text-2xl mr-4 text-blue-500">{specialty.icon}</div>
+                  <h3 className="text-xl font-semibold flex-grow">{specialty.title}</h3>
+                  <motion.div
+                    initial={false}
+                    animate={{ rotate: expandedSpecialty === index ? 180 : 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    ▼
+                  </motion.div>
+                </motion.header>
+                <AnimatePresence initial={false}>
+                  {expandedSpecialty === index && (
+                    <motion.div
+                      key="content"
+                      initial="collapsed"
+                      animate="open"
+                      exit="collapsed"
+                      variants={{
+                        open: { opacity: 1, height: "auto" },
+                        collapsed: { opacity: 0, height: 0 }
+                      }}
+                      transition={{ duration: 0.8, ease: [0.04, 0.62, 0.23, 0.98] }}
+                    >
+                      <div className="px-4 py-2">
+                        <p className="mb-2">{specialty.description}</p>
+                        <h4 className="font-semibold mt-2 mb-1">Key Procedures:</h4>
+                        <ul className="list-disc list-inside">
+                          {specialty.procedures.map((procedure, i) => (
+                            <li key={i}>{procedure}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
             ))}
           </div>
         </section>
 
-        {/* Destinations Section */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Our Medical Tourism Destinations</h2>
-          <p className="text-lg mb-6">
-            We offer medical tourism services in some of the world's top healthcare destinations, each known for their specialties and high-quality care:
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                country: "Thailand",
-                specialties: ["Cosmetic surgery", "Gender reassignment procedures", "Dental care", "Wellness retreats"],
-                description: "Known for its world-class hospitals, skilled surgeons, and affordable prices, Thailand offers a perfect blend of quality healthcare and tropical recovery environments."
-              },
-              {
-                country: "India",
-                specialties: ["Cardiac care", "Orthopedic treatments", "Fertility services", "Ayurvedic medicine"],
-                description: "India is a leader in complex cardiac procedures and orthopedic treatments, offering cutting-edge technology at a fraction of Western prices."
-              },
-              {
-                country: "Turkey",
-                specialties: ["Hair transplants", "Dental treatments", "Eye surgeries", "Plastic surgery"],
-                description: "Turkey has become a hub for aesthetic procedures, particularly hair transplants and dental work, with state-of-the-art clinics in Istanbul and other major cities."
-              },
-              {
-                country: "Mexico",
-                specialties: ["Bariatric surgery", "Dental care", "Cosmetic procedures"],
-                description: "Popular among North American patients, Mexico offers high-quality, affordable treatments, especially in dental care and weight loss surgeries."
-              },
-              {
-                country: "Costa Rica",
-                specialties: ["Dental implants", "Cosmetic surgery", "Orthopedics"],
-                description: "Costa Rica combines excellent medical care with eco-tourism, allowing patients to recover in beautiful, natural settings."
-              },
-              {
-                country: "Hungary",
-                specialties: ["Dental care", "Thermal spa treatments", "Orthopedic procedures"],
-                description: "Hungary, especially Budapest, is famous for its dental tourism, offering top-quality treatments at significantly lower prices than other European countries."
-              },
-            ].map((destination, index) => (
-              <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-                <h3 className="text-xl font-semibold mb-2">{destination.country}</h3>
-                <p className="mb-2"><strong>Specialties:</strong> {destination.specialties.join(", ")}</p>
-                <p>{destination.description}</p>
-              </div>
-            ))}
+        {/* Why Choose Sozo-hal */}
+        <section className="mb-20">
+          <h2 className="text-4xl font-bold mb-12 text-center">Why Choose Sozo-hal?</h2>
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-l from-green-400 to-blue-500 transform -skew-y-3"></div>
+            <div className="relative bg-white p-8 shadow-lg">
+              <ul className="list-disc pl-5 space-y-2">
+                <li>Extensive global network of top-tier medical facilities</li>
+                <li>Transparent, competitive pricing with no hidden fees</li>
+                <li>24/7 support from dedicated medical tourism professionals</li>
+                <li>Partnerships with only accredited hospitals and certified doctors</li>
+                <li>Personalized care plans tailored to your unique needs</li>
+              </ul>
+            </div>
           </div>
         </section>
 
-        {/* Testimonials Section */}
-        <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Patient Testimonials</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Medical Tourism Destinations */}
+        <section className="mb-20">
+          <h2 className="text-4xl font-bold mb-12 text-center">Our Global Health Havens</h2>
+          <div className="relative w-full h-[500px] border border-gray-300 rounded-lg overflow-hidden">
+            <MapContainer center={[20, 0]} zoom={2} style={{ height: '100%', width: '100%' }}>
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              />
+              {destinations.map((destination, index) => (
+                <Marker key={index} position={destination.coordinates}>
+                  <Popup>
+                    <h3 className="font-bold">{destination.name}</h3>
+                    <p>Specialties: {destination.specialties.join(', ')}</p>
+                  </Popup>
+                </Marker>
+              ))}
+            </MapContainer>
+          </div>
+        </section>
+
+        {/* Testimonials */}
+        <section className="mb-20">
+          <h2 className="text-4xl font-bold mb-12 text-center">Patient Testimonials</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
-              {
-                name: "Eunice Ebuala",
-                procedure: "Breast Augmentation in Thailand",
-                testimonial: "Sozo-hal made my entire medical tourism journey smooth and stress-free. From coordinating my surgery in Thailand to arranging my accommodation, everything was perfectly handled. The staff was incredibly supportive, and the results of my procedure exceeded my expectations. I felt safe and cared for throughout the entire process."
-              },
-              {
-                name: "Rice Strandford",
-                procedure: "Full Mouth Reconstruction in Mexico",
-                testimonial: "Thanks to the Sozo-hal team, I received top-quality dental care in Mexico and saved thousands. I felt supported every step of the way, from the initial consultation to the final follow-up. The clinic they recommended was state-of-the-art, and the dentists were highly skilled. I now have the smile I've always dreamed of, and the experience was actually enjoyable!"
-              },
-              {
-                name: "Amelia Thompson",
-                procedure: "Knee Replacement in India",
-                testimonial: "I was hesitant about traveling abroad for my knee replacement, but Sozo-hal put all my fears to rest. The hospital in India was world-class, and the surgeons were exceptional. The cost savings were significant, and I received personalized care that I doubt I would have gotten at home. The recovery period in a beautiful resort was an added bonus!"
-              },
-              {
-                name: "Mohammed Al-Fayed",
-                procedure: "Hair Transplant in Turkey",
-                testimonial: "My experience with Sozo-hal for my hair transplant in Turkey was nothing short of amazing. The clinic they recommended was cutting-edge, and the results are fantastic. The entire process, from travel arrangements to post-procedure care, was seamless. I highly recommend their services to anyone considering medical tourism."
-              },
+              { name: "Eunice Ebuala", procedure: "Surgery", location: "Thailand", quote: "Sozo-hal made my entire medical tourism journey smooth and stress-free. From coordinating my surgery in Thailand to arranging my accommodation, everything was perfectly handled." },
+              { name: "Rice Strandford", procedure: "Dental Care", location: "Mexico", quote: "Thanks to the team, I received top-quality dental care in Mexico and saved thousands. I felt supported every step of the way." },
             ].map((testimonial, index) => (
-              <div key={index} className="bg-gray-100 p-6 rounded-lg">
-                <p className="mb-4 italic">"{testimonial.testimonial}"</p>
-                <p className="font-semibold">{testimonial.name}</p>
-                <p className="text-sm text-gray-600">{testimonial.procedure}</p>
+              <div key={index} className="bg-white shadow-lg rounded-lg overflow-hidden transition-transform duration-300 hover:scale-105">
+                <div className="p-6">
+                  <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold mb-2">{testimonial.procedure} in {testimonial.location}</div>
+                  <p className="text-gray-900 font-semibold mb-4">"{testimonial.quote}"</p>
+                  <p className="text-gray-600 text-sm">– {testimonial.name}</p>
+                </div>
               </div>
             ))}
           </div>
         </section>
 
         {/* Call to Action */}
-        <div className="text-center mt-12">
-          <h2 className="text-3xl font-bold mb-4">Ready to Start Your Medical Tourism Journey?</h2>
-          <p className="mb-6">Contact Sozo-hal today for a free consultation and take the first step towards affordable, high-quality healthcare abroad.</p>
-          <button
-            onClick={handleContactClick}
-            className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300"
-          >
-            Contact Us
-          </button>
-        </div>
+        <section className="mb-20 bg-gradient-to-r from-blue-500 to-purple-600 text-white py-16 rounded-lg shadow-xl">
+          <div className="container mx-auto px-4 text-center">
+            <h2 className="text-4xl font-bold mb-6">Ready to Start Your Medical Journey?</h2>
+            <p className="text-xl mb-8 max-w-2xl mx-auto">
+              Our team of experts is here to guide you through every step of your medical tourism experience. From choosing the right treatment to planning your travel, we've got you covered.
+            </p>
+            <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+              <button
+                onClick={handleContactClick}
+                className="bg-white text-blue-600 px-8 py-4 rounded-full text-xl font-bold hover:bg-blue-100 transition duration-300 transform hover:scale-105"
+              >
+                Contact Us
+              </button>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );
