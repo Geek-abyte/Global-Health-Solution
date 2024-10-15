@@ -163,7 +163,7 @@ const MedicalTourism = () => {
               { icon: <FaHandHoldingMedical />, title: "Personalized Care", description: "Tailored medical experiences" },
               { icon: <FaGlobe />, title: "Travel & Heal", description: "Combine treatment with tourism" },
             ].map((benefit, index) => (
-              <div key={index} className="w-1/2 md:w-1/5 p-4 text-center">
+              <div key={index} className="w-1/2 md:w-1/5 p-4 text-center flex flex-col justify-center items-center">
                 <div className="text-4xl mb-2 text-blue-500">{benefit.icon}</div>
                 <h3 className="font-semibold">{benefit.title}</h3>
                 <p className="text-sm">{benefit.description}</p>
