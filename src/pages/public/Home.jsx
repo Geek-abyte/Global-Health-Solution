@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaPlane, FaStethoscope, FaAmbulance, FaArrowRight, FaRobot, FaUserMd, FaVideo, FaPills } from 'react-icons/fa';
+import { FaPlane, FaStethoscope, FaAmbulance, FaArrowRight, FaRobot, FaUserMd, FaVideo, FaPills, FaClipboardList } from 'react-icons/fa';
 import { consult, doctorIcon, medicMask, pngwing1, roboDoc, userIcon } from '../../assets';
 import { Button, ChatBot } from '../../components';
 import TypewriterEffect from '../../components/TypewriterEffect';
@@ -179,9 +179,9 @@ const Home = () => {
       animation: "M10 50 Q50 10 90 50 Q50 90 10 50",
     },
     {
-      icon: <FaAmbulance className="text-5xl text-primary-6" />,
-      title: "Air Ambulance Services",
-      description: "Rapid medical transport for critical care patients",
+      icon: <FaClipboardList className="text-5xl text-primary-6" />,
+      title: "Laboratory Referral Services",
+      description: "Streamlined access to advanced diagnostic testing",
       animation: "M10 30 Q50 60 90 30 Q50 0 10 30",
     },
   ];
@@ -247,9 +247,8 @@ const Home = () => {
         <img src={roboDoc} alt="robo doctor" className="absolute right-0 bottom-0 w-xs max-w-lg opacity-30 md:opacity-100" />
       </section>
 
-      <section className="services-section py-20 bg-white py-8">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center text-primary-10">Our Services</h2>
+      <section className="services-section py-8 bg-white">
+        <div className="container mx-auto mt-16 px-4">
           <SimpleCarousel items={cards.map(renderServiceCard)} autoplay={true} autoplayInterval={2000} />
           <div className="text-center mt-12">
             <Button
