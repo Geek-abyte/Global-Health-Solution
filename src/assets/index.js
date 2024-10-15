@@ -26,3 +26,4 @@ export { default as doctor3 } from "./doctor3.png";
 export { default as generalPractitioner } from "./generalPractitioner.jpg";
 export { default as dentist } from "./dentist.jpg";
 export { default as allergist } from "./allergist.jpg";
+export { default as medicalTourismHero } from "./medical-tourism-hero.jpg";

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import AgoraRTC from 'agora-rtc-sdk-ng';
 import { initializeAgoraEngine, endCall } from '../../../states/videoCallSlice';
 import { FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash, FaPhoneSlash, FaFileAlt, FaComments, FaExpand, FaCompress, FaClock } from 'react-icons/fa';
@@ -23,6 +23,8 @@ const ChatRoom = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isFullScreenMode, setIsFullScreenMode] = useState(false);
   const [fullScreenUser, setFullScreenUser] = useState(null);
+  const location = useLocation();
+  const previousPath = location.state?.from || '/dashboard';
 
   useEffect(() => {
     dispatch(initializeAgoraEngine(currentCall.channelName));
@@ -137,8 +139,8 @@ const ChatRoom = () => {
       if (clientRef.current) {
         clientRef.current.leave();
       }
-      // Navigate to the main menu or end call screen
-      navigate('/dashboard'); // Adjust this path as needed
+      // Navigate back to the previous page (specialist page) or dashboard
+      navigate(previousPath);
     }
   };
 

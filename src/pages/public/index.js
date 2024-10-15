@@ -12,3 +12,8 @@ export { default as CookiePolicy } from "./CookiePolicy";
 export { default as Terms } from "./Terms";
 export { default as LoginCrossroad } from "./LoginCrossRoad";
 export { default as Feedback } from "./Feedback";
+export { default as Services } from "./Services";
+export { default as MedicalDevices } from "./MedicalDevices";
+export { default as MedicalTourism } from "./MedicalTourism";
+export { default as LaboratoryServices } from "./LaboratoryServices";
+export { default as Contact } from "./Contact";

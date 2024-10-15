@@ -27,6 +27,11 @@ export const PATH = {
     cookie: path(ROOT, "cookie-policy"),
     terms: path(ROOT, "terms"),
     feedback: path(ROOT, "feedback"),
+    services: path(ROOT, "services"),
+    medicalDevices: path(ROOT, "services/medical-devices"),
+    medicalTourism: path(ROOT, "services/medical-tourism"),
+    laboratoryServices: path(ROOT, "services/laboratory-services"),
+    contact: path(ROOT, "contact"),
   },
   checkout: path(PATIENT, "checkout"),
   dashboard: {

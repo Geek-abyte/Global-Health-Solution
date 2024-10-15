@@ -7,7 +7,7 @@ const Footer = () => {
   return (
     <footer className='bg-primary-6 flex flex-col gap-x-[90px] justify-between items-between text-white md:pr-[200px] md:px-[100px] p-[40px] md:pb-[90px]'>
       <div className='flex flex-col md:flex-row gap-8 md:gap-[100px]'>
-      <img src={logoDark} alt="" className='hidden md:block w-[300px]' />
+        <img src={logoDark} alt="" className='hidden md:block w-[300px]' />
 
         <div className='flex flex-col gap-y-[5px]'>
           <h4 className='font-extrabold text-[24px]'>The Platform</h4>
@@ -32,7 +32,7 @@ const Footer = () => {
             <Link to={PATH.general.about}>
               <li>About Us</li>
             </Link>
-            <Link>
+            <Link to={PATH.general.contact}>
               <li>Contact Us</li>
             </Link>
           </ul>

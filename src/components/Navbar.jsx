@@ -9,6 +9,7 @@ import { showToast, showModal, hideModal } from "../states/popUpSlice";
 import { fetchUserProfile, logout } from "../states/user/authSlice";
 import PatientSidebar from "../layouts/PatientSidebar";
 import LogoutModal from "./LogoutModal";
+import { FaChevronDown } from 'react-icons/fa';
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -21,6 +22,8 @@ const Navbar = ({ className }) => {
   const { user, isAuthenticated } = useSelector((state) => state.auth);
   const openModal = useSelector((state) => state.popUp.modalContent);
   const isDashboard = location.pathname.startsWith(PATH.dashboard.default);
+  const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
+  const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
 
   useEffect(() => {
     setNavMode(location.pathname.includes("auth") ? "none" : "full");
@@ -36,7 +39,7 @@ const Navbar = ({ className }) => {
     dispatch(showModal({ content: "logout" }));
   };
 
-  const NavLink = ({ to, children }) => {
+  const NavLink = ({ to, children, hasDropdown }) => {
     const isActive =
       (to === "/" && location.pathname === "/") ||
       (to !== "/" &&
@@ -46,7 +49,40 @@ const Navbar = ({ className }) => {
       <Link
         to={to}
         className={`${isActive ? "text-primary-6" : "text-gray-600"
-          } hover:text-primary-6 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium`}
+          } hover:text-primary-6 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium flex items-center relative`}
+        onMouseEnter={() => hasDropdown && setIsServicesDropdownOpen(true)}
+        onMouseLeave={() => hasDropdown && setIsServicesDropdownOpen(false)}
+      >
+        {children}
+        {hasDropdown && <FaChevronDown className="ml-1" />}
+        {hasDropdown && isServicesDropdownOpen && (
+          <div className="absolute bottom-0 left-0 w-full h-4 bg-transparent" />
+        )}
+      </Link>
+    );
+  };
+
+  const ServicesDropdown = () => (
+    <div
+      className="absolute top-full left-0 mt-0 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10"
+      onMouseEnter={() => setIsServicesDropdownOpen(true)}
+      onMouseLeave={() => setIsServicesDropdownOpen(false)}
+    >
+      <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+        <Link to={PATH.general.medicalDevices} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Medical Devices and Equipment</Link>
+        <Link to={PATH.general.medicalTourism} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Medical Tourism</Link>
+        <Link to={PATH.general.laboratoryServices} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Laboratory Referral Services</Link>
+      </div>
+    </div>
+  );
+
+  const MobileNavLink = ({ to, children, onClick }) => {
+    const isActive = location.pathname.startsWith(to) && location.pathname !== "/";
+    return (
+      <Link
+        to={to}
+        className={`${isActive ? "text-primary-6" : "text-gray-600"} hover:text-primary-6 transition-colors duration-200 px-3 py-2 rounded-md text-sm font-medium block`}
+        onClick={onClick}
       >
         {children}
       </Link>
@@ -67,6 +103,10 @@ const Navbar = ({ className }) => {
                 <NavLink to={PATH.general.home}>Home</NavLink>
                 <NavLink to={PATH.general.about}>About</NavLink>
                 <NavLink to={PATH.general.doctors}>Doctors</NavLink>
+                <div className="relative group">
+                  <NavLink to={PATH.general.services} hasDropdown>Services</NavLink>
+                  {isServicesDropdownOpen && <ServicesDropdown />}
+                </div>
                 {user && (
                   <NavLink
                     to={
@@ -89,7 +129,6 @@ const Navbar = ({ className }) => {
                       alt={user.firstName}
                       crossOrigin="anonymous"
                     />
-                    {/* {console.log('profile Image', defaultUser)} */}
                     <span className="text-gray-700 font-medium">
                       {user.firstName}
                     </span>
@@ -185,19 +224,31 @@ const Navbar = ({ className }) => {
         ) : (
           <div className="md:hidden bg-white shadow-lg rounded-b-lg">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              <NavLink to={PATH.general.home}>Home</NavLink>
-              <NavLink to={PATH.general.about}>About</NavLink>
-              <NavLink to={PATH.general.doctors}>Our Doctors</NavLink>
+              <MobileNavLink to={PATH.general.home} onClick={() => setIsOpen(false)}>Home</MobileNavLink>
+              <MobileNavLink to={PATH.general.about} onClick={() => setIsOpen(false)}>About</MobileNavLink>
+              <MobileNavLink to={PATH.general.doctors} onClick={() => setIsOpen(false)}>Our Doctors</MobileNavLink>
+              <div>
+                <button
+                  className="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gray-600 hover:text-primary-6 transition-colors duration-200"
+                  onClick={() => setIsMobileServicesOpen(!isMobileServicesOpen)}
+                >
+                  Services {isMobileServicesOpen ? '▲' : '▼'}
+                </button>
+                {isMobileServicesOpen && (
+                  <div className="pl-4">
+                    <MobileNavLink to={PATH.general.medicalDevices} onClick={() => setIsOpen(false)}>Medical Devices and Equipment</MobileNavLink>
+                    <MobileNavLink to={PATH.general.medicalTourism} onClick={() => setIsOpen(false)}>Medical Tourism</MobileNavLink>
+                    <MobileNavLink to={PATH.general.laboratoryServices} onClick={() => setIsOpen(false)}>Laboratory Referral Services</MobileNavLink>
+                  </div>
+                )}
+              </div>
               {user && (
-                <NavLink
-                  to={
-                    user.role === "specialist"
-                      ? PATH.doctor.dashboard
-                      : PATH.dashboard.default
-                  }
+                <MobileNavLink
+                  to={user.role === "specialist" ? PATH.doctor.dashboard : PATH.dashboard.default}
+                  onClick={() => setIsOpen(false)}
                 >
                   Dashboard
-                </NavLink>
+                </MobileNavLink>
               )}
               {user ? (
                 <div className="flex flex-col space-y-2 px-3 py-2">

@@ -78,9 +78,9 @@ const PricingModal = ({ closeModal, setPrice, setDuration }) => {
             <PricingCard
               title="Basic"
               price="20.00"
-              duration={1200} // 30 minutes in seconds
+              duration={900} // 15 minutes in seconds
               features={[
-                "20-minute consultation",
+                "15-minute consultation",
                 "Basic guidance",
                 "Email summary",
               ]}
@@ -88,9 +88,9 @@ const PricingModal = ({ closeModal, setPrice, setDuration }) => {
             <PricingCard
               title="Pro"
               price="40.00"
-              duration={2400} // 45 minutes in seconds
+              duration={2700} // 45 minutes in seconds
               features={[
-                "40-minute consultation",
+                "45-minute consultation",
                 "In-depth discussion",
                 "Personalized report",
                 "1 week email support",
@@ -99,7 +99,7 @@ const PricingModal = ({ closeModal, setPrice, setDuration }) => {
             />
             <PricingCard
               title="Enterprise"
-              price="60.00"
+              price="70.00"
               duration={3600} // 60 minutes in seconds
               features={[
                 "60-minute consultation",

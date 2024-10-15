@@ -27,6 +27,11 @@ import {
   Terms,
   LoginCrossroad,
   Feedback,
+  Services,
+  MedicalDevices,
+  MedicalTourism,
+  LaboratoryServices,
+  Contact,
 } from "../pages/public";
 import { DEFAULT_PATH, PATH } from "./path";
 import { LoadingScreen } from "../components";
@@ -114,6 +119,11 @@ export default function Router() {
         { path: PATH.general.feedback, element: <Feedback /> },
         { path: PATH.general.page404, element: <NotFound /> },
         { path: "*", element: <Navigate to={PATH.general.page404} replace /> },
+        { path: PATH.general.contact, element: <Contact /> },
+        { path: PATH.general.services, element: <Services /> },
+        { path: PATH.general.medicalDevices, element: <MedicalDevices /> },
+        { path: PATH.general.medicalTourism, element: <MedicalTourism /> },
+        { path: PATH.general.laboratoryServices, element: <LaboratoryServices /> },
       ],
     },
     {

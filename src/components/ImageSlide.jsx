@@ -1,30 +1,19 @@
 import React from 'react';
-import { CarouselProvider, Slider, Slide, ButtonBack, ButtonNext } from 'pure-react-carousel';
-import 'pure-react-carousel/dist/react-carousel.es.css';
-import { ImageCard } from "./"
-import { IoIosArrowDropleftCircle, IoIosArrowDroprightCircle } from 'react-icons/io';
+import { ImageCard } from "./";
+import CustomCarousel from './CustomCarousel';
 
-export default class extends React.Component {
-  render() {
-    const { cards, visible, className } = this.props;
+const ImageSlide = ({ cards, className }) => {
+  return (
+    <div className={`w-full ${className}`}>
+      <CustomCarousel autoScroll={true}>
+        {cards.map((card, index) => (
+          <div key={index + card.content} className="flex justify-center items-center p-2">
+            <ImageCard image={card.image}>{card.content}</ImageCard>
+          </div>
+        ))}
+      </CustomCarousel>
+    </div>
+  );
+};
 
-    return (
-      <CarouselProvider
-        // naturalSlideWidth={100}
-        isIntrinsicHeight 
-        infinite
-        visibleSlides={visible}
-        totalSlides={cards.length}
-        className={`${className} relative flex justify-center items-center`}
-      >
-        <Slider className>
-          {cards.map((card, index) => (
-            <Slide index={0} key={index+card.content} className="mx-[10px]"><ImageCard image={card.image}>{card.content}</ImageCard></Slide>
-          ))}
-        </Slider>
-        <ButtonBack className='absolute -left-4 z-12 top-[50%] translate-y-[-50%]'><IoIosArrowDropleftCircle size={60} className='opacity-25 text-gray-3 hover:opacity-100'/></ButtonBack>
-        <ButtonNext className='absolute -right-4 z-12 top-[50%] translate-y-[-50%]'><IoIosArrowDroprightCircle size={60} className='opacity-25 text-gray-3 hover:opacity-100'/></ButtonNext>
-      </CarouselProvider>
-    );
-  }
-}
+export default ImageSlide;
