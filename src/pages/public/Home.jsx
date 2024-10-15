@@ -88,9 +88,9 @@ const InteractiveChoice = () => {
       icon: <FaRobot className="text-4xl" />,
     },
     {
-      name: 'Doctor',
+      name: 'Consultant',
       image: consult,
-      title: 'Consult a Doctor',
+      title: 'Consultant',
       description: 'Connect with experienced healthcare professionals',
       action: () => navigate(PATH.general.findDoctor),
       color: 'bg-pink-500',

@@ -159,8 +159,8 @@ const ChatBot = () => {
       <div
         ref={chatbotRef}
         className={`${chatClass} overflow-hidden  rounded-lg shadow-lg w-[95vw] sm:w-96 h-[400px] md:h-[450px] mb-[70px] md:mb-[100px] flex flex-col transition-transform duration-300 transform ${isOpen
-            ? "translate-y-0 translate-x-0 scale-100"
-            : "translate-y-96 translate-x-44 scale-0"
+          ? "translate-y-0 translate-x-0 scale-100"
+          : "translate-y-96 translate-x-44 scale-0"
           }`}
         onTransitionEnd={() => !isOpen && setChatClass("hidden")}
       >
@@ -327,19 +327,27 @@ const ChatBot = () => {
             )}
           </>
         ) : (
-          // Login prompt for unauthenticated users
+          // Updated login prompt for unauthenticated users
           <div className="flex flex-col items-center justify-center h-full bg-white p-6">
             <RiCustomerService2Fill className="text-6xl text-primary-7 mb-4" />
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Login Required</h2>
             <p className="text-gray-600 text-center mb-4">
-              Please log in to use the AI chat feature.
+              Please log in or sign up to use the AI chat feature.
             </p>
-            <button
-              onClick={() => navigate(PATH.general.loginCrossroad)}
-              className="bg-primary-7 text-white px-6 py-2 rounded-full hover:bg-primary-8 transition-colors duration-300"
-            >
-              Log In
-            </button>
+            <div className="flex flex-col space-y-3 w-full max-w-xs">
+              <button
+                onClick={() => navigate(PATH.general.loginCrossroad)}
+                className="w-full bg-primary-7 text-white px-6 py-2 rounded-full hover:bg-primary-8 transition-colors duration-300"
+              >
+                Log In
+              </button>
+              <button
+                onClick={() => navigate(PATH.general.signUp)}
+                className="w-full bg-white text-primary-7 px-6 py-2 rounded-full border-2 border-primary-7 hover:bg-primary-1 transition-colors duration-300"
+              >
+                Sign Up
+              </button>
+            </div>
           </div>
         )}
       </div>
