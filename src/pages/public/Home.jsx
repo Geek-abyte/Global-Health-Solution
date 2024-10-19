@@ -212,7 +212,7 @@ const Home = () => {
     </div>
   );
 
-  const serviceTitles = services.map(service => service.title);
+  const serviceTitles = ['Free AI Diagnosis', ...services.map(service => service.title)];
 
   const handleServiceClick = (service) => {
     setSelectedService(service);
