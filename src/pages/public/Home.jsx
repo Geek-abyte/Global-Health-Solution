@@ -180,7 +180,7 @@ const Home = () => {
     },
     {
       icon: <FaClipboardList className="text-5xl text-primary-6" />,
-      title: "Laboratory Referral Services",
+      title: "Laboratory Services",
       description: "Streamlined access to advanced diagnostic testing",
       animation: "M10 30 Q50 60 90 30 Q50 0 10 30",
     },
@@ -230,7 +230,7 @@ const Home = () => {
             <span className="text-white block mt-2">Healthcare Services</span>
             <span className="text-secondary-1 block mt-2">with our</span>
           </h1>
-          <div className="text-2xl sm:text-3xl md:text-4xl text-white mb-8">
+          <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-8">
             <TypewriterEffect words={serviceTitles} typingSpeed={100} erasingSpeed={50} delayBetweenWords={2000} />
           </div>
           <Button

@@ -1,4 +1,13 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAction } from "@reduxjs/toolkit";
+
+// Add these new actions
+export const triggerChatbotAttention = createAction(
+  "popUp/triggerChatbotAttention"
+);
+
+export const resetChatbotAttention = createAction(
+  "popUp/resetChatbotAttention"
+);
 
 const initialState = {
   showToast: false,
@@ -6,7 +15,8 @@ const initialState = {
   toastStatus: "default",
   showModal: false,
   modalContent: null,
-chatBotOpen: false,
+  chatBotOpen: false,
+  chatbotAttentionTriggered: false, // Add this new state
 };
 
 const popUpSlice = createSlice({
@@ -18,7 +28,6 @@ const popUpSlice = createSlice({
       state.toastMessage = action.payload.message;
       state.toastStatus = action.payload.status || "default";
     },
-
     hideToast(state) {
       state.showToast = false;
       state.toastMessage = "";
@@ -34,10 +43,19 @@ const popUpSlice = createSlice({
     },
     openChatBot(state, action) {
       state.chatBotOpen = action.payload;
-    }
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(triggerChatbotAttention, (state) => {
+      state.chatbotAttentionTriggered = true;
+    });
+    builder.addCase(resetChatbotAttention, (state) => {
+      state.chatbotAttentionTriggered = false;
+    });
   },
 });
 
 export const { showToast, hideToast, showModal, hideModal, openChatBot } =
   popUpSlice.actions;
+
 export default popUpSlice.reducer;

@@ -8,7 +8,7 @@ import axios from "axios";
 import { symptoms } from "../../data/symptoms";
 import axiosInstance from "../../utils/axiosConfig";
 import { useDispatch, useSelector } from "react-redux";
-import { openChatBot } from "../../states/popUpSlice";
+import { openChatBot, resetChatbotAttention } from "../../states/popUpSlice";
 import { Navigate, useNavigate } from "react-router";
 import { PATH } from "../../routes/path";
 
@@ -23,7 +23,7 @@ const exampleMessages = [
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { ChatBotOpen } = useSelector((state) => state.popUp);
+  const { ChatBotOpen, chatbotAttentionTriggered } = useSelector((state) => state.popUp);
   const dispatch = useDispatch();
   const [tags, setTags] = useState([]);
   const [isAddingTags, setIsAddingTags] = useState(false);
@@ -36,6 +36,7 @@ const ChatBot = () => {
   const chatbotRef = useRef(null);
   const messageAreaRef = useRef(null); // Ref for the message area
   const navigate = useNavigate();
+  const [isAttentionEffect, setIsAttentionEffect] = useState(false);
 
   // tab options
   const tabs = ["home", "symptoms", "faq"];
@@ -154,14 +155,26 @@ const ChatBot = () => {
       toggleChatBot();
     }
   }, [ChatBotOpen]);
+
+  useEffect(() => {
+    if (chatbotAttentionTriggered) {
+      setIsAttentionEffect(true);
+      toggleChatBot();
+      setTimeout(() => {
+        setIsAttentionEffect(false);
+        dispatch(resetChatbotAttention());
+      }, 3000);
+    }
+  }, [chatbotAttentionTriggered, dispatch]);
+
   return (
     <div className="fixed font-roboto-condensed bottom-2 md:bottom-4 right-2 md:right-6 z-20">
       <div
         ref={chatbotRef}
-        className={`${chatClass} overflow-hidden  rounded-lg shadow-lg w-[95vw] sm:w-96 h-[400px] md:h-[450px] mb-[70px] md:mb-[100px] flex flex-col transition-transform duration-300 transform ${isOpen
-          ? "translate-y-0 translate-x-0 scale-100"
-          : "translate-y-96 translate-x-44 scale-0"
-          }`}
+        className={`${chatClass} overflow-hidden rounded-lg shadow-lg w-[95vw] sm:w-96 h-[400px] md:h-[450px] mb-[70px] md:mb-[100px] flex flex-col transition-transform duration-300 transform ${isOpen
+            ? "translate-y-0 translate-x-0 scale-100"
+            : "translate-y-96 translate-x-44 scale-0"
+          } ${isAttentionEffect ? "animate-gentle-bounce" : ""}`}
         onTransitionEnd={() => !isOpen && setChatClass("hidden")}
       >
         {isAuthenticated ? (
@@ -353,7 +366,8 @@ const ChatBot = () => {
       </div>
       <button
         onClick={toggleChatBot}
-        className="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-[5px] md:p-[10px] shadow-lg hover:scale-110 transition-transform duration-300"
+        className={`absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-[5px] md:p-[10px] shadow-lg hover:scale-110 transition-transform duration-300 ${isAttentionEffect ? "animate-pulse" : ""
+          }`}
       >
         <div className="border-2 border-white rounded-full p-2">
           {isOpen ? (

@@ -50,7 +50,7 @@ const Footer = () => {
         </div>
       </div>
       <div className='border-t mt-8 pt-4'>
-        copyright something
+        @sozohal 2024
       </div>
     </footer>
   )

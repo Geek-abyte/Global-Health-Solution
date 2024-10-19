@@ -3,7 +3,7 @@ import { DTable } from "../../../components";
 import { cardbrain, carddoc, cardfile } from "../../../assets";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { openChatBot } from "../../../states/popUpSlice";
+import { openChatBot, triggerChatbotAttention } from "../../../states/popUpSlice";
 import { PATH } from "../../../routes/path";
 import axiosInstance from "../../../utils/axiosConfig";
 
@@ -40,6 +40,7 @@ const PatientDashboard = ({ className }) => {
   }, [user]);
 
   const handleChat = () => {
+    dispatch(triggerChatbotAttention());
     dispatch(openChatBot(true));
   };
 

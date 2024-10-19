@@ -18,7 +18,7 @@ const Services = () => {
           link={PATH.general.medicalTourism}
         />
         <ServiceCard
-          title="Laboratory Referral Services"
+          title="Laboratory Services"
           description="Access a network of trusted laboratories for various medical tests and diagnostics."
           link={PATH.general.laboratoryServices}
         />
