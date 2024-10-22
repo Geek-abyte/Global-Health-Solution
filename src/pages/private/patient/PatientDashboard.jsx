@@ -77,7 +77,7 @@ const PatientDashboard = ({ className }) => {
     },
     {
       title: "Appointments",
-      image: cardfile, // You might want to use a different image for appointments
+      image: cardfile,
       color: "text-green-600",
       onClick: handleAppointments,
     },
