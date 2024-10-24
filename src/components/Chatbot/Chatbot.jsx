@@ -119,7 +119,7 @@ const ChatBot = () => {
         symptoms: packet,
       });
       setLoading(false);
-      addMessage(response.data.response, "bot");
+      addMessage(response.data, "bot");
       addMessage(
         "Try a different set of symptoms, or would you like to contact a consultant?",
         "bot"
