@@ -180,7 +180,7 @@ const Home = () => {
     },
     {
       icon: <FaClipboardList className="text-5xl text-primary-6" />,
-      title: "Laboratory Services",
+      title: "Laboratory Referral Services",
       description: "Streamlined access to advanced diagnostic testing",
       animation: "M10 30 Q50 60 90 30 Q50 0 10 30",
     },

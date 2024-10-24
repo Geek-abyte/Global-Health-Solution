@@ -10,19 +10,28 @@ const initialState = {
 export const fetchMedicalFile = createAsyncThunk(
   "medicalFile/fetchMedicalFile",
   async (patientId) => {
-    console.log("Fetching medical file for patientId:", patientId);
     const response = await axiosInstance.get(`/medical-file/${patientId}`);
-    console.log("Fetched medical file response:", response);
     return response.data;
   }
 );
 
 export const updateMedicalFile = createAsyncThunk(
   "medicalFile/updateMedicalFile",
-  async ({ patientId, content }) => {
+  async ({ patientId, content, prescription }) => {
     const response = await axiosInstance.put(`/medical-file/${patientId}`, {
       content,
+      prescription,
     });
+    return response.data;
+  }
+);
+
+export const fetchPrescriptions = createAsyncThunk(
+  "medicalFile/fetchPrescriptions",
+  async (patientId) => {
+    const response = await axiosInstance.get(
+      `/medical-file/${patientId}/prescriptions`
+    );
     return response.data;
   }
 );
@@ -37,7 +46,6 @@ const medicalFileSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchMedicalFile.fulfilled, (state, action) => {
-        console.log("Updating state with medical file:", action.payload);
         state.loading = false;
         state.medicalFile = action.payload;
       })
@@ -53,6 +61,20 @@ const medicalFileSlice = createSlice({
         state.medicalFile = action.payload;
       })
       .addCase(updateMedicalFile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+      .addCase(fetchPrescriptions.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(fetchPrescriptions.fulfilled, (state, action) => {
+        state.loading = false;
+        state.medicalFile = {
+          ...state.medicalFile,
+          prescriptions: action.payload.prescriptions,
+        };
+      })
+      .addCase(fetchPrescriptions.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

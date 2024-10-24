@@ -5,6 +5,7 @@ import AgoraRTC from 'agora-rtc-sdk-ng';
 import { initializeAgoraEngine, endCall } from '../../../states/videoCallSlice';
 import { FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash, FaPhoneSlash, FaFileAlt, FaComments, FaExpand, FaCompress, FaClock } from 'react-icons/fa';
 import MedicalFile from '../../../components/MedicalFile';
+import { fetchPrescriptions } from '../../../states/medicalFileSlice';
 
 const ChatRoom = () => {
   const navigate = useNavigate();
@@ -139,8 +140,22 @@ const ChatRoom = () => {
       if (clientRef.current) {
         clientRef.current.leave();
       }
-      // Navigate back to the previous page (specialist page) or dashboard
-      navigate(previousPath);
+
+      // Determine the redirect path based on user role
+      let redirectPath;
+      if (user.role === 'patient') {
+        // Redirect to the patient specialist page
+        redirectPath = `/user/specialist`;
+      } else if (user.role === 'specialist') {
+        // Redirect to the doctor's dashboard
+        redirectPath = '/doctor/dashboard';
+      } else {
+        // Fallback to the previous path or dashboard
+        redirectPath = previousPath;
+      }
+
+      // Navigate to the determined path
+      navigate(redirectPath);
     }
   };
 
@@ -162,6 +177,13 @@ const ChatRoom = () => {
     setIsFullScreenMode(!isFullScreenMode);
     setFullScreenUser(user);
   };
+
+  useEffect(() => {
+    // Fetch prescriptions for the patient
+    if (user.role === 'patient' && currentCall && currentCall.userId) {
+      dispatch(fetchPrescriptions(currentCall.userId));
+    }
+  }, [dispatch, callId, currentCall, user.role]);
 
   return (
     <div className="flex h-screen bg-gray-900 text-white">
@@ -221,6 +243,22 @@ const ChatRoom = () => {
         <div className={`transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-1/4' : 'w-0'} bg-white shadow-lg overflow-hidden`}>
           <div className="h-full overflow-y-auto p-4">
             <MedicalFile patientId={currentCall.userId} />
+          </div>
+        </div>
+      )}
+      {user.role === 'patient' && (
+        <div className={`transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-1/4' : 'w-0'} bg-white shadow-lg overflow-hidden`}>
+          <div className="h-full overflow-y-auto p-4">
+            <h2 className="text-xl font-bold mb-4">Your Prescriptions</h2>
+            {medicalFile?.prescriptions?.map((prescription, index) => (
+              <div key={index} className="mb-2 p-2 bg-gray-100 rounded">
+                <p className="font-semibold">{prescription.medication}</p>
+                <p>Dosage: {prescription.dosage}</p>
+                <p>Frequency: {prescription.frequency}</p>
+                <p>Start Date: {new Date(prescription.startDate).toLocaleDateString()}</p>
+                <p>End Date: {new Date(prescription.endDate).toLocaleDateString()}</p>
+              </div>
+            ))}
           </div>
         </div>
       )}

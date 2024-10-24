@@ -71,7 +71,7 @@ const Navbar = ({ className }) => {
       <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
         <Link to={PATH.general.medicalDevices} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Medical Devices and Equipment</Link>
         <Link to={PATH.general.medicalTourism} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Medical Tourism</Link>
-        <Link to={PATH.general.laboratoryServices} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Laboratory Services</Link>
+        <Link to={PATH.general.laboratoryServices} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">Laboratory referral Services</Link>
       </div>
     </div>
   );
@@ -238,7 +238,7 @@ const Navbar = ({ className }) => {
                   <div className="pl-4">
                     <MobileNavLink to={PATH.general.medicalDevices} onClick={() => setIsOpen(false)}>Medical Devices and Equipment</MobileNavLink>
                     <MobileNavLink to={PATH.general.medicalTourism} onClick={() => setIsOpen(false)}>Medical Tourism</MobileNavLink>
-                    <MobileNavLink to={PATH.general.laboratoryServices} onClick={() => setIsOpen(false)}>Laboratory Services</MobileNavLink>
+                    <MobileNavLink to={PATH.general.laboratoryServices} onClick={() => setIsOpen(false)}>Laboratory referral Services</MobileNavLink>
                   </div>
                 )}
               </div>

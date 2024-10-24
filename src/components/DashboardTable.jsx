@@ -83,7 +83,7 @@ const DashboardTable = ({ calls, loading, limit = Infinity }) => {
                 {call.specialistCategory}
               </td>
               <td className="px-6 py-4">
-                {console.log("see the time here", call.startTime, call.endTime)}
+                {/* {console.log("see the time here", call.startTime, call.endTime)} */}
                 {calculateDuration(call.startTime, call.endTime)}
               </td>
               <td className="px-6 py-4">

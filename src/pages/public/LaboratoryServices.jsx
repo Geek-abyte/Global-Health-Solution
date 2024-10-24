@@ -19,7 +19,7 @@ const LaboratoryServices = () => {
         <img src={labServicesHero} alt="Laboratory Services Hero" className='absolute h-full w-full object-cover' />
         <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         <div className="relative z-10 text-center text-white">
-          <h1 className="text-6xl font-bold mb-4">Sozo-hal Laboratory Services</h1>
+          <h1 className="text-6xl font-bold mb-4">Sozo-hal Laboratory Referral Services</h1>
           <p className="text-2xl mb-8">Excellence in Diagnostic Services</p>
         </div>
       </div>

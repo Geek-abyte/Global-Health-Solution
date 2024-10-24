@@ -7,7 +7,7 @@ const Feedback = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const recipientEmail = 'feedback@example.com'; // Replace with your actual email
+    const recipientEmail = 'abel.oragbon@gmail.com'; // Updated email address
     const subject = 'Feedback from Global Health Solution';
     const body = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0AMessage:%0D%0A${message}`;
     window.location.href = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${body}`;

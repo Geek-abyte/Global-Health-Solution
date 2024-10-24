@@ -13,6 +13,13 @@ const MedicalFile = ({ patientId }) => {
   console.log("MedicalFile component - error:", error);
 
   const [newNote, setNewNote] = useState('');
+  const [newPrescription, setNewPrescription] = useState({
+    medication: '',
+    dosage: '',
+    frequency: '',
+    startDate: '',
+    endDate: '',
+  });
   const [isExpanded, setIsExpanded] = useState(true);
   const [activeTab, setActiveTab] = useState('info');
 
@@ -26,16 +33,37 @@ const MedicalFile = ({ patientId }) => {
     setNewNote(e.target.value);
   };
 
-  const handleSubmit = () => {
+  const handlePrescriptionChange = (e) => {
+    setNewPrescription({ ...newPrescription, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmitNote = () => {
     if (newNote.trim()) {
       dispatch(updateMedicalFile({ patientId, content: newNote }))
         .then((action) => {
           if (updateMedicalFile.fulfilled.match(action)) {
-            // Refresh the medical file data after successful update
             dispatch(fetchMedicalFile(patientId));
           }
         });
       setNewNote('');
+    }
+  };
+
+  const handleSubmitPrescription = () => {
+    if (newPrescription.medication && newPrescription.dosage && newPrescription.frequency && newPrescription.startDate && newPrescription.endDate) {
+      dispatch(updateMedicalFile({ patientId, prescription: newPrescription }))
+        .then((action) => {
+          if (updateMedicalFile.fulfilled.match(action)) {
+            dispatch(fetchMedicalFile(patientId));
+          }
+        });
+      setNewPrescription({
+        medication: '',
+        dosage: '',
+        frequency: '',
+        startDate: '',
+        endDate: '',
+      });
     }
   };
 
@@ -70,9 +98,13 @@ const MedicalFile = ({ patientId }) => {
             >
               Notes
             </button>
+            <button
+              className={`py-2 px-4 ${activeTab === 'prescriptions' ? 'border-b-2 border-primary-6 text-primary-6' : 'text-gray-400'}`}
+              onClick={() => setActiveTab('prescriptions')}
+            >
+              Prescriptions
+            </button>
           </div>
-
-          {console.log("see medical file", medicalFile)}
 
           {activeTab === 'info' && medicalFile?.patientInfo && (
             <div className="space-y-2">
@@ -107,9 +139,74 @@ const MedicalFile = ({ patientId }) => {
               ></textarea>
               <button
                 className="mt-2 bg-primary-6 text-white px-4 py-2 rounded hover:bg-primary-7 transition-colors"
-                onClick={handleSubmit}
+                onClick={handleSubmitNote}
               >
                 Add Note
+              </button>
+            </div>
+          )}
+
+          {activeTab === 'prescriptions' && (
+            <div>
+              <div className="mb-4 max-h-40 overflow-y-auto">
+                {medicalFile?.prescriptions?.map((prescription, index) => (
+                  <div key={index} className="mb-2 p-2 bg-gray-700 rounded">
+                    <p className="text-sm text-gray-300">
+                      {new Date(prescription.date).toLocaleString()} - {prescription.specialistId.firstName} {prescription.specialistId.lastName} ({prescription.specialistId.specialistCategory})
+                    </p>
+                    <p className="text-white">Medication: {prescription.medication}</p>
+                    <p className="text-white">Dosage: {prescription.dosage}</p>
+                    <p className="text-white">Frequency: {prescription.frequency}</p>
+                    <p className="text-white">Start Date: {new Date(prescription.startDate).toLocaleDateString()}</p>
+                    <p className="text-white">End Date: {new Date(prescription.endDate).toLocaleDateString()}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="space-y-2">
+                <input
+                  className="w-full p-2 border rounded bg-gray-700 text-white border-gray-600"
+                  type="text"
+                  name="medication"
+                  value={newPrescription.medication}
+                  onChange={handlePrescriptionChange}
+                  placeholder="Medication"
+                />
+                <input
+                  className="w-full p-2 border rounded bg-gray-700 text-white border-gray-600"
+                  type="text"
+                  name="dosage"
+                  value={newPrescription.dosage}
+                  onChange={handlePrescriptionChange}
+                  placeholder="Dosage"
+                />
+                <input
+                  className="w-full p-2 border rounded bg-gray-700 text-white border-gray-600"
+                  type="text"
+                  name="frequency"
+                  value={newPrescription.frequency}
+                  onChange={handlePrescriptionChange}
+                  placeholder="Frequency"
+                />
+                <input
+                  className="w-full p-2 border rounded bg-gray-700 text-white border-gray-600"
+                  type="date"
+                  name="startDate"
+                  value={newPrescription.startDate}
+                  onChange={handlePrescriptionChange}
+                />
+                <input
+                  className="w-full p-2 border rounded bg-gray-700 text-white border-gray-600"
+                  type="date"
+                  name="endDate"
+                  value={newPrescription.endDate}
+                  onChange={handlePrescriptionChange}
+                />
+              </div>
+              <button
+                className="mt-2 bg-primary-6 text-white px-4 py-2 rounded hover:bg-primary-7 transition-colors"
+                onClick={handleSubmitPrescription}
+              >
+                Add Prescription
               </button>
             </div>
           )}

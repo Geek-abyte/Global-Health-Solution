@@ -27,7 +27,7 @@ const PatientSidebar = ({ isOpen, onClose }) => {
   ];
 
   const handleLogout = () => {
-    dispatch(showModal({ content: "OTP verification" }));
+    dispatch(showModal({ content: "logout" }));
   };
 
   const NavLink = ({ item }) => (
