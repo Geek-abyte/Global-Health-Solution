@@ -174,7 +174,7 @@ const Home = () => {
     },
     {
       icon: <FaStethoscope className="text-5xl text-primary-6" />,
-      title: "Medical Equipment",
+      title: "Medical Devices and Equipment",
       description: "State-of-the-art medical devices and supplies for healthcare facilities",
       animation: "M10 50 Q50 10 90 50 Q50 90 10 50",
     },

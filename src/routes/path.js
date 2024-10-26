@@ -26,6 +26,7 @@ export const PATH = {
     privacy: path(ROOT, "privacy-policy"),
     cookie: path(ROOT, "cookie-policy"),
     terms: path(ROOT, "terms"),
+    consultantTerms: path(ROOT, "consultants-terms-and-conditions"),
     feedback: path(ROOT, "feedback"),
     services: path(ROOT, "services"),
     medicalDevices: path(ROOT, "services/medical-devices"),

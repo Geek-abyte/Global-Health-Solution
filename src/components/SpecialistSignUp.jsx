@@ -588,12 +588,12 @@ const SpecialistSignUpForm = () => {
                   className="ml-2 block text-sm text-gray-900"
                 >
                   I agree to the{" "}
-                  <a
-                    href="#"
-                    className="text-primary-600 hover:text-primary-500"
+                  <Link
+                    to={PATH.general.consultantTerms}
+                    className="text-primary-600 hover:text-primary-700 underline font-medium"
                   >
                     Terms and Conditions
-                  </a>
+                  </Link>
                 </label>
               </div>
               <ErrorMessage

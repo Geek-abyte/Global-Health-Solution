@@ -57,6 +57,7 @@ import EditSpecialistProfile from "../pages/private/doctor/EditSpecialistPage";
 import SpecialistAppointments from "../pages/private/doctor/SpecialistAppointment";
 import Appointments from "../pages/private/patient/Appointment";
 import CreateAppointment from '../pages/private/patient/CreateAppointment';
+import ConsultantTerms from "../pages/public/ConsultantTerms";
 
 const AuthWrapper = ({ children }) => {
   const dispatch = useDispatch();
@@ -115,6 +116,7 @@ export default function Router() {
         { path: PATH.general.privacy, element: <PrivacyPolicy /> },
         { path: PATH.general.cookie, element: <CookiePolicy /> },
         { path: PATH.general.terms, element: <Terms /> },
+        { path: PATH.general.consultantTerms, element: <ConsultantTerms /> },
         { path: PATH.doctor.awaitingApproval, element: <AwaitingApproval /> },
         { path: PATH.general.feedback, element: <Feedback /> },
         { path: PATH.general.page404, element: <NotFound /> },
