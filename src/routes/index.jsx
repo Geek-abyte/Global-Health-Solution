@@ -52,12 +52,13 @@ import { connectSocket, disconnectSocket } from "../services/sockets";
 import SpecialistSignIn from "../pages/public/SpecialistSignIn";
 import { CallDetail } from "../pages/private/patient";
 import AdminLayout from "../layouts/AdminLayout";
-import { AdminAllUsers, AdminDashboard, AdminLogin, AdminManageSpecialists, AdminSpecialistDetail, AdminBlogs, CreateEditBlog, BlogPreview } from "../pages/private/admin";
+import { AdminAllUsers, AdminDashboard, AdminLogin, AdminManageSpecialists, AdminSpecialistDetail, AdminBlogs, CreateEditBlog, BlogPreview, AdminCalls } from "../pages/private/admin";
 import EditSpecialistProfile from "../pages/private/doctor/EditSpecialistPage";
 import SpecialistAppointments from "../pages/private/doctor/SpecialistAppointment";
 import Appointments from "../pages/private/patient/Appointment";
 import CreateAppointment from '../pages/private/patient/CreateAppointment';
 import ConsultantTerms from "../pages/public/ConsultantTerms";
+import Payments from "../pages/private/admin/Payments";
 
 const AuthWrapper = ({ children }) => {
   const dispatch = useDispatch();
@@ -236,6 +237,8 @@ export default function Router() {
         { path: PATH.admin.blogs, element: <AdminBlogs /> },
         { path: PATH.admin.createBlog, element: <CreateEditBlog /> },
         { path: PATH.admin.editBlog + "/:id", element: <CreateEditBlog /> },
+        { path: PATH.admin.payments, element: <Payments /> },
+        { path: PATH.admin.calls, element: <AdminCalls /> },
         { path: PATH.admin.previewBlog + "/:id", element: <BlogPreview /> },
       ],
     },

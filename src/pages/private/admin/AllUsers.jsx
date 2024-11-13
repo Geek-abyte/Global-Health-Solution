@@ -12,6 +12,7 @@ import {
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../../utils/axiosConfig";
+import LoadingAnimation from "../../../components/LoadingAnimation";
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
@@ -25,15 +26,18 @@ const UsersPage = () => {
     country: "",
     joinedDate: "",
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
   const fetchUsers = async () => {
+    setLoading(true);
     const response = await axiosInstance.get("/admin/get-users");
     const { data } = response;
     setUsers(data);
+    setLoading(false);
   };
 
   const handleSearch = (event) => {
@@ -68,8 +72,8 @@ const UsersPage = () => {
       : true;
     const matchesJoinedDate = filters.joinedDate
       ? new Date(user.createdAt)
-          .toLocaleDateString()
-          .includes(filters.joinedDate)
+        .toLocaleDateString()
+        .includes(filters.joinedDate)
       : true;
 
     return matchesSearch && matchesRole && matchesCountry && matchesJoinedDate;
@@ -109,13 +113,12 @@ const UsersPage = () => {
       </td>
       <td className="px-6 py-4 whitespace-nowrap">
         <span
-          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-            user.role === "admin"
+          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.role === "admin"
               ? "bg-red-100 text-red-800"
               : user.role === "specialist"
-              ? "bg-green-100 text-green-800"
-              : "bg-blue-100 text-blue-800"
-          }`}
+                ? "bg-green-100 text-green-800"
+                : "bg-blue-100 text-blue-800"
+            }`}
         >
           {user.role}
         </span>
@@ -156,6 +159,13 @@ const UsersPage = () => {
       fetchUsers();
     }
   };
+
+  if (loading) return (
+    <div className="p-6 bg-gray-100 min-h-screen flex flex-col items-center justify-center">
+      <LoadingAnimation />
+      <p className="text-xl font-semibold mt-4">Loading users...</p>
+    </div>
+  );
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -248,11 +258,10 @@ const UsersPage = () => {
             <button
               key={index}
               onClick={() => paginate(index + 1)}
-              className={`mx-1 px-3 py-1 rounded ${
-                currentPage === index + 1
+              className={`mx-1 px-3 py-1 rounded ${currentPage === index + 1
                   ? "bg-blue-500 text-white"
                   : "bg-white text-blue-500 hover:bg-blue-100"
-              }`}
+                }`}
             >
               {index + 1}
             </button>

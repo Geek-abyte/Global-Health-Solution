@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { hideToast } from "./states/popUpSlice";
 import { addNotification } from "./states/notificationSlice";
 import io from "socket.io-client";
+import LogoutModal from "./components/LogoutModal";
 
 function App() {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ function App() {
       {showModal && modalContent === "incomingCall" && (
         <IncomingCallNotification />
       )}
+      {showModal && modalContent === "logout" && <LogoutModal />}
     </>
   );
 

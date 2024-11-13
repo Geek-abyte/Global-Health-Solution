@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchBlogs, deleteBlog } from '../../../states/blog/blogSlice';
 import BlogPreview from './BlogPreview';
 import { PATH } from '../../../routes/path';
+import LoadingAnimation from '../../../components/LoadingAnimation';
 
 const AdminBlogs = () => {
   const dispatch = useDispatch();
@@ -33,7 +34,12 @@ const AdminBlogs = () => {
     return true;
   });
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+    <div className="p-6 bg-gray-100 min-h-screen flex flex-col items-center justify-center">
+      <LoadingAnimation />
+      <p className="text-xl font-semibold mt-4">Loading blogs...</p>
+    </div>
+  );
   if (error) return <div>Error: {error}</div>;
 
   return (

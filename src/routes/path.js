@@ -69,6 +69,7 @@ export const PATH = {
     dashboard: ADMIN,
     login: path(ADMIN, "login"),
     users: path(ADMIN, "users"),
+    calls: path(ADMIN, "calls"),
     manage: path(ADMIN, "manage-specialists"),
     specialist: path(ADMIN, "specialist"),
     payments: path(ADMIN, "payments"),

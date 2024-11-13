@@ -7,6 +7,7 @@ import { showToast } from "../states/popUpSlice";
 import { loginUser } from "../states/user/authSlice";
 import { LoadingSpinner } from "./";
 import { PATH } from "../routes/path";
+import axios from 'axios';
 
 const formInput =
   "border-[3px] border-primary-5 text-primary-2 rounded-[20px] overflow-hidden p-2 w-full";
@@ -72,9 +73,36 @@ const SignInForm = ({ specialist, client }) => {
         }
         return errors;
       }}
-      onSubmit={(values) => {
-        setIsSubmitting(true);
-        dispatch(loginUser(values));
+      onSubmit={async (values, { setSubmitting }) => {
+        const maxRetries = 3;
+        let retryCount = 0;
+
+        const attemptLogin = async () => {
+          try {
+            setIsSubmitting(true);
+            await dispatch(loginUser(values)).unwrap();
+          } catch (error) {
+            if (error.code === 'ECONNRESET' && retryCount < maxRetries) {
+              retryCount++;
+              console.log(`Retrying login attempt ${retryCount} of ${maxRetries}`);
+              await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+              return attemptLogin();
+            }
+            throw error;
+          }
+        };
+
+        try {
+          await attemptLogin();
+        } catch (error) {
+          console.error('Login failed after retries:', error);
+          dispatch(showToast({
+            status: "error",
+            message: "Connection error. Please try again."
+          }));
+        } finally {
+          setIsSubmitting(false);
+        }
       }}
     >
       {({ isSubmitting }) => (

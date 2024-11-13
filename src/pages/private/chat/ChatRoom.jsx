@@ -6,6 +6,7 @@ import { initializeAgoraEngine, endCall } from '../../../states/videoCallSlice';
 import { FaMicrophone, FaMicrophoneSlash, FaVideo, FaVideoSlash, FaPhoneSlash, FaFileAlt, FaComments, FaExpand, FaCompress, FaClock } from 'react-icons/fa';
 import MedicalFile from '../../../components/MedicalFile';
 import { fetchPrescriptions } from '../../../states/medicalFileSlice';
+import FeedbackPromptModal from '../../../components/FeedbackPromptModal';
 
 const ChatRoom = () => {
   const navigate = useNavigate();
@@ -26,6 +27,7 @@ const ChatRoom = () => {
   const [fullScreenUser, setFullScreenUser] = useState(null);
   const location = useLocation();
   const previousPath = location.state?.from || '/dashboard';
+  const [showFeedbackPrompt, setShowFeedbackPrompt] = useState(false);
 
   useEffect(() => {
     dispatch(initializeAgoraEngine(currentCall.channelName));
@@ -141,22 +143,27 @@ const ChatRoom = () => {
         clientRef.current.leave();
       }
 
-      // Determine the redirect path based on user role
-      let redirectPath;
-      if (user.role === 'patient') {
-        // Redirect to the patient specialist page
-        redirectPath = `/user/specialist`;
-      } else if (user.role === 'specialist') {
-        // Redirect to the doctor's dashboard
-        redirectPath = '/doctor/dashboard';
-      } else {
-        // Fallback to the previous path or dashboard
-        redirectPath = previousPath;
-      }
-
-      // Navigate to the determined path
-      navigate(redirectPath);
+      // Show feedback prompt before navigation
+      setShowFeedbackPrompt(true);
     }
+  };
+
+  // Handle feedback prompt close
+  const handleFeedbackPromptClose = () => {
+    setShowFeedbackPrompt(false);
+
+    // Determine the redirect path based on user role
+    let redirectPath;
+    if (user.role === 'patient') {
+      redirectPath = `/user/specialist`;
+    } else if (user.role === 'specialist') {
+      redirectPath = '/doctor/dashboard';
+    } else {
+      redirectPath = previousPath;
+    }
+
+    // Navigate to the determined path
+    navigate(redirectPath);
   };
 
   useEffect(() => {
@@ -186,83 +193,92 @@ const ChatRoom = () => {
   }, [dispatch, callId, currentCall, user.role]);
 
   return (
-    <div className="flex h-screen bg-gray-900 text-white">
-      <div className={`flex flex-col transition-all duration-300 ease-in-out ${isSidebarOpen && user.role === 'specialist' ? 'w-3/4' : 'w-full'}`}>
-        <div className="flex-1 p-4 relative">
-          {/* Timer overlay */}
-          <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
-            <div className="bg-gray-800 bg-opacity-75 text-white px-4 py-2 rounded-full flex items-center space-x-2">
-              <FaClock className="text-primary-6" />
-              <span className="font-semibold">
-                {timeLeft !== null ? formatTime(timeLeft) : 'Connecting...'}
-              </span>
+    <>
+      <div className="flex h-screen bg-gray-900 text-white">
+        <div className={`flex flex-col transition-all duration-300 ease-in-out ${isSidebarOpen && user.role === 'specialist' ? 'w-3/4' : 'w-full'}`}>
+          <div className="flex-1 p-4 relative">
+            {/* Timer overlay */}
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
+              <div className="bg-gray-800 bg-opacity-75 text-white px-4 py-2 rounded-full flex items-center space-x-2">
+                <FaClock className="text-primary-6" />
+                <span className="font-semibold">
+                  {timeLeft !== null ? formatTime(timeLeft) : 'Connecting...'}
+                </span>
+              </div>
+            </div>
+            {isFullScreenMode ? (
+              <>
+                <div className="absolute inset-0 bg-gray-800 rounded-lg overflow-hidden">
+                  <div id={fullScreenUser ? `remote-video-${fullScreenUser.uid}` : 'local-video'} className="absolute inset-0"></div>
+                  <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">
+                    {fullScreenUser ? fullScreenUser.name : 'You'}
+                  </div>
+                </div>
+                <div className="absolute bottom-4 right-4 w-1/4 aspect-video bg-gray-800 rounded-lg overflow-hidden cursor-pointer"
+                  onClick={() => toggleFullScreenMode()}>
+                  <div id={fullScreenUser ? 'local-video' : `remote-video-${users[0]?.uid}`} className="absolute inset-0"></div>
+                  <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">
+                    {fullScreenUser ? 'You' : users[0]?.name || 'Remote User'}
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
+                <div className="relative aspect-video bg-gray-800 rounded-lg overflow-hidden cursor-pointer"
+                  onClick={() => toggleFullScreenMode()}>
+                  <div id="local-video" className="absolute inset-0"></div>
+                  <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">You</div>
+                </div>
+                {users.map((user) => (
+                  <div key={user.uid} className="relative aspect-video bg-gray-800 rounded-lg overflow-hidden cursor-pointer"
+                    onClick={() => toggleFullScreenMode(user)}>
+                    <div id={`remote-video-${user.uid}`} className="absolute inset-0"></div>
+                    <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">{user.name || 'Remote User'}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="bg-gray-800 p-4 flex justify-center space-x-4">
+            <ControlButton onClick={toggleAudio} isActive={!isAudioMuted} activeIcon={<FaMicrophone />} inactiveIcon={<FaMicrophoneSlash />} />
+            <ControlButton onClick={toggleVideo} isActive={!isVideoMuted} activeIcon={<FaVideo />} inactiveIcon={<FaVideoSlash />} />
+            <ControlButton onClick={endCall} isActive={false} activeIcon={<FaPhoneSlash />} inactiveIcon={<FaPhoneSlash />} bgColor="bg-red-500" />
+            <ControlButton onClick={() => setIsSidebarOpen(!isSidebarOpen)} isActive={isSidebarOpen} activeIcon={<FaFileAlt />} inactiveIcon={<FaFileAlt />} />
+            <ControlButton onClick={() => toggleFullScreenMode()} isActive={isFullScreenMode} activeIcon={<FaExpand />} inactiveIcon={<FaCompress />} />
+          </div>
+        </div>
+        {user.role === 'specialist' && (
+          <div className={`transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-1/4' : 'w-0'} bg-white shadow-lg overflow-hidden`}>
+            <div className="h-full overflow-y-auto p-4">
+              <MedicalFile patientId={currentCall.userId} />
             </div>
           </div>
-          {isFullScreenMode ? (
-            <>
-              <div className="absolute inset-0 bg-gray-800 rounded-lg overflow-hidden">
-                <div id={fullScreenUser ? `remote-video-${fullScreenUser.uid}` : 'local-video'} className="absolute inset-0"></div>
-                <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">
-                  {fullScreenUser ? fullScreenUser.name : 'You'}
-                </div>
-              </div>
-              <div className="absolute bottom-4 right-4 w-1/4 aspect-video bg-gray-800 rounded-lg overflow-hidden cursor-pointer"
-                onClick={() => toggleFullScreenMode()}>
-                <div id={fullScreenUser ? 'local-video' : `remote-video-${users[0]?.uid}`} className="absolute inset-0"></div>
-                <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">
-                  {fullScreenUser ? 'You' : users[0]?.name || 'Remote User'}
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-full">
-              <div className="relative aspect-video bg-gray-800 rounded-lg overflow-hidden cursor-pointer"
-                onClick={() => toggleFullScreenMode()}>
-                <div id="local-video" className="absolute inset-0"></div>
-                <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">You</div>
-              </div>
-              {users.map((user) => (
-                <div key={user.uid} className="relative aspect-video bg-gray-800 rounded-lg overflow-hidden cursor-pointer"
-                  onClick={() => toggleFullScreenMode(user)}>
-                  <div id={`remote-video-${user.uid}`} className="absolute inset-0"></div>
-                  <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white px-2 py-1 rounded">{user.name || 'Remote User'}</div>
+        )}
+        {user.role === 'patient' && (
+          <div className={`transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-1/4' : 'w-0'} bg-white shadow-lg overflow-hidden`}>
+            <div className="h-full overflow-y-auto p-4">
+              <h2 className="text-xl font-bold mb-4">Your Prescriptions</h2>
+              {medicalFile?.prescriptions?.map((prescription, index) => (
+                <div key={index} className="mb-2 p-2 bg-gray-100 rounded">
+                  <p className="font-semibold">{prescription.medication}</p>
+                  <p>Dosage: {prescription.dosage}</p>
+                  <p>Frequency: {prescription.frequency}</p>
+                  <p>Start Date: {new Date(prescription.startDate).toLocaleDateString()}</p>
+                  <p>End Date: {new Date(prescription.endDate).toLocaleDateString()}</p>
                 </div>
               ))}
             </div>
-          )}
-        </div>
-        <div className="bg-gray-800 p-4 flex justify-center space-x-4">
-          <ControlButton onClick={toggleAudio} isActive={!isAudioMuted} activeIcon={<FaMicrophone />} inactiveIcon={<FaMicrophoneSlash />} />
-          <ControlButton onClick={toggleVideo} isActive={!isVideoMuted} activeIcon={<FaVideo />} inactiveIcon={<FaVideoSlash />} />
-          <ControlButton onClick={endCall} isActive={false} activeIcon={<FaPhoneSlash />} inactiveIcon={<FaPhoneSlash />} bgColor="bg-red-500" />
-          <ControlButton onClick={() => setIsSidebarOpen(!isSidebarOpen)} isActive={isSidebarOpen} activeIcon={<FaFileAlt />} inactiveIcon={<FaFileAlt />} />
-          <ControlButton onClick={() => toggleFullScreenMode()} isActive={isFullScreenMode} activeIcon={<FaExpand />} inactiveIcon={<FaCompress />} />
-        </div>
+          </div>
+        )}
       </div>
-      {user.role === 'specialist' && (
-        <div className={`transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-1/4' : 'w-0'} bg-white shadow-lg overflow-hidden`}>
-          <div className="h-full overflow-y-auto p-4">
-            <MedicalFile patientId={currentCall.userId} />
-          </div>
-        </div>
-      )}
-      {user.role === 'patient' && (
-        <div className={`transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-1/4' : 'w-0'} bg-white shadow-lg overflow-hidden`}>
-          <div className="h-full overflow-y-auto p-4">
-            <h2 className="text-xl font-bold mb-4">Your Prescriptions</h2>
-            {medicalFile?.prescriptions?.map((prescription, index) => (
-              <div key={index} className="mb-2 p-2 bg-gray-100 rounded">
-                <p className="font-semibold">{prescription.medication}</p>
-                <p>Dosage: {prescription.dosage}</p>
-                <p>Frequency: {prescription.frequency}</p>
-                <p>Start Date: {new Date(prescription.startDate).toLocaleDateString()}</p>
-                <p>End Date: {new Date(prescription.endDate).toLocaleDateString()}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+
+      {/* Add FeedbackPromptModal */}
+      <FeedbackPromptModal
+        isOpen={showFeedbackPrompt}
+        onClose={handleFeedbackPromptClose}
+        callId={callId}
+      />
+    </>
   );
 };
 

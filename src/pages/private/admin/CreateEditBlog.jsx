@@ -8,7 +8,7 @@ import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
 import * as Yup from 'yup';
 import { FiSave, FiEye, FiUpload, FiX, FiPlus } from 'react-icons/fi';
 import Button from "../../../components/Button";
-import { LoadingSpinner } from "../../../components";
+import { LoadingSpinner, LoadingAnimation } from "../../../components";
 import axiosInstance from "../../../utils/axiosConfig";
 
 const formInput = "border-[3px] border-primary-5 text-primary-2 rounded-[20px] overflow-hidden p-2 w-full";
@@ -29,12 +29,15 @@ const CreateEditBlog = () => {
   const { user } = useSelector((state) => state.auth);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewUrl, setPreviewUrl] = useState('');
+  const [isFetching, setIsFetching] = useState(false);
 
   const { VITE_TINYMCE_API_KEY } = import.meta.env;
 
   useEffect(() => {
     if (id) {
-      dispatch(fetchBlog(id));
+      setIsFetching(true);
+      dispatch(fetchBlog(id))
+        .finally(() => setIsFetching(false));
     }
     return () => {
       dispatch(clearError());
@@ -132,6 +135,13 @@ const CreateEditBlog = () => {
     setPreviewUrl(url);
     window.open(url, '_blank');
   };
+
+  if (isFetching) return (
+    <div className="p-6 bg-gray-100 min-h-screen flex flex-col items-center justify-center">
+      <LoadingAnimation />
+      <p className="text-xl font-semibold mt-4">Loading blog...</p>
+    </div>
+  );
 
   return (
     <div className="container mx-auto p-4">

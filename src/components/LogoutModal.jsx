@@ -15,68 +15,74 @@ const LogoutModal = () => {
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center"
-      aria-labelledby="modal-title"
-      role="dialog"
-      aria-modal="true"
-    >
-      <div
-        className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
-        aria-hidden="true"
-      ></div>
+    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center">
+      {/* Backdrop with blur effect */}
+      <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm transition-opacity" />
 
-      <div className="bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full z-60">
-        <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-          <div className="sm:flex sm:items-start">
-            <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+      {/* Modal Content */}
+      <div className="relative transform overflow-hidden rounded-2xl bg-white dark:bg-gray-900 shadow-2xl transition-all sm:max-w-md w-full mx-4 sm:mx-0">
+        <div className="absolute top-0 right-0 pt-4 pr-4">
+          <button
+            onClick={() => dispatch(hideModal())}
+            className="rounded-full p-1 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+          >
+            <svg
+              className="h-6 w-6 text-gray-400 hover:text-gray-500"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+
+        <div className="p-6">
+          <div className="flex flex-col items-center text-center">
+            {/* Animated Logout Icon */}
+            <div className="mb-4 p-3 rounded-full bg-red-50 dark:bg-red-900/20">
               <svg
-                className="h-6 w-6 text-red-600"
-                xmlns="http://www.w3.org/2000/svg"
+                className="w-12 h-12 text-red-500 animate-pulse"
                 fill="none"
-                viewBox="0 0 24 24"
                 stroke="currentColor"
-                aria-hidden="true"
+                viewBox="0 0 24 24"
               >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                 />
               </svg>
             </div>
-            <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-              <h3
-                className="text-lg leading-6 font-medium text-gray-900"
-                id="modal-title"
+
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              Sign Out?
+            </h3>
+            <p className="text-gray-500 dark:text-gray-400 mb-8">
+              Are you sure you want to sign out? You'll need to sign in again to access your account.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-3 w-full">
+              <button
+                onClick={confirmLogout}
+                className="w-full px-6 py-3 rounded-xl bg-red-600 text-white font-medium hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transform transition-transform hover:scale-105"
               >
-                Logout Confirmation
-              </h3>
-              <div className="mt-2">
-                <p className="text-sm text-gray-500">
-                  Are you sure you want to log out? You'll need to log in again
-                  to access your account.
-                </p>
-              </div>
+                Yes, Sign Out
+              </button>
+              <button
+                onClick={() => dispatch(hideModal())}
+                className="w-full px-6 py-3 rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transform transition-transform hover:scale-105"
+              >
+                Cancel
+              </button>
             </div>
           </div>
-        </div>
-        <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-          <button
-            type="button"
-            className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-            onClick={confirmLogout}
-          >
-            Logout
-          </button>
-          <button
-            type="button"
-            className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-            onClick={() => dispatch(hideModal())}
-          >
-            Cancel
-          </button>
         </div>
       </div>
     </div>

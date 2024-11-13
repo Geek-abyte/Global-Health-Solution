@@ -23,6 +23,7 @@ import {
 } from "chart.js";
 import axiosInstance from "../../../utils/axiosConfig";
 import { PATH } from "../../../routes/path";
+import LoadingAnimation from "../../../components/LoadingAnimation";
 
 ChartJS.register(
   CategoryScale,
@@ -38,20 +39,39 @@ ChartJS.register(
 const Dashboard = () => {
   const [isUnapprovedUsers, setIsUnapprovedUsers] = useState(false);
   const [showNotification, setShowNotification] = useState(true);
+  const [paymentStats, setPaymentStats] = useState({
+    totalRevenue: 0,
+    revenueChange: 0,
+    monthlyRevenue: [],
+    paymentDistribution: {
+      succeeded: 0,
+      failed: 0,
+      pending: 0
+    }
+  });
+  const [userStats, setUserStats] = useState({
+    totalUsers: 0,
+    userGrowth: 0,
+    monthlyUsers: []
+  });
+  const [isLoading, setIsLoading] = useState(true);
 
   // Sample data for charts
   const userChartData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+    labels: userStats.monthlyUsers.map(item => {
+      const [year, month] = item.month.split('-');
+      return new Date(parseInt(year), parseInt(month) - 1).toLocaleString('default', { month: 'short' });
+    }),
     datasets: [
       {
         label: "Patients",
-        data: [65, 59, 80, 81, 56, 55],
+        data: userStats.monthlyUsers.map(item => item.patients),
         borderColor: "rgb(75, 192, 192)",
         tension: 0.1,
       },
       {
         label: "Specialists",
-        data: [28, 48, 40, 19, 86, 27],
+        data: userStats.monthlyUsers.map(item => item.specialists),
         borderColor: "rgb(255, 99, 132)",
         tension: 0.1,
       },
@@ -65,6 +85,40 @@ const Dashboard = () => {
         data: [300, 50, 100],
         backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
         hoverBackgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+      },
+    ],
+  };
+
+  // Update the payment chart data
+  const paymentChartData = {
+    labels: paymentStats.monthlyRevenue.map(item => {
+      const [year, month] = item.month.split('-');
+      return new Date(parseInt(year), parseInt(month) - 1).toLocaleString('default', { month: 'short' });
+    }).reverse(),
+    datasets: [
+      {
+        label: "Monthly Revenue",
+        data: paymentStats.monthlyRevenue.map(item => item.total / 100).reverse(),
+        borderColor: "rgb(75, 192, 192)",
+        backgroundColor: "rgba(75, 192, 192, 0.2)",
+        fill: true,
+        tension: 0.4,
+      },
+    ],
+  };
+
+  // Update the payment distribution data
+  const paymentDistributionData = {
+    labels: ["Successful", "Failed", "Pending"],
+    datasets: [
+      {
+        data: [
+          paymentStats.paymentDistribution.succeeded,
+          paymentStats.paymentDistribution.failed,
+          paymentStats.paymentDistribution.pending
+        ],
+        backgroundColor: ["#10B981", "#EF4444", "#F59E0B"],
+        hoverBackgroundColor: ["#059669", "#DC2626", "#D97706"],
       },
     ],
   };
@@ -85,8 +139,39 @@ const Dashboard = () => {
       }
     };
 
-    fetchUnapprovedUsers();
+    const fetchPaymentStats = async () => {
+      try {
+        const response = await axiosInstance.get("/payment/admin/dashboard-stats");
+        setPaymentStats(response.data);
+      } catch (error) {
+        console.error("Error fetching payment stats:", error);
+      }
+    };
+
+    const fetchUserStats = async () => {
+      try {
+        const response = await axiosInstance.get("/admin/dashboard-stats");
+        setUserStats(response.data);
+      } catch (error) {
+        console.error("Error fetching user stats:", error);
+      }
+    };
+
+    Promise.all([
+      fetchUnapprovedUsers(),
+      fetchPaymentStats(),
+      fetchUserStats()
+    ]).finally(() => {
+      setIsLoading(false);
+    });
   }, []);
+
+  if (isLoading) return (
+    <div className="p-6 bg-gray-100 min-h-screen flex flex-col items-center justify-center">
+      <LoadingAnimation />
+      <p className="text-xl font-semibold mt-4">Loading dashboard...</p>
+    </div>
+  );
 
   const NotificationBar = () => (
     <AnimatePresence>
@@ -139,9 +224,15 @@ const Dashboard = () => {
             <h2 className="text-xl font-semibold">Total Users</h2>
             <FiUsers className="text-2xl text-blue-500" />
           </div>
-          <p className="text-3xl font-bold">12,345</p>
-          <p className="text-sm text-green-500 flex items-center mt-2">
-            <FiArrowUp className="mr-1" /> 5.3% from last month
+          <p className="text-3xl font-bold">{userStats.totalUsers.toLocaleString()}</p>
+          <p className={`text-sm flex items-center mt-2 ${userStats.userGrowth >= 0 ? 'text-green-500' : 'text-red-500'
+            }`}>
+            {userStats.userGrowth >= 0 ? (
+              <FiArrowUp className="mr-1" />
+            ) : (
+              <FiArrowDown className="mr-1" />
+            )}
+            {Math.abs(userStats.userGrowth)}% from last month
           </p>
         </motion.div>
 
@@ -173,9 +264,17 @@ const Dashboard = () => {
             <h2 className="text-xl font-semibold">Total Revenue</h2>
             <FiDollarSign className="text-2xl text-yellow-500" />
           </div>
-          <p className="text-3xl font-bold">$98,765</p>
-          <p className="text-sm text-green-500 flex items-center mt-2">
-            <FiArrowUp className="mr-1" /> 8.7% from last month
+          <p className="text-3xl font-bold">
+            ${(paymentStats.totalRevenue / 100).toLocaleString()}
+          </p>
+          <p className={`text-sm flex items-center mt-2 ${paymentStats.revenueChange >= 0 ? 'text-green-500' : 'text-red-500'
+            }`}>
+            {paymentStats.revenueChange >= 0 ? (
+              <FiArrowUp className="mr-1" />
+            ) : (
+              <FiArrowDown className="mr-1" />
+            )}
+            {Math.abs(paymentStats.revenueChange)}% from last month
           </p>
         </motion.div>
 
@@ -195,25 +294,131 @@ const Dashboard = () => {
         </motion.div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <motion.div
-          className="bg-white rounded-lg shadow-md p-6"
+          className="bg-white rounded-lg shadow-md p-6 min-h-[400px]"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-xl font-semibold mb-4">User Growth</h2>
-          <Line data={userChartData} options={{ responsive: true }} />
+          <h2 className="text-xl font-semibold mb-6">User Growth</h2>
+          <div className="h-[300px]">
+            <Line
+              data={userChartData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: 'bottom'
+                  },
+                  tooltip: {
+                    callbacks: {
+                      label: function (context) {
+                        const label = context.dataset.label || '';
+                        return `${label}: ${context.parsed.y} users`;
+                      }
+                    }
+                  }
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    ticks: {
+                      precision: 0
+                    }
+                  }
+                }
+              }}
+            />
+          </div>
         </motion.div>
 
         <motion.div
-          className="bg-white rounded-lg shadow-md p-6"
+          className="bg-white rounded-lg shadow-md p-6 min-h-[400px]"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
+          transition={{ duration: 0.5 }}
         >
-          <h2 className="text-xl font-semibold mb-4">Call Distribution</h2>
-          <Doughnut data={callChartData} options={{ responsive: true }} />
+          <h2 className="text-xl font-semibold mb-6">Revenue Trend</h2>
+          <div className="h-[300px]">
+            <Line
+              data={paymentChartData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: 'bottom'
+                  },
+                  tooltip: {
+                    callbacks: {
+                      label: function (context) {
+                        return `Revenue: $${context.parsed.y.toLocaleString()}`;
+                      }
+                    }
+                  }
+                },
+                scales: {
+                  y: {
+                    beginAtZero: true,
+                    ticks: {
+                      callback: (value) => `$${value.toLocaleString()}`
+                    }
+                  }
+                }
+              }}
+            />
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="bg-white rounded-lg shadow-md p-6 min-h-[400px]"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h2 className="text-xl font-semibold mb-6">Call Distribution</h2>
+          <div className="h-[300px] flex items-center justify-center">
+            <Doughnut
+              data={callChartData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: 'bottom'
+                  }
+                }
+              }}
+            />
+          </div>
+        </motion.div>
+
+        <motion.div
+          className="bg-white rounded-lg shadow-md p-6 min-h-[400px]"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <h2 className="text-xl font-semibold mb-6">Payment Status Distribution</h2>
+          <div className="h-[300px] flex items-center justify-center">
+            <Doughnut
+              data={paymentDistributionData}
+              options={{
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: 'bottom',
+                    labels: {
+                      padding: 20
+                    }
+                  }
+                }
+              }}
+            />
+          </div>
         </motion.div>
       </div>
     </div>

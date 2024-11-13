@@ -14,10 +14,13 @@ import {
 import { Outlet, useLocation, Link } from "react-router-dom";
 import { PATH } from "../routes/path";
 import { logoDark, logoWhite } from "../assets";
+import { useDispatch } from "react-redux";
+import { showModal } from "../states/popUpSlice";
 
 const AdminLayout = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const location = useLocation();
+  const dispatch = useDispatch();
 
   const toggleUserMenu = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
@@ -33,6 +36,11 @@ const AdminLayout = () => {
       location.pathname === PATH.admin.manage
     );
   }, [location.pathname]);
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    dispatch(showModal({ content: "logout" }));
+  };
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
@@ -83,44 +91,44 @@ const AdminLayout = () => {
               )}
             </li>
             <li className={`mb-2 ${isActive(PATH.admin.payments)}`}>
-              <a
-                href={PATH.admin.payments}
+              <Link
+                to={PATH.admin.payments}
                 className="flex items-center p-2 hover:bg-gray-700 rounded"
               >
                 <FiDollarSign className="mr-2" /> Payments
-              </a>
+              </Link>
             </li>
-            <li className={`mb-2 ${isActive(PATH.admin.payments)}`}>
-              <a
-                href={PATH.admin.calls}
+            <li className={`mb-2 ${isActive(PATH.admin.calls)}`}>
+              <Link
+                to={PATH.admin.calls}
                 className="flex items-center p-2 hover:bg-gray-700 rounded"
               >
                 <FiPhone className="mr-2" /> Calls
-              </a>
+              </Link>
             </li>
             <li className={`mb-2 ${isActive(PATH.admin.preference)}`}>
-              <a
-                href={PATH.admin.preference}
+              <Link
+                to={PATH.admin.preference}
                 className="flex items-center p-2 hover:bg-gray-700 rounded"
               >
                 <FiSettings className="mr-2" /> Preferences
-              </a>
+              </Link>
             </li>
             <li className={`mb-2 ${isActive(PATH.admin.blogs)}`}>
-              <a
-                href={PATH.admin.blogs}
+              <Link
+                to={PATH.admin.blogs}
                 className="flex items-center p-2 hover:bg-gray-700 rounded"
               >
                 <FiBook className="mr-2" /> Blogs
-              </a>
+              </Link>
             </li>
             <li className="mt-auto">
-              <a
-                href="/logout"
-                className="flex items-center p-2 hover:bg-gray-700 rounded"
+              <button
+                onClick={handleLogout}
+                className="flex items-center p-2 hover:bg-gray-700 rounded w-full text-left"
               >
                 <FiLogOut className="mr-2" /> Logout
-              </a>
+              </button>
             </li>
           </ul>
         </nav>
