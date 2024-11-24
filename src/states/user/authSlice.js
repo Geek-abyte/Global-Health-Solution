@@ -5,35 +5,21 @@ import {
   removeProperty,
   setTokenWithExpiry,
 } from "../../utils/helperFunctions";
-import axios from "axios";
 
 export const loginUser = createAsyncThunk(
-  "auth/login",
+  "auth/loginUser",
   async (userData, { rejectWithValue }) => {
     try {
-      const config = {
-        timeout: 10000, // 10 second timeout
-        retry: 3,
-        retryDelay: (retryCount) => retryCount * 1000,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-
-      const response = await axios.post(
-        `${apiUrl}/api/users/login`,
-        userData,
-        config
+      const response = await axiosInstance.post(
+        userData.hasOwnProperty("admin") ? "/admin/login" : "/users/login",
+        removeProperty(userData, "admin")
       );
-
+      const { token, role } = response.data;
+      setTokenWithExpiry(token, 259200);
+      localStorage.setItem("userRole", role);
       return response.data;
     } catch (error) {
-      if (error.code === "ECONNRESET") {
-        return rejectWithValue("Connection was reset. Please try again.");
-      }
-      return rejectWithValue(
-        error.response?.data?.message || "An error occurred during login"
-      );
+      return rejectWithValue(error.response.data);
     }
   }
 );

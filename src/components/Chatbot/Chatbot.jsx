@@ -3,6 +3,7 @@ import { BsRobot, BsX } from "react-icons/bs";
 import { IoMdArrowBack } from "react-icons/io";
 import { RiCustomerService2Fill } from "react-icons/ri";
 import { IoCloseCircleOutline } from "react-icons/io5";
+import { FiSend } from "react-icons/fi";
 import { toSnakeCase } from "../../helperFunctions";
 import { symptoms } from "../../data/symptoms";
 import axiosInstance from "../../utils/axiosConfig";
@@ -15,7 +16,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 const exampleMessages = [
   { text: "Hi there!", sender: "bot" },
   {
-    text: "Input your symptoms to determine the likely illness or contact a consultant",
+    text: "How can I help you today? tell me what's your symptoms are and I'll help you determine the likely illness or contact a consultant",
     sender: "bot",
   },
 ];
@@ -36,6 +37,7 @@ const ChatBot = () => {
   const messageAreaRef = useRef(null);
   const navigate = useNavigate();
   const [isAttentionEffect, setIsAttentionEffect] = useState(false);
+  const [userInput, setUserInput] = useState("");
 
   const tabs = ["home", "symptoms", "faq"];
   const [selectedTab, setSelectedTab] = useState(tabs[0]);
@@ -119,7 +121,7 @@ const ChatBot = () => {
         symptoms: packet,
       });
       setLoading(false);
-      addMessage(response.data, "bot");
+      addMessage(response.data.response, "bot");
       addMessage(
         "Try a different set of symptoms, or would you like to contact a consultant?",
         "bot"
@@ -130,6 +132,34 @@ const ChatBot = () => {
       setLoading(false);
       addMessage("There was a problem with the result, please try again", "bot");
       addMessage("Or would you like to contact a consultant?", "bot");
+    }
+  };
+
+  const handleSendQuestion = () => {
+    if (userInput.trim() === "") return;
+    addMessage(userInput, "user");
+    sendQuestion(userInput);
+    setUserInput("");
+  };
+
+  const sendQuestion = async (question) => {
+    setLoading(true);
+    try {
+      const response = await axiosInstance.post("/chatbot/predict_disease", {
+        question: question,
+      });
+      setLoading(false);
+      addMessage(response.data.response, "bot");
+    } catch (error) {
+      console.error("Error:", error);
+      setLoading(false);
+      addMessage("There was a problem with the response, please try again.", "bot");
+    }
+  };
+
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      handleSendQuestion();
     }
   };
 
@@ -196,13 +226,7 @@ const ChatBot = () => {
                     className="bg-white rounded-lg text-[20px] cursor-pointer shadow-lg p-4 "
                     onClick={() => handleTabChange(1)}
                   >
-                    Tell us your symptoms
-                  </div>
-                  <div
-                    className="bg-white rounded-lg text-[20px] cursor-pointer shadow-lg p-4 "
-                    onClick={() => sendTags(tags)}
-                  >
-                    Frequently asked questions
+                    Ask a Question
                   </div>
                 </div>
               </div>
@@ -216,7 +240,7 @@ const ChatBot = () => {
                     className="absolute top-2 left-2"
                     onClick={() => handleTabChange(0)}
                   />
-                  symptoms
+                  Chat
                 </div>
                 <div
                   id="message-area"
@@ -245,89 +269,21 @@ const ChatBot = () => {
                         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-7"></div>
                       </div>
                     )}
-                    {isAddingTags === false && !loading && (
-                      <div className="flex space-x-4 mt-10">
-                        <button
-                          className={`border rounded-xl p-2 transition-transform duration-500 ease-out transform hover:scale-110 bg-gradient-to-r from-purple-500 to-indigo-500 text-white ${showButton
-                            ? "scale-100 opacity-100 inline-block"
-                            : "scale-0 opacity-0 none"
-                            }`}
-                          onClick={() => handleAddingTags()}
-                        >
-                          Input Symptoms
-                        </button>
-                        <button
-                          className={`border rounded-xl p-2 duration-500 ease-out transition-transform transform hover:scale-110 bg-gradient-to-r from-pink-500 to-red-500 text-white ${showButton
-                            ? "scale-100 opacity-100 inline-block"
-                            : "scale-0 opacity-0 none"
-                            }`}
-                          onClick={() => navigate(PATH.dashboard.consultant)}
-                        >
-                          Contact a consultant
-                        </button>
-                      </div>
-                    )}
-                    {tags.length > 0 && (
-                      <div className="mt-6">
-                        <ul className="flex flex-wrap flex-row-reverse">
-                          {tags.map((tag, index) => (
-                            <li
-                              key={index}
-                              className="flex items-center bg-gray-200 rounded-full px-3 py-1 m-1"
-                            >
-                              <span>{tag}</span>
-                              <IoCloseCircleOutline
-                                onClick={() => removeTag(index)}
-                                className="ml-2 outline-none focus:outline-none"
-                                color="red"
-                              />
-                            </li>
-                          ))}
-                        </ul>
-                        <div className="flex justify-center mt-4">
-                          <button
-                            className={`border rounded-xl p-2 bg-primary-4 text-white transition-all duration-500 ease-in-out transform hover:scale-110 ${tags.length > 4
-                              ? "scale-100 opacity-100 inline-block"
-                              : "scale-0 opacity-0 none"
-                              }`}
-                            onClick={() => handleSeePrediction(tags)}
-                          >
-                            See Prediction
-                          </button>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
-                {isAddingTags && (
-                  <div>
-                    {suggestions.length > 0 && (
-                      <div className="bg-gray-100 border-gray-200 max-h-[200px] overflow-auto">
-                        {suggestions.map((suggestion, index) => (
-                          <div
-                            key={index}
-                            className="p-2 hover:bg-gray-200 cursor-pointer"
-                            onClick={() => handleSelectSuggestion(suggestion)}
-                          >
-                            {suggestion}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <div
-                      className={`bg-white p-4 flex justify-center ${isOpen ? "translate-y-0 translate-x-0" : "translate-y-12"
-                        }`}
-                    >
-                      <input
-                        type="text"
-                        placeholder="search for syptoms..."
-                        value={searchTerm}
-                        onChange={handleInputChange}
-                        className="flex-1 border rounded-lg px-4 py-2 mr-2"
-                      />
-                    </div>
-                  </div>
-                )}
+                <div className="flex p-4 bg-gray-100">
+                  <input
+                    type="text"
+                    placeholder="Type your question..."
+                    value={userInput}
+                    onChange={(e) => setUserInput(e.target.value)}
+                    onKeyDown={handleKeyPress}
+                    className="flex-1 border rounded-lg px-4 py-2 mr-2"
+                  />
+                  <button onClick={handleSendQuestion} className="text-blue-500">
+                    <FiSend size={24} />
+                  </button>
+                </div>
               </div>
             )}
           </>
